@@ -1,2 +1,2 @@
 from db.models.base import Base
-from db.models.user import User
+from db.models.users import Users
