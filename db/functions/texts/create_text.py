@@ -2,7 +2,7 @@ from db.core import Session
 from db.models import Texts
 
 
-async def create_text(text: str):
+def create_text(text: str):
     """Function for create new text in database."""
     with Session() as session:
         new_text = Texts(level=1, text=text)
