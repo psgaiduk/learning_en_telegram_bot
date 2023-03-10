@@ -7,6 +7,7 @@ from loguru import logger
 from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user
 from telegram_bot_app.core import dispatcher
+from telegram_bot_app.states import TextStates
 
 
 @dispatcher.message_handler(commands='start')
@@ -55,4 +56,6 @@ async def cmd_start(message: types.Message, state: FSMContext):
             f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>'
         ])
 
-    await message.answer(text_for_user, reply_markup=markup, parse_mode="HTML")
+    await TextStates.next_sentence.set()
+
+    await message.answer(text_for_user, reply_markup=markup, parse_mode='HTML')
