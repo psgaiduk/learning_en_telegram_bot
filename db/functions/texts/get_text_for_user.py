@@ -2,10 +2,9 @@ from random import choice
 
 from db.core import Session
 from db.models import users_texts, Texts
-from db.utils import add_new_text_to_db
 
 
-def get_text_for_user(telegram_id: int):
+def get_text_for_user(telegram_id: int) -> tuple:
     """"""
     with Session() as session:
         subquery = session.query(
@@ -23,7 +22,7 @@ def get_text_for_user(telegram_id: int):
         ).all()
 
         if not texts:
-            return add_new_text_to_db()
+            return None, None
 
         random_text = choice(texts)[0]
 
