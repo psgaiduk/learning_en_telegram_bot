@@ -4,7 +4,7 @@ from db.core import Session
 from db.models import users_texts, Texts
 
 
-def get_text_for_user(telegram_id: int) -> tuple:
+async def get_text_for_user(telegram_id: int) -> tuple:
     """"""
     with Session() as session:
         subquery = session.query(
