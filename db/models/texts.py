@@ -9,4 +9,10 @@ class Texts(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     level = Column(Integer)
-    text = Column(Text)
+    text_en = Column(Text)
+    text_ru = Column(Text)
+    text_fr = Column(Text)
+    text_es = Column(Text)
+    text_ge = Column(Text)
+
+
