@@ -24,17 +24,21 @@ async def cmd_start(message: types.Message, state: FSMContext):
         user = await create_user(telegram_id=chat_id, name=message.from_user.first_name)
         logger.debug(f'New user = {user}')
 
-    text, text_id = await get_text_for_user(telegram_id=user.telegram_id)
-    logger.debug(f'Get new text text_id = {text_id}\n{text}')
 
-    sentences_with_translate = text.split(']')
-    logger.debug(f'Split sentences\n{sentences_with_translate}')
+
+    main_text, translate_text, text_id = await get_text_for_user(user=user)
+    logger.debug(f'Get new text text_id = {text_id}\n{main_text}\n{translate_text}')
+
+    sentences = main_text.split('.')
+    translate_sentences = translate_text.split('.')
+    logger.debug(f'Split sentences\n{sentences}')
     sentences_for_user = []
-    for sentence in sentences_with_translate:
-        if '[' not in sentence:
+    for index, sentence in enumerate(sentences):
+        if not sentence:
             continue
-        sentence_on_en, sentence_on_ru = sentence.strip().split('[')
-        sentences_for_user.append((sentence_on_en.strip(), sentence_on_ru.strip()))
+        sentence_on_main_language = sentence
+        sentence_translate = translate_sentences[index]
+        sentences_for_user.append((sentence_on_main_language.strip(), sentence_translate.strip()))
 
     logger.debug(f'List sentences and translate:\n{sentences_for_user}')
 
