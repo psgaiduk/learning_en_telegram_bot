@@ -6,6 +6,7 @@ from loguru import logger
 
 from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user
+from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.states import TextStates
 
@@ -24,7 +25,12 @@ async def cmd_start(message: types.Message, state: FSMContext):
         user = await create_user(telegram_id=chat_id, name=message.from_user.first_name)
         logger.debug(f'New user = {user}')
 
-
+    is_complete_text_today = await get_today_text_by_telegram_id(telegram_id=user.telegram_id)
+    logger.debug(f'check have user text today = {is_complete_text_today}')
+    if is_complete_text_today:
+        logger.debug(f'user today have text, send about this')
+        await message.answer('Вы сегодня уже прочитали текст, завтра будет новый.', parse_mode='HTML')
+        return
 
     main_text, translate_text, text_id = await get_text_for_user(user=user)
     logger.debug(f'Get new text text_id = {text_id}\n{main_text}\n{translate_text}')
@@ -48,7 +54,14 @@ async def cmd_start(message: types.Message, state: FSMContext):
 
     logger.debug(f'current sentence\n{current_sentence}')
 
-    await state.set_data({'previous_sentences': previous_sentences, 'next_sentences': next_sentences})
+    await state.set_data(
+        {
+            'previous_sentences': previous_sentences,
+            'next_sentences': next_sentences,
+            'user': user,
+            'text_id': text_id,
+        }
+    )
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     markup.add('Далее')
@@ -57,7 +70,8 @@ async def cmd_start(message: types.Message, state: FSMContext):
         [
             current_sentence[0],
             '\n<u>Посмотреть перевод:</u>',
-            f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>'
+            f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>',
+            f'\nДо конца осталось: {len(next_sentences)} шт.'
         ])
 
     await TextStates.next_sentence.set()
