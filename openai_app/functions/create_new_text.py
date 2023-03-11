@@ -26,9 +26,8 @@ def create_new_text() -> str:
 
     text = (
         'Напиши короткий рассказ на английском.',
-        'В рассказе должно быть не меньше чем 500 слов из списка 5000 самых распространнённых слов английского языка.',
+        'В рассказе должно быть от 300 до 500 слов из списка 5000 самых распространнённых слов английского языка.',
         f'Рассказ должен быть в стиле писателя {choice(authors)}',
-        'После каждого предложения добавь литературный перевод на русском языке в квадратных скобках.',
     )
 
     completion = openai.ChatCompletion.create(
@@ -36,4 +35,4 @@ def create_new_text() -> str:
         messages=[{'role': 'user', 'content': '\n'.join(text)}]
     )
 
-    return completion.get('choices', [{}])[0]['message']['content']
+    return completion.get('choices', [{}])[0]['message']['content'].replace('\n', '')
