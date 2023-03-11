@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text as text_filter
 from loguru import logger
 
+from db.functions.texts_users import create_texts_users
 from telegram_bot_app.states import TextStates
 from telegram_bot_app.core import dispatcher
 
@@ -19,7 +20,7 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
         previous_sentences = state_data.get('previous_sentences')
         next_sentences = state_data.get('next_sentences')
         logger.debug(f'current sentence\n{current_sentence}')
-        await state.set_data({'previous_sentences': previous_sentences, 'next_sentences': next_sentences})
+        await state.update_data({'previous_sentences': previous_sentences, 'next_sentences': next_sentences})
 
         text_for_user = '\n'.join(
             [
@@ -31,6 +32,11 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
     else:
         text_for_user = 'Поздравляю! Текст закончен.'
         markup = types.ReplyKeyboardRemove()
+        user = state_data.get('user')
+        text_id = state_data.get('text_id')
+        logger.debug(f'Get user = {user}')
+        await create_texts_users(user=user, text_id=text_id)
+
         await state.finish()
 
         await message.answer(text_for_user, reply_markup=markup, parse_mode='HTML')
