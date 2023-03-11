@@ -10,3 +10,5 @@ class Users(Base):
     telegram_id = Column(Integer, primary_key=True)
     name = Column(String)
     level = Column(Integer)
+    main_language = Column(String)
+    learn_language = Column(String)
