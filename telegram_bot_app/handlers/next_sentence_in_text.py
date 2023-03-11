@@ -31,7 +31,7 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
             ])
         await message.answer(text_for_user, parse_mode='HTML')
     else:
-        text_for_user = 'Поздравляю! Текст закончен.'
+        text_for_user = 'Поздравляю! Текст закончен.\nЗавтра будет новый!'
         markup = types.ReplyKeyboardRemove()
         user = state_data.get('user')
         text_id = state_data.get('text_id')
