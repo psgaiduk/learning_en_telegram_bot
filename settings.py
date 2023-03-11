@@ -11,6 +11,7 @@ class MainSettings(BaseSettings):
     openai_token: str = Field(..., env='OPEN_AI_TOKEN')
     path_to_database: str = path.join(path.dirname(__file__), 'database.db')
     telegram_token: str = Field(..., env='TELEGRAM_BOT_TOKEN')
+    nlp_token: str = Field(..., env='NLP_TOKEN')
 
     class Config:
         """Config."""
