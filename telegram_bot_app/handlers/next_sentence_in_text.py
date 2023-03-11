@@ -26,7 +26,8 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
             [
                 current_sentence[0],
                 '\n<u>Посмотреть перевод:</u>',
-                f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>'
+                f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>',
+                f'\nДо конца осталось: {len(next_sentences)} шт.'
             ])
         await message.answer(text_for_user, parse_mode='HTML')
     else:
