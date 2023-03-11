@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Date, String, Integer
-from sqlalchemy import Table
+from sqlalchemy import Column, String, Integer
 from sqlalchemy import ForeignKey
 
 from db.models.base import Base
 
 
-users_texts = Table(
-    'users_texts',
-    Base.metadata,
-    Column('id', Integer, index=True, primary_key=True),
-    Column('date', Date),
-    Column('language', String),
-    Column('user_telegram_id', ForeignKey('users.telegram_id')),
-    Column('text_id', ForeignKey('texts.id')),
-)
+class UsersText(Base):
+    __tablename__ = 'users_texts'
+
+    id = Column(Integer, index=True, primary_key=True)
+    date = Column(Integer)
+    language = Column(String)
+    user_telegram_id = Column(ForeignKey('users.telegram_id'))
+    text_id = Column(ForeignKey('texts.id'))

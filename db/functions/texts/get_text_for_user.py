@@ -1,17 +1,17 @@
 from random import choice
 
 from db.core import Session
-from db.models import users_texts, Texts, Users
+from db.models import UsersText, Texts, Users
 
 
 async def get_text_for_user(user: Users) -> tuple:
     """"""
     with Session() as session:
         subquery = session.query(
-            users_texts
+            UsersText
         ).filter(
-            users_texts.c.user_telegram_id == user.telegram_id,
-            users_texts.c.language == f'{user.main_language}{user.learn_language}'
+            UsersText.user_telegram_id == user.telegram_id,
+            UsersText.language == f'{user.main_language}{user.learn_language}'
         ).subquery()
 
         texts = session.query(
