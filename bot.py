@@ -3,6 +3,8 @@ from os import path
 from aiogram.utils import executor
 from loguru import logger
 
+from db.models import Base
+from db.core import engine
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.handlers import *
 
@@ -17,4 +19,7 @@ logger.add(
 
 
 if __name__ == '__main__':
+    answer = input('enter command: ')
+    if answer == '1':
+        Base.metadata.create_all(bind=engine)
     executor.start_polling(dispatcher, skip_updates=True)
