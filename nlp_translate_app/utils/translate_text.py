@@ -1,4 +1,5 @@
 from requests import get
+from nltk.text import sent_tokenize
 
 from settings import settings
 
@@ -12,18 +13,21 @@ def translate_text(text_on_en: str, language: str) -> str:
     }
 
     translate = []
-    text_on_en = text_on_en.replace('\n', '')
+    text_on_en = text_on_en.replace('\n', '').replace('.', '. ')
+    sentences_en = sent_tokenize(text=text_on_en, language='english')
+    part_text_for_translate = ''
 
-    for start_symbol in range(0, len(text_on_en), MAX_LETTERS):
-        part_of_text = text_on_en[start_symbol:start_symbol + MAX_LETTERS]
-
-        params_for_translate = {
-            'text': part_of_text,
-            'to': language,
-            'from': 'en',
-        }
-        response = get(url=url, params=params_for_translate, headers=headers).json()
-        translate.append(response.get('translated_text', {}).get(language))
+    for sentence in sentences_en:
+        if len(part_text_for_translate + sentence) > MAX_LETTERS:
+            params_for_translate = {
+                'text': part_text_for_translate,
+                'to': language,
+                'from': 'en',
+            }
+            response = get(url=url, params=params_for_translate, headers=headers).json()
+            translate.append(response.get('translated_text', {}).get(language))
+            part_text_for_translate = ''
+        else:
+            part_text_for_translate += sentence
 
     return ''.join(translate)
-
