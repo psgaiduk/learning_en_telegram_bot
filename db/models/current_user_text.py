@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, BigInteger, Column, Integer, Text
+from sqlalchemy import BigInteger, Column, JSON, Integer
 
 from db.models.base import Base
 
