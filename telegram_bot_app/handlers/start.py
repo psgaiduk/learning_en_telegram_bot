@@ -5,8 +5,9 @@ from aiogram.dispatcher import FSMContext
 from loguru import logger
 from nltk.tokenize import sent_tokenize
 
+from db.models import Users
 from db.functions.users import get_user_by_telegram_id, create_user
-from db.functions.texts import get_text_for_user
+from db.functions.texts import get_text_for_user, delete_text
 from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.states import TextStates
@@ -35,13 +36,8 @@ async def cmd_start(message: types.Message, state: FSMContext):
         await message.answer('Вы сегодня уже прочитали текст, завтра будет новый.', parse_mode='HTML')
         return
 
-    main_text, translate_text, text_id = await get_text_for_user(user=user)
-    logger.debug(f'Get new text text_id = {text_id}\n{main_text}\n{translate_text}')
+    sentences, translate_sentences, text_id = await get_texts(user=user)
 
-    sentences = sent_tokenize(text=main_text.replace('.', '. '), language=languages[user.learn_language])
-    translate_sentences = sent_tokenize(text=translate_text.replace('.', '. '), language=languages[user.main_language])
-    logger.debug(f'Split sentences\n{sentences}')
-    logger.debug(f'\nSplit translate sentences\n{translate_sentences}')
     sentences_for_user = []
     for index, sentence in enumerate(sentences):
         if not sentence:
@@ -81,3 +77,19 @@ async def cmd_start(message: types.Message, state: FSMContext):
     await TextStates.next_sentence.set()
 
     await message.answer(text_for_user, reply_markup=markup, parse_mode='HTML')
+
+
+async def get_texts(user: Users):
+    main_text, translate_text, text_id = await get_text_for_user(user=user)
+    logger.debug(f'Get new text text_id = {text_id}\n{main_text}\n{translate_text}')
+
+    sentences = sent_tokenize(text=main_text.replace('.', '. '), language=languages[user.learn_language])
+    translate_sentences = sent_tokenize(text=translate_text.replace('.', '. '), language=languages[user.main_language])
+    logger.debug(f'Split sentences\n{sentences}')
+    logger.debug(f'\nSplit translate sentences\n{translate_sentences}')
+
+    if len(sentences) != len(translate_sentences):
+        delete_text(text_id=text_id)
+        await get_texts(user=user)
+
+    return sentences, translate_sentences, text_id
