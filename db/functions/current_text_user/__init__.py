@@ -1,1 +1,2 @@
 from db.functions.current_text_user.create_current_text_user import create_current_text_user
+from db.functions.current_text_user.get_current_text_user import get_current_text_for_user
