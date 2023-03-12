@@ -15,6 +15,7 @@ logger.add(
     format="{time:YYYY-MM-DD HH:mm:ss} || {extra[chat_id]} || {extra[work_id]} || {level} || {message}",
     level="DEBUG",
     rotation='00:00',
+    retention='30 days'
 )
 
 
