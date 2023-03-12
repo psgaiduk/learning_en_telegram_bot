@@ -6,7 +6,11 @@ from loguru import logger
 from nltk.tokenize import sent_tokenize
 
 from db.models import Users
-from db.functions.current_text_user import create_current_text_user, get_current_text_for_user
+from db.functions.current_text_user import (
+    create_current_text_user,
+    get_current_text_for_user,
+    update_current_text_user,
+)
 from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user, delete_text
 from db.functions.texts_users import get_today_text_by_telegram_id
@@ -91,7 +95,13 @@ async def cmd_start(message: types.Message, state: FSMContext):
 
     await TextStates.next_sentence.set()
 
-    if not current_text:
+    if current_text:
+        await update_current_text_user(
+            telegram_id=user.telegram_id,
+            next_sentences=next_sentences,
+            previous_sentences=next_sentences,
+        )
+    else:
         await create_current_text_user(
             telegram_id=user.telegram_id,
             text_id=text_id,
