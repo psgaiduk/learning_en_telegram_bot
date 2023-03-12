@@ -87,8 +87,10 @@ async def get_texts(user: Users):
     translate_sentences = sent_tokenize(text=translate_text.replace('.', '. '), language=languages[user.main_language])
     logger.debug(f'Split sentences\n{sentences}')
     logger.debug(f'\nSplit translate sentences\n{translate_sentences}')
+    logger.debug(f'len texts = {len(sentences)}, {len(translate_sentences)}')
 
     if len(sentences) != len(translate_sentences):
+        logger.debug(f'differen len of texts, delete texts')
         delete_text(text_id=text_id)
         await get_texts(user=user)
 
