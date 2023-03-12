@@ -1,0 +1,1 @@
+from db.functions.current_text_user.create_current_text_user import create_current_text_user
