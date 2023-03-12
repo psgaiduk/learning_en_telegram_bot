@@ -5,7 +5,7 @@ from settings import settings
 
 
 def translate_text(text_on_en: str, language: str) -> str:
-    MAX_LETTERS = 990
+    MAX_LETTERS = 800
     url = 'https://nlp-translation.p.rapidapi.com/v1/translate'
     headers = {
         'X-RapidAPI-Key': settings.nlp_token,
