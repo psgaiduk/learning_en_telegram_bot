@@ -59,8 +59,6 @@ async def cmd_start(message: types.Message, state: FSMContext):
         sentences, translate_sentences, text_id = await get_texts(user=user)
         sentences_for_user = []
         for index, sentence in enumerate(sentences):
-            if not sentence:
-                continue
             sentence_on_main_language = sentence
             sentence_translate = translate_sentences[index]
             sentences_for_user.append((sentence_on_main_language.strip(), sentence_translate.strip()))
