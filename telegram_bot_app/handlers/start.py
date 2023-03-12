@@ -41,6 +41,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     sentences = sent_tokenize(text=main_text.replace('.', '. '), language=languages[user.learn_language])
     translate_sentences = sent_tokenize(text=translate_text.replace('.', '. '), language=languages[user.main_language])
     logger.debug(f'Split sentences\n{sentences}')
+    logger.debug(f'\nSplit translate sentences\n{translate_sentences}')
     sentences_for_user = []
     for index, sentence in enumerate(sentences):
         if not sentence:
