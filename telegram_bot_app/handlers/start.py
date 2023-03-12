@@ -3,12 +3,15 @@ from datetime import datetime
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loguru import logger
+from nltk.tokenize import sent_tokenize
 
 from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user
 from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.states import TextStates
+
+languages = {'ru': 'russian', 'en': 'english', 'fr': 'french', 'es': 'spanish', 'ge': 'german'}
 
 
 @dispatcher.message_handler(commands='start')
@@ -35,8 +38,8 @@ async def cmd_start(message: types.Message, state: FSMContext):
     main_text, translate_text, text_id = await get_text_for_user(user=user)
     logger.debug(f'Get new text text_id = {text_id}\n{main_text}\n{translate_text}')
 
-    sentences = main_text.split('.')
-    translate_sentences = translate_text.split('.')
+    sentences = sent_tokenize(text=main_text.replace('.', '. '), language=languages[user.learn_language])
+    translate_sentences = sent_tokenize(text=translate_text.replace('.', '. '), language=languages[user.main_language])
     logger.debug(f'Split sentences\n{sentences}')
     sentences_for_user = []
     for index, sentence in enumerate(sentences):
