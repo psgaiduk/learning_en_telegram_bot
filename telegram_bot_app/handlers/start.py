@@ -6,7 +6,7 @@ from loguru import logger
 from nltk.tokenize import sent_tokenize
 
 from db.models import Users
-from db.functions.current_text_user import create_current_text_user
+from db.functions.current_text_user import create_current_text_user, get_current_text_for_user
 from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user, delete_text
 from db.functions.texts_users import get_today_text_by_telegram_id
@@ -37,23 +37,35 @@ async def cmd_start(message: types.Message, state: FSMContext):
         await message.answer('Вы сегодня уже прочитали текст, завтра будет новый.', parse_mode='HTML')
         return
 
-    sentences, translate_sentences, text_id = await get_texts(user=user)
+    current_text = await get_current_text_for_user(telegram_id=user.telegram_id)
 
-    sentences_for_user = []
-    for index, sentence in enumerate(sentences):
-        if not sentence:
-            continue
-        sentence_on_main_language = sentence
-        sentence_translate = translate_sentences[index]
-        sentences_for_user.append((sentence_on_main_language.strip(), sentence_translate.strip()))
+    if current_text:
+        current_sentence = current_text.next_sentences.pop(0)
+        previous_sentences = current_text.previous_sentences
+        next_sentences = current_text.next_sentences
+        text_id = current_text.text_id
+        logger.debug(f'text id = {text_id}\n'
+                     f'previous sentences = {previous_sentences}\n'
+                     f'nex sentences = {next_sentences}')
 
-    logger.debug(f'List sentences and translate:\n{sentences_for_user}')
+        message_for_user = 'Что-то пошло не так, но мы продолжаем.'
+        await message.answer(message_for_user, parse_mode='HTML')
 
-    current_sentence = sentences_for_user.pop(0)
-    previous_sentences = [current_sentence]
-    next_sentences = sentences_for_user
+    else:
+        sentences, translate_sentences, text_id = await get_texts(user=user)
+        sentences_for_user = []
+        for index, sentence in enumerate(sentences):
+            if not sentence:
+                continue
+            sentence_on_main_language = sentence
+            sentence_translate = translate_sentences[index]
+            sentences_for_user.append((sentence_on_main_language.strip(), sentence_translate.strip()))
 
-    logger.debug(f'current sentence\n{current_sentence}')
+        logger.debug(f'List sentences and translate:\n{sentences_for_user}')
+
+        current_sentence = sentences_for_user.pop(0)
+        previous_sentences = [current_sentence]
+        next_sentences = sentences_for_user
 
     await state.set_data(
         {
@@ -63,6 +75,8 @@ async def cmd_start(message: types.Message, state: FSMContext):
             'text_id': text_id,
         }
     )
+
+    logger.debug(f'current sentence\n{current_sentence}')
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     markup.add('Далее')
@@ -76,13 +90,14 @@ async def cmd_start(message: types.Message, state: FSMContext):
         ])
 
     await TextStates.next_sentence.set()
-    current_text_user = await create_current_text_user(
-        telegram_id=user.telegram_id,
-        text_id=text_id,
-        next_sentences=next_sentences,
-        previous_sentences=previous_sentences,
-    )
-    logger.debug(f'save current text user in database = {current_text_user}')
+
+    if not current_text:
+        await create_current_text_user(
+            telegram_id=user.telegram_id,
+            text_id=text_id,
+            next_sentences=next_sentences,
+            previous_sentences=previous_sentences,
+        )
 
     await message.answer(text_for_user, reply_markup=markup, parse_mode='HTML')
 
