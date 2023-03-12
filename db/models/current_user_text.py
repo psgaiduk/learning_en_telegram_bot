@@ -8,7 +8,7 @@ class CurrentUserText(Base):
     __tablename__ = 'current_user_text'
 
     id = Column(Integer, primary_key=True, index=True)
-    telegram_id = Column(Integer)
+    telegram_id = Column(BigInteger)
     text_id = Column(Integer)
     next_sentences = Column(JSON)
     previous_sentences = Column(JSON)
