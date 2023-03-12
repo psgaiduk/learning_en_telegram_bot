@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text as text_filter
 from loguru import logger
 
-from db.functions.current_text_user import update_current_text_user
+from db.functions.current_text_user import delete_current_text_user, update_current_text_user
 from db.functions.texts_users import create_texts_users
 from telegram_bot_app.states import TextStates
 from telegram_bot_app.core import dispatcher
@@ -47,6 +47,8 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
         await create_texts_users(user=user, text_id=text_id)
 
         await state.finish()
+
+        await delete_current_text_user(telegram_id=user.telegram_id)
 
         await message.answer(text_for_user, reply_markup=markup, parse_mode='HTML')
 
