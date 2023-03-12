@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text as text_filter
 from loguru import logger
 
+from db.functions.current_text_user import update_current_text_user
 from db.functions.texts_users import create_texts_users
 from telegram_bot_app.states import TextStates
 from telegram_bot_app.core import dispatcher
@@ -13,6 +14,8 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
 
     state_data = await state.get_data()
 
+    user = state_data.get('user')
+    logger.debug(f'Get user = {user}')
     next_sentences = state_data.get('next_sentences')
 
     if next_sentences:
@@ -29,13 +32,18 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
                 f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>',
                 f'\nДо конца осталось: {len(next_sentences)} шт.'
             ])
+
+        await update_current_text_user(
+            telegram_id=user.telegram_id,
+            next_sentences=next_sentences,
+            previous_sentences=next_sentences,
+        )
+
         await message.answer(text_for_user, parse_mode='HTML')
     else:
         text_for_user = 'Поздравляю! Текст закончен.\nЗавтра будет новый!'
         markup = types.ReplyKeyboardRemove()
-        user = state_data.get('user')
         text_id = state_data.get('text_id')
-        logger.debug(f'Get user = {user}')
         await create_texts_users(user=user, text_id=text_id)
 
         await state.finish()
