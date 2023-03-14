@@ -30,4 +30,12 @@ def translate_text(text_on_en: str, language: str) -> str:
         else:
             part_text_for_translate += sentence
 
+    params_for_translate = {
+        'text': part_text_for_translate,
+        'to': language,
+        'from': 'en',
+    }
+    response = get(url=url, params=params_for_translate, headers=headers).json()
+    translate.append(response.get('translated_text', {}).get(language))
+
     return ''.join(translate)
