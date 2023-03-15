@@ -143,8 +143,8 @@ async def get_sentences_for_user(sentences: list, translate_sentences: list):
             sentence_on_main_language = ''
             sentence_on_learn_language = ''
         else:
-            sentence_on_learn_language += sentence.strip()
-            sentence_on_main_language += sentence_translate.strip()
+            sentence_on_learn_language = ' '.join((sentence_on_learn_language, sentence.strip()))
+            sentence_on_main_language = ' '.join((sentence_on_main_language, sentence_translate.strip()))
 
     if sentence_on_learn_language:
         sentences_for_user.append((sentence_on_learn_language, sentence_on_main_language))
