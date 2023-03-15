@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext
 from loguru import logger
 from nltk.tokenize import sent_tokenize
 
+from constants import Constant
 from db.models import Users
 from db.functions.current_text_user import (
     create_current_text_user,
@@ -60,11 +61,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
 
     else:
         sentences, translate_sentences, text_id = await get_texts(user=user)
-        sentences_for_user = []
-        for index, sentence in enumerate(sentences):
-            sentence_on_main_language = sentence
-            sentence_translate = translate_sentences[index]
-            sentences_for_user.append((sentence_on_main_language.strip(), sentence_translate.strip()))
+        sentences_for_user = await get_sentences_for_user(sentences=sentences, translate_sentences=translate_sentences)
 
         logger.debug(f'List sentences and translate:\n{sentences_for_user}')
 
@@ -129,3 +126,27 @@ async def get_texts(user: Users):
         await get_texts(user=user)
 
     return sentences, translate_sentences, text_id
+
+
+async def get_sentences_for_user(sentences: list, translate_sentences: list):
+    sentences_for_user = []
+
+    sentence_on_main_language = ''
+    sentence_on_learn_language = ''
+    for index, sentence in enumerate(sentences):
+        sentence_translate = translate_sentences[index]
+        if not sentence_on_learn_language:
+            sentence_on_learn_language = sentence.strip()
+            sentence_on_main_language = sentence_translate.strip()
+        elif len(sentence_on_learn_language + sentence) > Constant.max_length_sentence_for_user.value:
+            sentences_for_user.append((sentence_on_learn_language, sentence_on_main_language))
+            sentence_on_main_language = ''
+            sentence_on_learn_language = ''
+        else:
+            sentence_on_learn_language += sentence.strip()
+            sentence_on_main_language += sentence_translate.strip()
+
+    if sentence_on_learn_language:
+        sentences_for_user.append((sentence_on_learn_language, sentence_on_main_language))
+
+    return sentences_for_user
