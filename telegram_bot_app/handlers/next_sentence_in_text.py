@@ -42,7 +42,10 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
         await message.answer(text_for_user, parse_mode='HTML')
     else:
         text_for_user = 'Поздравляю! Текст закончен.\nЗавтра будет новый!'
-        markup = types.ReplyKeyboardRemove()
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
+        markup.add('Start')
+
         text_id = state_data.get('text_id')
         await create_texts_users(user=user, text_id=text_id)
 
