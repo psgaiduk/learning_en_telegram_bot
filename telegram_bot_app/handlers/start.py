@@ -15,12 +15,15 @@ from db.functions.users import get_user_by_telegram_id, create_user
 from db.functions.texts import get_text_for_user, delete_text
 from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
+from aiogram.dispatcher.filters import Text
 from telegram_bot_app.states import TextStates
+
 
 languages = {'ru': 'russian', 'en': 'english', 'fr': 'french', 'es': 'spanish', 'ge': 'german'}
 
 
 @dispatcher.message_handler(commands='start')
+@dispatcher.message_handler(Text(equals='start', ignore_case=True))
 async def cmd_start(message: types.Message, state: FSMContext):
     """Work with command start."""
     chat_id = message.from_id
