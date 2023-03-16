@@ -12,7 +12,7 @@ def translate_text(text_on_en: str, language: str) -> str:
         'X-RapidAPI-Host': 'deepl-translator.p.rapidapi.com',
     }
 
-    text_on_en = text_on_en.replace('\n', '').replace('.', '. ')
+    text_on_en = text_on_en.replace('\n', '').replace('.', '.\n')
 
     payload = {
         'text': text_on_en,
