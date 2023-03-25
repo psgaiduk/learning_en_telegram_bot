@@ -21,7 +21,7 @@ async def get_text_for_user(user: Users) -> tuple:
         ).filter_by(
             user_telegram_id=None,
         ).filter(
-            Texts.level == 3,
+            Texts.level == user.level,
         )
         texts = texts.all()
 
