@@ -3,7 +3,7 @@ from requests import post
 from settings import settings
 
 
-def translate_text(text_on_en: str, language: str) -> str:
+def translate_text(text_on_en: str, language: str) -> tuple[str, str]:
     url = 'https://deepl-translator.p.rapidapi.com/translate'
 
     headers = {
@@ -22,4 +22,4 @@ def translate_text(text_on_en: str, language: str) -> str:
 
     response = post(url, json=payload, headers=headers).json()
 
-    return response['text']
+    return response['text'], text_on_en
