@@ -22,9 +22,6 @@ async def cmd_settings(message: types.Message, state: FSMContext):
 
     await SettingsStates.start_settings.set()
 
-    answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {user.level}'
-    await message.answer(answer_text, parse_mode='HTML')
-
     level_0 = types.InlineKeyboardButton('Детский', callback_data='level_0')
     level_1 = types.InlineKeyboardButton('1', callback_data='level_1')
     level_2 = types.InlineKeyboardButton('2', callback_data='level_2')
@@ -39,6 +36,5 @@ async def cmd_settings(message: types.Message, state: FSMContext):
     else:
         start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_2)
 
-    answer_text = 'Чтобы поменять сложность кликни по кнопке.'
-
+    answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {user.level}'
     await message.answer(answer_text, reply_markup=start_keyboard, parse_mode='HTML')
