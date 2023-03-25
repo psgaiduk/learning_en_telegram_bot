@@ -26,15 +26,16 @@ async def cmd_settings(message: types.Message, state: FSMContext):
     level_1 = types.InlineKeyboardButton('1', callback_data='level_1')
     level_2 = types.InlineKeyboardButton('2', callback_data='level_2')
     level_3 = types.InlineKeyboardButton('3', callback_data='level_3')
+    cancel = types.InlineKeyboardButton('Завершить', callback_data='cancel')
 
     if user.level == 0:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_1, level_2, level_3)
+        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_1, level_2, level_3, cancel)
     elif user.level == 1:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_2, level_3)
+        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_2, level_3, cancel)
     elif user.level == 2:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_3)
+        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_3, cancel)
     else:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_2)
+        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_2, cancel)
 
     answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {user.level}'
     await message.answer(answer_text, reply_markup=start_keyboard, parse_mode='HTML')
