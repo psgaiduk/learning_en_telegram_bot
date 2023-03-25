@@ -27,3 +27,9 @@ async def update_settings(query: types.CallbackQuery, state: FSMContext):
         await query.message.delete()
 
         await state.finish()
+
+    elif 'cancel' in callback_data:
+        answer_text = 'Настройка завершана'
+        await query.answer(answer_text)
+        await query.message.delete()
+        await state.finish()
