@@ -22,7 +22,7 @@ async def cmd_settings(message: types.Message, state: FSMContext):
 
     await SettingsStates.start_settings.set()
 
-    level_0 = types.InlineKeyboardButton('Детский', callback_data='level_0')
+    level_0 = types.InlineKeyboardButton('0', callback_data='level_0')
     level_1 = types.InlineKeyboardButton('1', callback_data='level_1')
     level_2 = types.InlineKeyboardButton('2', callback_data='level_2')
     level_3 = types.InlineKeyboardButton('3', callback_data='level_3')
