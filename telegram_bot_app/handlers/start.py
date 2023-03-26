@@ -58,6 +58,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
         sentences_for_user = await create_sentences_for_user(
             sentences=sentences,
             translate_sentences=translate_sentences,
+            user=user,
         )
         logger.debug(f'List sentences and translate:\n{sentences_for_user}')
 
