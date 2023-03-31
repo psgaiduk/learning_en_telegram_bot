@@ -13,7 +13,7 @@ class TelegramSDK:
 
         self._url = f'https://api.telegram.org/bot{settings.telegram_token}'
 
-    def send_video_link(self, telegram_id: int, video_link: str, text_message: str):
+    def send_video_link(self, telegram_id: int, video_link: str, text_message: str = ''):
         url = self._url + '/sendVideo'
 
         params_for_send_video = {
@@ -31,12 +31,28 @@ class TelegramSDK:
             response = post(url, data={'chat_id': 232540084}, files={'video': f})
             print(response.json())
 
+    def send_message(self, telegram_id: int, message: str):
+        url = self._url + '/sendMessage'
+        params_for_send_message = {
+            'chat_id': telegram_id,
+            'text': message,
+        }
+        response = get(url, params=params_for_send_message)
+
+
 
 if __name__ == '__main__':
-    TelegramSDK().send_video_file()
+    tsdk = TelegramSDK()
+    # tsdk.send_video_file()
 
     # TelegramSDK().send_video_link(
     #     telegram_id=232540084,
     #     video_link='BAACAgIAAxkDAAIGcWQgaAqCtddYI-0YWyEFiuFFiWwwAALfMAACukABSUjGI1XQgm8kLwQ',
     #     text_message=text,
     # )
+
+    tsdk.send_message(
+        telegram_id=232540084,
+        message='text'
+    )
+
