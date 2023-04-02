@@ -22,3 +22,7 @@ def add_new_text_to_db():
             text_ge=text_ge,
             level=level_id,
         )
+
+
+if __name__ == '__main__':
+    add_new_text_to_db()
