@@ -1,12 +1,12 @@
 from datetime import datetime
 
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from loguru import logger
 
 from db.utils import add_new_text_to_db
 from telegram_messenger_app.functions import send_reminders
 
-scheduler = BackgroundScheduler()
+scheduler = BlockingScheduler()
 
 
 def start_scheduler():
