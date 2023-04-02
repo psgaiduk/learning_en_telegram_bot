@@ -1,9 +1,12 @@
+from loguru import logger
+
 from openai_app.functions import create_new_text
 from db.functions.texts import create_text
 from nlp_translate_app.utils import translate_text
 
 
 def add_new_text_to_db():
+    logger.info('start add new text')
     for level_id in range(4):
         new_en_text = create_new_text(level_id=level_id)
         text_ru = translate_text(text_on_en=new_en_text, language='RU')
