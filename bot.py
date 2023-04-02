@@ -5,6 +5,7 @@ from loguru import logger
 
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.handlers import *
+from schedule import start_scheduler
 
 
 file_path = path.join(path.dirname(__file__), 'logs', 'debug', 'logs.log')
@@ -18,4 +19,5 @@ logger.add(
 
 
 if __name__ == '__main__':
+    start_scheduler()
     executor.start_polling(dispatcher, skip_updates=True)
