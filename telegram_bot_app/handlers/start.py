@@ -15,7 +15,7 @@ from db.functions.texts import get_text_for_user, delete_text
 from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
 from aiogram.dispatcher.filters import Text
-from telegram_bot_app.functions import create_sentences_for_user, get_user_by_chat_id
+from telegram_bot_app.functions import create_sentences_for_user, get_user_by_chat_id, create_text_for_user
 from telegram_bot_app.states import TextStates
 
 
@@ -80,13 +80,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     markup.add('Далее')
 
-    text_for_user = '\n'.join(
-        [
-            current_sentence[0],
-            '\n<u>Посмотреть перевод:</u>',
-            f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>',
-            f'\nДо конца осталось: {len(next_sentences)} шт.'
-        ])
+    text_for_user = create_text_for_user(current_sentence=current_sentence, next_sentences=next_sentences)
 
     await TextStates.next_sentence.set()
 

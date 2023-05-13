@@ -7,6 +7,7 @@ from db.functions.current_text_user import delete_current_text_user, update_curr
 from db.functions.texts_users import create_texts_users
 from telegram_bot_app.states import TextStates
 from telegram_bot_app.core import dispatcher
+from telegram_bot_app.functions import create_text_for_user
 
 
 @dispatcher.message_handler(text_filter(equals='далее', ignore_case=True), state=TextStates.next_sentence)
@@ -25,13 +26,7 @@ async def next_sentence_in_text(message: types.Message, state: FSMContext):
         logger.debug(f'current sentence\n{current_sentence}')
         await state.update_data({'previous_sentences': previous_sentences, 'next_sentences': next_sentences})
 
-        text_for_user = '\n'.join(
-            [
-                current_sentence[0],
-                '\n<u>Посмотреть перевод:</u>',
-                f'<tg-spoiler>{current_sentence[1]}</tg-spoiler>',
-                f'\nДо конца осталось: {len(next_sentences)} шт.'
-            ])
+        text_for_user = create_text_for_user(current_sentence=current_sentence, next_sentences=next_sentences)
 
         await update_current_text_user(
             telegram_id=user.telegram_id,
