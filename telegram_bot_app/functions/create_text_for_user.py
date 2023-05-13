@@ -9,7 +9,7 @@ def create_text_for_user(current_sentence: list, next_sentences: list) -> str:
     hard_words_main_language = findall(pattern, sentence_on_main_language)
 
     hard_words_with_translate = []
-    for word_index, hard_word in hard_words_learn_language:
+    for word_index, hard_word in enumerate(hard_words_learn_language):
         hard_word_insert = f'\n{hard_word} - {hard_words_main_language[word_index]}'
         hard_words_with_translate.append(hard_word_insert)
 
