@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from loguru import logger
 
+from main.choices import Levels
 from telegram_bot_app.core import dispatcher
 from telegram_bot_app.functions import get_user_by_chat_id
 from telegram_bot_app.states import SettingsStates
@@ -22,10 +23,10 @@ async def cmd_settings(message: types.Message, state: FSMContext):
 
     await SettingsStates.start_settings.set()
 
-    level_0 = types.InlineKeyboardButton('0', callback_data='level_0')
-    level_1 = types.InlineKeyboardButton('1', callback_data='level_1')
-    level_2 = types.InlineKeyboardButton('2', callback_data='level_2')
-    level_3 = types.InlineKeyboardButton('3', callback_data='level_3')
+    level_0 = types.InlineKeyboardButton(Levels.A1.name, callback_data='level_0')
+    level_1 = types.InlineKeyboardButton(Levels.A2.name, callback_data='level_1')
+    level_2 = types.InlineKeyboardButton(Levels.B1.name, callback_data='level_2')
+    level_3 = types.InlineKeyboardButton(Levels.B2.name, callback_data='level_3')
     cancel = types.InlineKeyboardButton('Завершить', callback_data='cancel')
 
     if user.level == 0:
@@ -37,5 +38,7 @@ async def cmd_settings(message: types.Message, state: FSMContext):
     else:
         start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_2, cancel)
 
-    answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {user.level}'
+    level_name = Levels.get_level_name(level=user.level)
+
+    answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {level_name}'
     await message.answer(answer_text, reply_markup=start_keyboard, parse_mode='HTML')
