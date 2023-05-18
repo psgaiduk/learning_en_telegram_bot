@@ -11,11 +11,16 @@ from db.functions.current_text_user import (
     get_current_text_for_user,
     update_current_text_user,
 )
-from db.functions.texts import get_text_for_user, delete_text
+from db.functions.texts import delete_text, get_text_for_user
 from db.functions.texts_users import get_today_text_by_telegram_id
 from telegram_bot_app.core import dispatcher
 from aiogram.dispatcher.filters import Text
-from telegram_bot_app.functions import create_sentences_for_user, get_user_by_chat_id, create_text_for_user
+from telegram_bot_app.functions import (
+    create_new_user,
+    create_sentences_for_user,
+    get_user_by_chat_id,
+    create_text_for_user,
+)
 from telegram_bot_app.states import TextStates
 
 
@@ -30,7 +35,11 @@ async def cmd_start(message: types.Message, state: FSMContext):
     logger.configure(extra={'chat_id': chat_id, 'work_id': datetime.now().timestamp()})
     logger.debug(f'message = {message}')
 
-    user = await get_user_by_chat_id(chat_id=chat_id, name=message.from_user.first_name)
+    user = await get_user_by_chat_id(chat_id=chat_id)
+
+    if not user:
+        await create_new_user(chat_id=chat_id, name=message.from_user.first_name, message=message)
+        return
 
     is_complete_text_today = await get_today_text_by_telegram_id(telegram_id=user.telegram_id)
     logger.debug(f'check have user text today = {is_complete_text_today}')

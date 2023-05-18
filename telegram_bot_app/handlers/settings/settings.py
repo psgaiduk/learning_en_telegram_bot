@@ -5,10 +5,9 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from loguru import logger
 
-from main.choices import Levels
 from telegram_bot_app.core import dispatcher
-from telegram_bot_app.functions import get_user_by_chat_id
-from telegram_bot_app.states import SettingsStates
+from telegram_bot_app.functions import create_new_user, get_user_by_chat_id
+from telegram_bot_app.functions.settings import create_message_settings
 
 
 @dispatcher.message_handler(commands='settings')
@@ -19,26 +18,11 @@ async def cmd_settings(message: types.Message, state: FSMContext):
     logger.configure(extra={'chat_id': chat_id, 'work_id': datetime.now().timestamp()})
     logger.debug(f'message = {message}')
 
-    user = await get_user_by_chat_id(chat_id=chat_id, name=message.from_user.first_name)
+    user = await get_user_by_chat_id(chat_id=chat_id)
 
-    await SettingsStates.start_settings.set()
+    if not user:
+        await create_new_user(chat_id=chat_id, name=message.from_user.first_name, message=message)
+        return
 
-    level_0 = types.InlineKeyboardButton(Levels.A1.name, callback_data='level_0')
-    level_1 = types.InlineKeyboardButton(Levels.A2.name, callback_data='level_1')
-    level_2 = types.InlineKeyboardButton(Levels.B1.name, callback_data='level_2')
-    level_3 = types.InlineKeyboardButton(Levels.B2.name, callback_data='level_3')
-    cancel = types.InlineKeyboardButton('Завершить', callback_data='cancel')
+    await create_message_settings(user=user, message=message)
 
-    if user.level == 0:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_1, level_2, level_3, cancel)
-    elif user.level == 1:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_2, level_3, cancel)
-    elif user.level == 2:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_3, cancel)
-    else:
-        start_keyboard = types.InlineKeyboardMarkup(resize_keyboard=True).add(level_0, level_1, level_2, cancel)
-
-    level_name = Levels.get_level_name(level=user.level)
-
-    answer_text = f'{user.name}, вот твои настройки:\nУровень сложности: {level_name}'
-    await message.answer(answer_text, reply_markup=start_keyboard, parse_mode='HTML')
