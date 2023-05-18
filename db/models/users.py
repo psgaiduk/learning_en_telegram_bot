@@ -8,7 +8,7 @@ class Users(Base):
     """Model of user."""
 
     if settings.environment == 'local':
-        __tablename__ = '0_local_users'
+        __tablename__ = '_local_users'
     else:
         __tablename__ = 'users'
 

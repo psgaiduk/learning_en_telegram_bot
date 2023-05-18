@@ -8,7 +8,7 @@ class CurrentUserText(Base):
     """Model of current user text."""
 
     if settings.environment == 'local':
-        __tablename__ = '0_local_current_user_text'
+        __tablename__ = '_local_current_user_text'
     else:
         __tablename__ = 'current_user_text'
 

@@ -9,7 +9,7 @@ class UsersText(Base):
     """Model of user's text."""
 
     if settings.environment == 'local':
-        __tablename__ = '0_local_users_texts'
+        __tablename__ = '_local_users_texts'
     else:
         __tablename__ = 'users_texts'
 
