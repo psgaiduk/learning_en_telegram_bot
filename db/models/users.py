@@ -1,11 +1,16 @@
 from sqlalchemy import BigInteger, Column, Integer, String
 
 from db.models.base import Base
+from settings import settings
 
 
 class Users(Base):
     """Model of user."""
-    __tablename__ = 'users'
+
+    if settings.environment == 'local':
+        __tablename__ = '0_local_users'
+    else:
+        __tablename__ = 'users'
 
     telegram_id = Column(BigInteger, primary_key=True)
     name = Column(String)
