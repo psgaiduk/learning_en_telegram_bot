@@ -8,7 +8,7 @@ class HeroLevels(Base):
 
     __tablename__ = 'hero_levels'
 
-    level_id = Column(BigInteger, primary_key=True)
+    level_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(VARCHAR(64))
     need_experience = Column(BigInteger)
     count_sentences = Column(Integer)
