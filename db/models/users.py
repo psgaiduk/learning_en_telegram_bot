@@ -13,9 +13,10 @@ class Users(Base):
         __tablename__ = 'users'
 
     telegram_id = Column(BigInteger, primary_key=True)
-    level_en_id = Column(ForeignKey('levels_en.level_en_id'))
+    level_en_id = Column(ForeignKey('levels_en.level_en_id'), nullable=True)
     main_language_id = Column(ForeignKey('main_languages.main_language_id'))
-    user_name = Column(VARCHAR(64))
+    user_name = Column(VARCHAR(64), nullable=True)
     experience = Column(BigInteger, default=0)
     hero_level_id = Column(ForeignKey('hero_levels.level_id'))
-    stage = Column(VARCHAR(64))
+    previous_stage = Column(VARCHAR(64), nullable=True)
+    stage = Column(VARCHAR(64), nullable=True)
