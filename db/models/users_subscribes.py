@@ -1,16 +1,15 @@
-from sqlalchemy import BigInteger, Column, ForeignKey, VARCHAR, Date, DateTime, Integer
+from datetime import datetime
+
+from sqlalchemy import Column, ForeignKey, Date, DateTime, Integer
+from sqlalchemy.orm import relationship
 
 from db.models.base import Base
-from settings import settings
 
 
 class UsersSubscribes(Base):
-    """Model of user."""
+    """Model of user's subscribes."""
 
-    if settings.environment == 'local':
-        __tablename__ = '_local_users_subscribes'
-    else:
-        __tablename__ = 'users_subscribes'
+    __tablename__ = 'users_subscribes'
 
     id = Column(primary_key=True, autoincrement=True)
     telegram_id = Column(ForeignKey('users.telegram_id'))
@@ -18,4 +17,7 @@ class UsersSubscribes(Base):
     date_start = Column(Date)
     date_end = Column(Date)
     income = Column(Integer)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship('Users', back_populates='subscribes')
+    subscribe = relationship('Subscribes', back_populates='users_subscribes', uselist=False)

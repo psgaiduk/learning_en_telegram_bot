@@ -1,13 +1,16 @@
-from sqlalchemy import Column, VARCHAR, Integer
+from sqlalchemy import Column, String, Integer
+from sqlalchemy.orm import relationship
 
 from db.models.base import Base
 
 
 class LevelsEn(Base):
-    """Model of user."""
+    """Model of level of english."""
 
     __tablename__ = 'levels_en'
 
     level_en_id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(VARCHAR(64))
+    title = Column(String(64))
     order = Column(Integer)
+
+    users = relationship('Users', back_populates='level_en')
