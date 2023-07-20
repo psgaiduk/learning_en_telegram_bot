@@ -11,3 +11,4 @@ from db.models.users_hero_levels_history import UsersHeroLevelsHistory
 from db.models.charges import Charges
 from db.models.users_charges_history import UsersChargesHistory
 from db.models.books import Books
+from db.models.users_books_history import UsersBooksHistory

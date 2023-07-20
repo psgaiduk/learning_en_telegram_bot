@@ -23,6 +23,7 @@ class Users(Base):
     subscribes = relationship('UsersSubscribes', back_populates='user')
     hero_levels_history = relationship('UsersHeroLevelsHistory', back_populates='user')
     charges_history = relationship('UsersChargesHistory', back_populates='user')
+    books_history = relationship('UsersBooksHistory', back_populates='user')
 
     level_en = relationship('LevelsEn', back_populates='users', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users', uselist=False)
