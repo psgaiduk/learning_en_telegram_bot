@@ -13,7 +13,7 @@ class UsersHeroLevelsHistory(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(ForeignKey('users.telegram_id'))
-    hero_level_id = Column(ForeignKey('games.game_id'), nullable=True)
+    hero_level_id = Column(ForeignKey('hero_levels.level_id'), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow())
 
     user = relationship('Users', back_populates='games', uselist=False)
