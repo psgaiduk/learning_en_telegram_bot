@@ -11,3 +11,5 @@ class Charges(Base):
 
     charge_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(64))
+
+    users_charges_history = relationship('UsersChargesHistory', back_populates='charge')
