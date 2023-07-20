@@ -17,3 +17,4 @@ class BooksSentences(Base):
     words = Column(JSON)
 
     book = relationship('Books', back_populates='books_sentences', uselist=False)
+    users_books_sentences_history = relationship('UsersBooksSentencesHistory', back_populates='sentence')

@@ -13,3 +13,4 @@ from db.models.users_charges_history import UsersChargesHistory
 from db.models.books import Books
 from db.models.users_books_history import UsersBooksHistory
 from db.models.books_sentences import BooksSentences
+from db.models.users_books_sentences_history import UsersBooksSentencesHistory
