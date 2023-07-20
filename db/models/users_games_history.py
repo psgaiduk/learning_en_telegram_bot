@@ -13,7 +13,7 @@ class UsersGamesHistory(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(ForeignKey('users.telegram_id'))
-    game_id = Column(ForeignKey('games.game_id'), nullable=True)
+    game_id = Column(ForeignKey('games.game_id'))
     created_at = Column(DateTime, default=datetime.utcnow())
     count_questions = Column(Integer)
     correct_answers = Column(Integer)

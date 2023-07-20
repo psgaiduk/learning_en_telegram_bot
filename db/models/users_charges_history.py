@@ -13,7 +13,7 @@ class UsersChargesHistory(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_id = Column(ForeignKey('users.telegram_id'))
-    charge_id = Column(ForeignKey('charges.charge_id'), nullable=True)
+    charge_id = Column(ForeignKey('charges.charge_id'))
     created_at = Column(DateTime, default=datetime.utcnow())
     experience = Column(Integer)
 
