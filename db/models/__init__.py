@@ -14,3 +14,5 @@ from db.models.books import Books
 from db.models.users_books_history import UsersBooksHistory
 from db.models.books_sentences import BooksSentences
 from db.models.users_books_sentences_history import UsersBooksSentencesHistory
+from db.models.grammar_exercises import GrammarExercises
+from db.models.type_grammar_exercises import TypeGrammarExercises

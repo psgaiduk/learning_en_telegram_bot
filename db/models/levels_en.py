@@ -14,3 +14,4 @@ class LevelsEn(Base):
     order = Column(Integer)
 
     users = relationship('Users', back_populates='level_en')
+    type_grammar_exercises = relationship('TypeGrammarExercises', back_populates='level_en')
