@@ -16,5 +16,5 @@ class UsersHeroLevelsHistory(Base):
     hero_level_id = Column(ForeignKey('hero_levels.level_id'), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow())
 
-    user = relationship('Users', back_populates='games', uselist=False)
+    user = relationship('Users', back_populates='hero_levels_history', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users_games_history', uselist=False)

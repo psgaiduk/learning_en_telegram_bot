@@ -17,5 +17,5 @@ class UsersBooksHistory(Base):
     start_read = Column(DateTime, default=datetime.utcnow())
     end_read = Column(DateTime, nullable=True, default=None)
 
-    user = relationship('Users', back_populates='games', uselist=False)
+    user = relationship('Users', back_populates='books_history', uselist=False)
     book = relationship('Books', back_populates='users_books_history', uselist=False)

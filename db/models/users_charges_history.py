@@ -17,5 +17,5 @@ class UsersChargesHistory(Base):
     created_at = Column(DateTime, default=datetime.utcnow())
     experience = Column(Integer)
 
-    user = relationship('Users', back_populates='games', uselist=False)
+    user = relationship('Users', back_populates='charges_history', uselist=False)
     charge = relationship('Charges', back_populates='users_charges_history', uselist=False)
