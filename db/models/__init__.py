@@ -7,3 +7,4 @@ from db.models.subscribes import Subscribes
 from db.models.users_games_history import UsersGamesHistory
 from db.models.games import Games
 from db.models.main_languages import MainLanguages
+from db.models.users_hero_levels_history import UsersHeroLevelsHistory

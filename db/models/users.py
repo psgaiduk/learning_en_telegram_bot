@@ -21,6 +21,8 @@ class Users(Base):
     games = relationship('UsersGamesHistory', back_populates='user')
     referrals = relationship('UsersReferrals', back_populates='user')
     subscribes = relationship('UsersSubscribes', back_populates='user')
+    users_hero_levels_history = relationship('UsersHeroLevelsHistory', back_populates='user')
+
     level_en = relationship('LevelsEn', back_populates='users', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users', uselist=False)
     main_language = relationship('MainLanguages', back_populates='users', uselist=False)
