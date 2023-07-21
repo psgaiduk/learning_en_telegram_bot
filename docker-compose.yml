@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: dbname
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpass
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+  bot:
+    build: ./bot
+    depends_on:
+      - db
+  admin:
+    build: ./admin
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - admin
+volumes:
+  dbdata:
