@@ -13,7 +13,7 @@ class BooksSentences(Base):
     book_id = Column(ForeignKey('books.book_id'))
     order = Column(Integer)
     text = Column(JSON)
-    text_ru = Column(JSON)
+    translation = Column(JSON)
     words = Column(JSON)
 
     book = relationship('Books', back_populates='books_sentences', uselist=False)
