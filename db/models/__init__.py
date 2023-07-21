@@ -16,3 +16,5 @@ from db.models.books_sentences import BooksSentences
 from db.models.users_books_sentences_history import UsersBooksSentencesHistory
 from db.models.grammar_exercises import GrammarExercises
 from db.models.type_grammar_exercises import TypeGrammarExercises
+from db.models.achievements import Achievements
+
