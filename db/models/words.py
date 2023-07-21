@@ -15,3 +15,4 @@ class Words(Base):
     translation = Column(JSON)
 
     type_word = relationship('TypeWords', back_populates='words', uselist=False)
+    users_words_history = relationship('UsersWordsHistory', back_populates='word')

@@ -21,3 +21,4 @@ from db.models.users_achievements_history import UsersAchievementsHistory
 from db.models.users_grammar_exercises_history import UsersGrammarExercisesHistory
 from db.models.type_words import TypeWords
 from db.models.words import Words
+from db.models.users_words_history import UsersWordsHistory
