@@ -14,3 +14,4 @@ class GrammarExercises(Base):
     text = Column(Text)
 
     type_grammar_exercise = relationship('TypeGrammarExercises', back_populates='grammar_exercises', uselist=False)
+    users_grammar_exercises_history = relationship('UsersGrammarExercisesHistory', back_populates='grammar_exercise')

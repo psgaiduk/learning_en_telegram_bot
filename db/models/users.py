@@ -26,6 +26,7 @@ class Users(Base):
     books_history = relationship('UsersBooksHistory', back_populates='user')
     books_sentences_history = relationship('UsersBooksSentencesHistory', back_populates='user')
     achievements_history = relationship('UsersAchievementsHistory', back_populates='user')
+    grammar_exercises_history = relationship('UsersGrammarExercisesHistory', back_populates='user')
 
     level_en = relationship('LevelsEn', back_populates='users', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users', uselist=False)
