@@ -1,5 +1,0 @@
-from telegram_bot_app.handlers.start import cmd_start
-from telegram_bot_app.handlers.texts.next_sentence_in_text import next_sentence_in_text
-from telegram_bot_app.handlers.settings.settings import cmd_settings
-from telegram_bot_app.handlers.settings.update_settings import update_settings
-from telegram_bot_app.handlers.settings.update_settings_invalid import update_settings_invalid

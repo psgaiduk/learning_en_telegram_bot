@@ -1,1 +1,0 @@
-from db.functions.text_reminders.get_text_reminders import get_text_reminders

@@ -1,1 +1,0 @@
-from nlp_translate_app.utils.translate_text import translate_text
