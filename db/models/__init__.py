@@ -19,3 +19,4 @@ from db.models.type_grammar_exercises import TypeGrammarExercises
 from db.models.achievements import Achievements
 from db.models.users_achievements_history import UsersAchievementsHistory
 from db.models.users_grammar_exercises_history import UsersGrammarExercisesHistory
+from db.models.type_words import TypeWords
