@@ -15,3 +15,5 @@ class Achievements(Base):
     image_telegram_url = Column(Text)
     image_url = Column(Text)
 
+    users_achievements_history = relationship('UsersAchievementsHistory', back_populates='achievement')
+
