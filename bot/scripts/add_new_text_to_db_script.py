@@ -14,10 +14,6 @@ from nltk import pos_tag
 import spacy
 
 
-
-from db.utils import add_new_text_to_db
-
-
 class AddNewBookToDB:
 
     def __init__(self):

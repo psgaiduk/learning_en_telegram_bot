@@ -1,6 +1,6 @@
 from requests import post
 
-from bot.settings import settings
+from settings import settings
 
 
 def translate_text(text_on_en: str, language: str) -> str:

@@ -2,7 +2,7 @@ from random import choice
 
 import openai
 
-from bot.settings import settings
+from settings import settings
 
 
 def create_new_text(level_id: int) -> str:

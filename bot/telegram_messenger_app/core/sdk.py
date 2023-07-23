@@ -1,6 +1,6 @@
 from requests import get, post
 
-from bot.settings import settings
+from settings import settings
 
 
 class TelegramSDK:

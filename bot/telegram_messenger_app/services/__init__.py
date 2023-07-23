@@ -1,1 +1,0 @@
-from telegram_messenger_app.services.send_notification import SendReminders
