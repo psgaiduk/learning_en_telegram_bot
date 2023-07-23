@@ -8,12 +8,20 @@ services:
       - dbdata:/var/lib/postgresql/data
   bot:
     build: ./bot
+    volumes:
+      - ./bot:/app
+    command: ["python", "-u", "./bot.py"]
     depends_on:
       - db
     env_file:
       - .env
   admin:
     build: ./admin
+    volumes:
+      - ./admin:/admin
+    command: ["flask", "run", "--host=0.0.0.0", "--port=5000", "--reload"]
+    environment:
+      - FLASK_ENV=development
     depends_on:
       - db
     env_file:
