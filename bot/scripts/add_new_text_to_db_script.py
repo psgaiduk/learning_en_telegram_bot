@@ -12,6 +12,8 @@ from loguru import logger
 from nltk.tokenize import sent_tokenize
 from nltk import pos_tag
 import spacy
+from db.core import DatabaseSessionManager
+from db.models import Books, BooksSentences, Words
 
 
 class AddNewBookToDB:
@@ -31,6 +33,10 @@ class AddNewBookToDB:
     def work(self):
         self._open_book()
         self._create_text_for_insert()
+        print(self._text_for_insert)
+        with DatabaseSessionManager(commit=False) as session:
+            texts = session.query(Books).all()
+            print(texts)
 
     def _open_book(self):
         with open('new_book.txt', 'r') as book_text:
