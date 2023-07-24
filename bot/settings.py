@@ -10,7 +10,7 @@ class PostgresSettings(BaseSettings):
     host: str = Field(..., env='POSTGRES_HOST')
     user: str = Field(..., env='POSTGRES_USER')
     password: str = Field(..., env='POSTGRES_PASSWORD')
-    db_name: str = Field(..., env='POSTGRES_DB_NAME')
+    db_name: str = Field(..., env='POSTGRES_DB')
 
     class Config:
         """Config."""
