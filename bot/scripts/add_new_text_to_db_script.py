@@ -1,5 +1,6 @@
 from json import load
 from re import sub
+from os import path
 
 from loguru import logger
 from nltk.tokenize import sent_tokenize
@@ -14,10 +15,12 @@ class AddNewBookToDB:
 
     def __init__(self):
         """Init."""
-        with open('idioms.json', 'r') as idioms:
+        file_idioms = path.join(path.dirname(__file__), 'idioms.json')
+        with open(file_idioms, 'r') as idioms:
             self._idioms = set(load(idioms).keys())
 
-        with open('phrases_verbs.json', 'r') as phrasal_verbs:
+        file_phrasal_verbs = path.join(path.dirname(__file__), 'phrases_verbs.json')
+        with open(file_phrasal_verbs, 'r') as phrasal_verbs:
             self._phrasal_verbs = set(load(phrasal_verbs).keys())
 
         self._missed_words = ('a', 'an', 'the', 'to', 'of', 'in', 'for', 'on', 'at', 'by', 'or', 'and', 'with', 'from')
@@ -33,7 +36,8 @@ class AddNewBookToDB:
             print(texts)
 
     def _open_book(self):
-        with open('new_book.txt', 'r') as book_text:
+        file = path.join(path.dirname(__file__), 'new_book.txt')
+        with open(file, 'r') as book_text:
             self._book_text = book_text.read()
 
     def _create_text_for_insert(self):
