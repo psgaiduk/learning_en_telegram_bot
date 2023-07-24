@@ -1,17 +1,11 @@
-import os
-import sys
-
-# Используйте абсолютный путь к корневому каталогу вашего проекта
-project_root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-sys.path.insert(0, project_root_path)
-
 from json import load
-
 from re import sub
+
 from loguru import logger
 from nltk.tokenize import sent_tokenize
 from nltk import pos_tag
 import spacy
+
 from db.core import DatabaseSessionManager
 from db.models import Books, BooksSentences, Words
 
