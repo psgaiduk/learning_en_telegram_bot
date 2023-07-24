@@ -9,7 +9,7 @@ class TypeGrammarExercises(Base):
 
     __tablename__ = 'type_grammar_exercises'
 
-    type_grammar_exercises_id = Column(Integer, primary_key=True, autoincrement=True)
+    type_grammar_exercise_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(128))
     level_en_id = Column(ForeignKey('levels_en.level_en_id'))
     correct_scores = Column(Integer)

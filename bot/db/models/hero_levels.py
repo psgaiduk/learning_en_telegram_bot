@@ -17,4 +17,4 @@ class HeroLevels(Base):
     order = Column(Integer)
 
     users = relationship('Users', back_populates='hero_level')
-    users_hero_levels_history = relationship('UsersHeroLevelsHistory', back_populates='hero_level')
+    heroes_levels_history = relationship('UsersHeroLevelsHistory', back_populates='hero_level')

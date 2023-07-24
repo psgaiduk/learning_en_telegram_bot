@@ -18,7 +18,6 @@ class Users(Base):
     previous_stage = Column(String(64), nullable=True)
     stage = Column(String(64), nullable=True)
 
-    games = relationship('UsersGamesHistory', back_populates='user')
     referrals = relationship('UsersReferrals', back_populates='user',  foreign_keys='UsersReferrals.telegram_id')
     friends = relationship('UsersReferrals', back_populates='friend',  foreign_keys='UsersReferrals.friend_telegram_id')
     subscribes = relationship('UsersSubscribes', back_populates='user')
@@ -29,6 +28,7 @@ class Users(Base):
     achievements_history = relationship('UsersAchievementsHistory', back_populates='user')
     grammar_exercises_history = relationship('UsersGrammarExercisesHistory', back_populates='user')
     words_history = relationship('UsersWordsHistory', back_populates='user')
+    games_history = relationship('UsersGamesHistory', back_populates='user')
 
     level_en = relationship('LevelsEn', back_populates='users', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users', uselist=False)

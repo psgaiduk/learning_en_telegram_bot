@@ -20,5 +20,5 @@ class UsersGamesHistory(Base):
     mistakes = Column(Integer)
     scores = Column(Integer)
 
-    user = relationship('Users', back_populates='games', uselist=False)
-    game = relationship('Games', back_populates='users_games_history', uselist=False)
+    user = relationship('Users', back_populates='games_history', uselist=False)
+    game = relationship('Games', back_populates='history', uselist=False)
