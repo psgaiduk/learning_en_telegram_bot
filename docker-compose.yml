@@ -18,8 +18,8 @@ services:
   admin:
     build: ./admin
     volumes:
-      - ./admin:/admin
-    command: ["flask", "run", "--host=0.0.0.0", "--port=5000", "--reload"]
+      - ./admin:/app
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     environment:
       - FLASK_ENV=development
     depends_on:
