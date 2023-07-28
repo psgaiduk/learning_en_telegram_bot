@@ -11,4 +11,6 @@ class MainLanguagesModel(Model):
         return f'{self.get_title_display()}'
 
     class Meta:
+        verbose_name = 'Main language'
+        verbose_name_plural = 'Main languages'
         db_table = 'main_languages'

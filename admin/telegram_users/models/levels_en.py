@@ -12,5 +12,7 @@ class LevelsEnModel(Model):
         return f'{self.title} - {self.get_title_display()}'
 
     class Meta:
+        verbose_name = 'English level'
+        verbose_name_plural = 'English levels'
         db_table = 'levels_en'
         ordering = ['order']

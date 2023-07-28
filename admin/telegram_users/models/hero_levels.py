@@ -9,5 +9,7 @@ class HeroLevelsModel(Model):
     order = IntegerField()
 
     class Meta:
+        verbose_name = 'Hero level'
+        verbose_name_plural = 'Hero levels'
         db_table = 'hero_levels'
         ordering = ['order']

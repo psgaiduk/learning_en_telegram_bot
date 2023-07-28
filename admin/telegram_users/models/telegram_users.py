@@ -17,4 +17,6 @@ class TelegramUsersModel(Model):
         return f'{self.telegram_id} - {self.user_name}'
 
     class Meta:
+        verbose_name = 'Telegram user'
+        verbose_name_plural = 'Telegram users'
         db_table = 'telegram_users'
