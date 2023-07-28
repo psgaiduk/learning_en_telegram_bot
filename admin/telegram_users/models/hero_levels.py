@@ -8,6 +8,9 @@ class HeroLevelsModel(Model):
     count_games = IntegerField()
     order = IntegerField()
 
+    def __str__(self) -> str:
+        return f'{self.title}'
+
     class Meta:
         verbose_name = 'Hero level'
         verbose_name_plural = 'Hero levels'
