@@ -13,9 +13,9 @@ def add_english_levels(apps, schema_editor):
 
 
 def add_languages(apps, schema_editor):
-    LanguagesModel = apps.get_model('telegram_users', 'LanguagesModel')
-    for index, choice in enumerate(Language.choices()):
-        LanguagesModel.objects.create(title=choice[0], order=index + 1)
+    LanguagesModel = apps.get_model('telegram_users', 'MainLanguagesModel')
+    for choice in Language.choices():
+        LanguagesModel.objects.create(title=choice[0])
 
 
 class Migration(migrations.Migration):
