@@ -3,6 +3,20 @@
 from django.db import migrations, models
 import django.db.models.deletion
 
+from telegram_users.choices import LevelEn, Language
+
+
+def add_english_levels(apps, schema_editor):
+    LevelENModel = apps.get_model('telegram_users', 'LevelsEnModel')
+    for index, choice in enumerate(LevelEn.choices()):
+        LevelENModel.objects.create(title=choice[0], order=index + 1)
+
+
+def add_languages(apps, schema_editor):
+    LanguagesModel = apps.get_model('telegram_users', 'LanguagesModel')
+    for index, choice in enumerate(Language.choices()):
+        LanguagesModel.objects.create(title=choice[0], order=index + 1)
+
 
 class Migration(migrations.Migration):
 
@@ -73,4 +87,6 @@ class Migration(migrations.Migration):
                 'db_table': 'telegram_users',
             },
         ),
+        migrations.RunPython(add_english_levels),
+        migrations.RunPython(add_languages),
     ]

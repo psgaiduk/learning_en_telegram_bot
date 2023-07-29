@@ -2,12 +2,13 @@
 
 from django.db import migrations, models
 
+from books.choices import TypeWord
+
 
 def add_typewords(apps, schema_editor):
     TypeWordsModel = apps.get_model('books', 'TypeWordsModel')
-    TypeWordsModel.objects.create(title='Word', type_word_id='word')
-    TypeWordsModel.objects.create(title='Phrase verb', type_word_id='phrase_verb')
-    TypeWordsModel.objects.create(title='Idiomatic expression', type_word_id='idiomatic_expression')
+    for choice in TypeWord.choices():
+        TypeWordsModel.objects.create(title=choice[0])
 
 
 class Migration(migrations.Migration):
