@@ -6,8 +6,8 @@ from books.choices import TypeWord
 class TypeWordsModel(Model):
     """Model of type of words."""
 
-    type_word_id = AutoField(primary_key=True, choices=TypeWord.choices())
-    title = CharField(max_length=128)
+    type_word_id = AutoField(primary_key=True)
+    title = CharField(max_length=128, choices=TypeWord.choices())
 
     def __str__(self) -> str:
         return f'{self.title}'
