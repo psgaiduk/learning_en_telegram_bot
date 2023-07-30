@@ -1,11 +1,11 @@
-from django.db.models import AutoField, CASCADE, CharField, ForeignKey, JSONField, IntegerField, Model
+from django.db.models import AutoField, CASCADE, CharField, ForeignKey, JSONField, Model
 
 
 class WordsModel(Model):
     """Model of words."""
 
     word_id = AutoField(primary_key=True)
-    type_word_id = ForeignKey('TypeWordsModel', on_delete=CASCADE)
+    type_word = ForeignKey('TypeWordsModel', on_delete=CASCADE)
     word = CharField(max_length=128)
     translation = JSONField()
 
