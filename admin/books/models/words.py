@@ -6,8 +6,8 @@ class WordsModel(Model):
 
     word_id = AutoField(primary_key=True)
     type_word = ForeignKey('TypeWordsModel', on_delete=CASCADE)
-    word = CharField(max_length=128)
-    translation = JSONField()
+    word = CharField(max_length=128, )
+    translation = JSONField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f'{self.word}'
