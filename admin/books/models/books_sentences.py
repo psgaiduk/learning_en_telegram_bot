@@ -7,7 +7,7 @@ from books.models.words import WordsModel
 class BooksSentencesModel(Model):
     """Model of books sentences."""
 
-    books_sentences_id = AutoField(primary_key=True)
+    sentence_id = AutoField(primary_key=True)
     book = ForeignKey(BooksModel, on_delete=CASCADE, related_name='books_sentences')
     order = IntegerField()
     text = TextField()
