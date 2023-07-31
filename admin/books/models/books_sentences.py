@@ -11,8 +11,13 @@ class BooksSentencesModel(Model):
     book = ForeignKey(BooksModel, on_delete=CASCADE, related_name='books_sentences')
     order = IntegerField()
     text = TextField()
-    translation = JSONField()
+    translation = JSONField(null=True, blank=True)
     words = ManyToManyField(WordsModel, related_name='books_sentences')
 
     def __str__(self):
         return f'Book {self.book.title}, Sentence {self.order}'
+
+    class Meta:
+        verbose_name = 'Sentence'
+        verbose_name_plural = 'Sentences'
+        db_table = 'books_sentences'
