@@ -1,0 +1,18 @@
+from django.db.models import AutoField, CASCADE, TextField, JSONField, IntegerField, ForeignKey, Model, ManyToManyField
+
+from books.models.books import BooksModel
+from books.models.words import WordsModel
+
+
+class BooksSentencesModel(Model):
+    """Model of books sentences."""
+
+    books_sentences_id = AutoField(primary_key=True)
+    book = ForeignKey(BooksModel, on_delete=CASCADE, related_name='books_sentences')
+    order = IntegerField()
+    text = TextField()
+    translation = JSONField()
+    words = ManyToManyField(WordsModel, related_name='books_sentences')
+
+    def __str__(self):
+        return f'Book {self.book.title}, Sentence {self.order}'
