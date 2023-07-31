@@ -1,1 +1,2 @@
 from nlp_translate.translate_text import translate_text
+from nlp_translate.translate_word import translate_word
