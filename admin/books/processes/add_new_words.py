@@ -21,4 +21,5 @@ class AddNewWordsProcess:
             )
             if not created:
                 obj.translation = word['translate']
+                obj.type_word = self._type_words
                 obj.save()
