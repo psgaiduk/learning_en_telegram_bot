@@ -5,10 +5,7 @@ class AddNewWordsProcess:
     """Add new words to the database."""
 
     def __call__(self, words: list[dict[str, str]], type_words: str) -> None:
-        try:
-            self._type_words = TypeWordsModel.objects.get(title=type_words)
-        except TypeWordsModel.DoesNotExist:
-            return
+        self._type_words = TypeWordsModel.objects.get(title=type_words)
 
         self._words = words
         self._add_words_to_database()
