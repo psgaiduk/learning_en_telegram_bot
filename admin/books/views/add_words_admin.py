@@ -1,7 +1,9 @@
-from django.shortcuts import render
-
+from django.contrib import messages
+from django.shortcuts import redirect, render
 
 from books.forms import WordsUploadForm
+from books.processes import AddNewWordsProcess
+from telegram_users.choices import Language
 
 
 def upload_words_view(request):
@@ -11,10 +13,17 @@ def upload_words_view(request):
             words = []
             words_list = form.cleaned_data['words'].split('\n')
             for word in words_list:
-                print(word)
-            # _add_new_words_process = AddNewWordsProcess()
-            # _add_new_words_process(words=words, type_words=form.cleaned_data['type_words'])
-            # здесь вы можете добавить сообщение об успехе или перенаправление
+                word = word.replace(' - ', '***').replace('"', '')
+                word_with_translate = word.split('***')
+                word_dict = {'word': word_with_translate.pop(0), 'translate': {}}
+                for index, language in enumerate(Language.choices()):
+                    word_translate = word_with_translate[index]
+                    word_dict['translate'][language[0]] = word_translate
+                words.append(word_dict)
+            _add_new_words_process = AddNewWordsProcess()
+            _add_new_words_process(words=words, type_words=form.cleaned_data['type_words'])
+            messages.success(request, 'Слова были успешно добавлены!')
+            return redirect('/admin/')
     else:
         form = WordsUploadForm()
 
