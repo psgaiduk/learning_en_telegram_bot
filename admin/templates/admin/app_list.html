@@ -1,0 +1,27 @@
+{% load i18n admin_modify admin_urls %}
+
+{% for app in app_list %}
+<div class="app-{{ app.app_label }} module">
+{% if app.models %}
+  <table>
+  <caption>
+    <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
+  </caption>
+  {% for model in app.models %}
+    <tr class="model-{{ model.object_name|lower }}">
+    {% if model.admin_url %}
+      <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+    {% else %}
+      <th scope="row">{{ model.name }}</th>
+    {% endif %}
+    </tr>
+  {% endfor %}
+      {% if app.app_label == 'books' %}
+        <tr>
+            <th colspan="3"><a href="/admin/upload_words/">{% trans 'Upload words' %}</a></th>
+        </tr>
+        {% endif %}
+  </table>
+{% endif %}
+</div>
+{% endfor %}
