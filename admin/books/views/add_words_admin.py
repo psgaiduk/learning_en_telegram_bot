@@ -1,3 +1,4 @@
+from django.contrib.admin.sites import site
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
@@ -39,4 +40,11 @@ def upload_words_view(request):
     else:
         form = WordsUploadForm()
 
-    return render(request, 'admin/add_words_form.html', {'form': form})
+    context = {
+        'form': form,
+        'opts': {'app_label': 'books'},
+        'available_apps': site.get_app_list(request),
+        'is_nav_sidebar_enabled': True,
+    }
+
+    return render(request, 'admin/add_words_form.html', context=context)
