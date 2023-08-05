@@ -82,7 +82,7 @@
 "Better late than never" - Лучше поздно, чем никогда
 "Curiosity killed the cat" - Любопытство до добра не доводит
 "Don't put the cart before the horse" - Не ставь телегу впереди лошади
-"Every cloud has a silver lining" - Все что ни делается - все к лучшему
+"Every cloud has a silver lining" - Все что ни делается-все к лучшему
 "Get over it" - Отпустить ситуацию
 "Hit the nail on the head" - Попасть в яблочко
 "It's not rocket science" - Это не ракетостроение (это несложно)
