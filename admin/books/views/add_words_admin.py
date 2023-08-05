@@ -21,7 +21,7 @@ def upload_words_view(request):
                     continue
 
                 word = word.replace(' - ', '***').replace('"', '')
-                word_with_translate = word.split('***')
+                word_with_translate = word.strip().split('***')
                 word_dict = {'word': word_with_translate.pop(0), 'translate': {}}
                 
                 if len(word_with_translate) != len(Language.choices()):
