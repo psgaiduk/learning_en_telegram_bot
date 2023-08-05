@@ -12,14 +12,10 @@ class AddNewWordsProcess:
 
     def _add_words_to_database(self):
         for word in self._words:
-            obj, created = WordsModel.objects.get_or_create(
+            WordsModel.objects.update_or_create(
                 word=word['word'],
                 defaults={
                     'type_word': self._type_words,
                     'translation': word['translate'],
                 }
             )
-            if not created:
-                obj.translation = word['translate']
-                obj.type_word = self._type_words
-                obj.save()
