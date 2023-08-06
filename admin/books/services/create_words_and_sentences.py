@@ -1,0 +1,104 @@
+from re import sub
+
+from nltk.tokenize import sent_tokenize
+from nltk import pos_tag
+import spacy
+
+from books.choices import TypeWord
+from books.models import WordsModel
+
+
+class CreateWordsAndSentencesService:
+    """ Create words and sentences service. """
+
+    _book_text: str
+
+    def __init__(self):
+        """Init."""
+        self._idioms = WordsModel.objects.filter(
+            type_word__title=TypeWord.idiomatic_expression.value).values_list('word', flat=True)
+
+        self._phrasal_verbs = WordsModel.objects.filter(
+            type_word__title=TypeWord.word.value).values_list('word', flat=True)
+
+        self._missed_words = ('a', 'an', 'the', 'to', 'of', 'in', 'for', 'on', 'at', 'by', 'or', 'and', 'with', 'from')
+
+        self._nlp = spacy.load('en_core_web_sm')
+
+    def work(self, text: str) -> list[dict[str, str]]:
+        sentences = sent_tokenize(text)
+        sentences_by_level = []
+
+        temp_sentence = ''
+        index = 0
+        for sentence in sentences:
+            if not temp_sentence:
+                temp_sentence = sentence
+            elif len(temp_sentence) < 100:
+                temp_sentence += f' {sentence}'
+            else:
+                index += 1
+                update_sentence, idioms = self._create_idioms(temp_sentence)
+                update_sentence, phrasal_verbs = self._create_phrasal_verbs(update_sentence)
+                words = self._create_words(update_sentence)
+
+                sentence_info = {
+                    'sentence': temp_sentence,
+                    'index': index,
+                    'idioms': idioms,
+                    'phrasal_verbs': phrasal_verbs,
+                    'words': words,
+                }
+                sentences_by_level.append(sentence_info)
+                temp_sentence = sentence
+
+        if temp_sentence:
+            sentence, idioms = self._create_idioms(temp_sentence)
+            sentence, phrasal_verbs = self._create_phrasal_verbs(sentence)
+            words = self._create_words(sentence)
+
+            sentence_info = {
+                'sentence': temp_sentence,
+                'idioms': idioms,
+                'phrasal_verbs': phrasal_verbs,
+                'words': words,
+            }
+            sentences_by_level.append(sentence_info)
+
+        return sentences_by_level
+
+    def _create_idioms(self, sentence: str) -> tuple[str, set[str]]:
+        temp_sentence = sentence
+        idioms = []
+        for idiom in self._idioms:
+            if idiom in temp_sentence:
+                temp_sentence.replace(idiom, '')
+                idioms.append(idiom)
+
+        return temp_sentence, set(idioms)
+
+    def _create_phrasal_verbs(self, sentence: str) -> tuple[str, set[str]]:
+        phrasal_verbs = []
+        for phrasal_verb in self._phrasal_verbs:
+            if phrasal_verb in sentence:
+                sentence.replace(phrasal_verb, '')
+                phrasal_verbs.append(phrasal_verb)
+
+        return sentence, set(phrasal_verbs)
+
+    def _create_words(self, sentence: str) -> set[str]:
+        words = []
+        clean_sentence = sub(r'[^\w\s]', '', sentence)
+        doc = self._nlp(clean_sentence)
+
+        tokens = [token.lemma_ for token in doc if not token.is_punct]
+        for token in tokens:
+            if token in self._missed_words or token.istitle():
+                continue
+
+            pos = pos_tag([token])[0][1]
+
+            if pos not in ['NNP', 'NNPS']:
+                words.append(token)
+
+        return set(words)
