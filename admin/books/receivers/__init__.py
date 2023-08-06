@@ -1,0 +1,1 @@
+from books.receivers.create_new_book import create_words_and_sentences
