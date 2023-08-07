@@ -1,23 +1,29 @@
 from http import HTTPStatus
 from typing import Optional
 
-from requests import get
+from requests import post
 
 from settings import settings
 
 
 def translate_word(word: str, language: str) -> Optional[str]:
-    url = 'https://just-translated.p.rapidapi.com/'
+    url = 'https://deep-translate1.p.rapidapi.com/language/translate/v2'
 
-    headers = {
-        "X-RapidAPI-Key": settings.translate_word_token,
-        "X-RapidAPI-Host": "just-translated.p.rapidapi.com"
+    payload = {
+        'q': word,
+        'source': 'en',
+        'target': language,
     }
 
-    querystring = {'lang': language, 'text': word}
+    headers = {
+        'content-type': 'application/json',
+        'X-RapidAPI-Key': settings.translate_word_token,
+        'X-RapidAPI-Host': 'deep-translate1.p.rapidapi.com'
+    }
 
-    response = get(url, headers=headers, params=querystring)
+    response = post(url, json=payload, headers=headers)
+
     if response.status_code != HTTPStatus.OK:
         return ''
 
-    return ', '.join(response.json()['text'])
+    return response.json()['data']['translations']['translatedText']
