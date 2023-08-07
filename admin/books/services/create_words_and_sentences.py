@@ -5,6 +5,7 @@ from nltk import pos_tag
 import spacy
 
 from books.choices import TypeWord
+from books.dto import SentenceDTO
 from books.models import WordsModel
 
 
@@ -25,7 +26,7 @@ class CreateWordsAndSentencesService:
 
         self._nlp = spacy.load('en_core_web_sm')
 
-    def work(self, text: str) -> list[dict[str, str]]:
+    def work(self, text: str) -> list[SentenceDTO]:
         sentences = sent_tokenize(text)
         sentences_by_level = []
 
@@ -42,13 +43,14 @@ class CreateWordsAndSentencesService:
                 update_sentence, phrasal_verbs = self._create_phrasal_verbs(update_sentence)
                 words = self._create_words(update_sentence)
 
-                sentence_info = {
-                    'sentence': temp_sentence,
-                    'index': index,
-                    'idioms': idioms,
-                    'phrasal_verbs': phrasal_verbs,
-                    'words': words,
-                }
+                sentence_info = SentenceDTO(
+                    text=temp_sentence,
+                    index=index,
+                    idiomatic_expression=idioms,
+                    phrase_verb=phrasal_verbs,
+                    words=words,
+                )
+
                 sentences_by_level.append(sentence_info)
                 temp_sentence = sentence
 
@@ -57,12 +59,14 @@ class CreateWordsAndSentencesService:
             sentence, phrasal_verbs = self._create_phrasal_verbs(sentence)
             words = self._create_words(sentence)
 
-            sentence_info = {
-                'sentence': temp_sentence,
-                'idioms': idioms,
-                'phrasal_verbs': phrasal_verbs,
-                'words': words,
-            }
+            sentence_info = SentenceDTO(
+                text=temp_sentence,
+                index=index,
+                idiomatic_expression=idioms,
+                phrase_verb=phrasal_verbs,
+                words=words,
+            )
+
             sentences_by_level.append(sentence_info)
 
         return sentences_by_level
