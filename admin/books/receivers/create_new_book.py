@@ -20,6 +20,8 @@ def create_words_and_sentences(sender, instance, created, **kwargs):
             new_words = set(sentence.words) - set(words.values_list('word', flat=True))
             type_word = TypeWordsModel.objects.get(title=TypeWord.word.value)
             for word in new_words:
+                if len(word) < 3:
+                    continue
                 translates_word = {}
                 for language_code, _ in Language.choices():
                     translates_word[language_code] = translate_word(word=word, language=language_code)
