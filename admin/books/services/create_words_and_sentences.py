@@ -7,6 +7,8 @@ import spacy
 from books.choices import TypeWord
 from books.dto import SentenceDTO
 from books.models import WordsModel
+from telegram_users.choices import Language
+from nlp_translate import translate_text
 
 
 class CreateWordsAndSentencesService:
@@ -27,16 +29,23 @@ class CreateWordsAndSentencesService:
         self._nlp = spacy.load('en_core_web_sm')
 
     def work(self, text: str) -> list[SentenceDTO]:
+
         sentences = sent_tokenize(text)
+        translate_sentences = self._translate_text(text=text)
         sentences_by_level = []
 
         temp_sentence = ''
+        translates_sentence = {language_code: '' for language_code, _ in Language.choices()}
         index = 0
-        for sentence in sentences:
+        for index_sentence, sentence in enumerate(sentences):
             if not temp_sentence:
                 temp_sentence = sentence
+                for language_code, _ in Language.choices():
+                    translates_sentence[language_code] = translate_sentences[language_code][index_sentence]
             elif len(temp_sentence) < 100:
                 temp_sentence += f' {sentence}'
+                for language_code, _ in Language.choices():
+                    translates_sentence[language_code] += f' {translate_sentences[language_code][index_sentence]}'
             else:
                 index += 1
                 update_sentence, idioms = self._create_idioms(temp_sentence)
@@ -49,10 +58,13 @@ class CreateWordsAndSentencesService:
                     idiomatic_expression=idioms,
                     phrase_verb=phrasal_verbs,
                     words=words,
+                    translate=translates_sentence,
                 )
 
                 sentences_by_level.append(sentence_info)
                 temp_sentence = sentence
+                for language_code, _ in Language.choices():
+                    translates_sentence[language_code] = translate_sentences[language_code][index_sentence]
 
         if temp_sentence:
             sentence, idioms = self._create_idioms(temp_sentence)
@@ -65,7 +77,11 @@ class CreateWordsAndSentencesService:
                 idiomatic_expression=idioms,
                 phrase_verb=phrasal_verbs,
                 words=words,
-            )
+                translate=translates_sentence,
+                )
+
+            for language_code, _ in Language.choices():
+                translates_sentence[language_code] = translate_sentences[language_code][index_sentence]
 
             sentences_by_level.append(sentence_info)
 
@@ -97,7 +113,7 @@ class CreateWordsAndSentencesService:
 
         tokens = [token.lemma_ for token in doc if not token.is_punct]
         for token in tokens:
-            if token in self._missed_words or token.istitle():
+            if token in self._missed_words or token.istitle() or len(token) < 3:
                 continue
 
             pos = pos_tag([token])[0][1]
@@ -106,3 +122,32 @@ class CreateWordsAndSentencesService:
                 words.append(token)
 
         return set(words)
+
+    def _translate_text(self, text: str) -> dict[str, list[str]]:
+        BATCH_SIZE: int = 3000
+        translates_sentence = {}
+        sentences = sent_tokenize(text)
+
+        for language_code, language_name in Language.get_info():
+            if not translates_sentence.get(language_code):
+                translates_sentence[language_code] = ''
+
+            current_batch = ''
+            for sentence in sentences:
+                if len(current_batch) + len(sentence) <= BATCH_SIZE:
+                    current_batch += sentence
+                else:
+                    translated_batch = translate_text(text_on_en=current_batch, language=language_code)
+                    translates_sentence[language_code] += translated_batch
+                    current_batch = sentence
+
+            if current_batch:
+                translated_batch = translate_text(text_on_en=current_batch, language=language_code)
+                translates_sentence[language_code] += translated_batch
+
+            translates_sentence[language_code] = sent_tokenize(
+                translates_sentence[language_code],
+                language=language_name,
+            )
+
+        return translates_sentence
