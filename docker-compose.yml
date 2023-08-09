@@ -38,5 +38,16 @@ services:
       - 8080:8080
     depends_on:
       - db
+  django_q:
+    build: ./admin
+    volumes:
+      - ./admin:/app
+    command: [ "python", "manage.py", "qcluster" ]
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: always
+
 volumes:
   dbdata:
