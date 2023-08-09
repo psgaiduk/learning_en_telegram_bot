@@ -9,3 +9,4 @@ class SentenceDTO(BaseModel):
     idiomatic_expression: list = []
     phrase_verb: list = []
     words: list = []
+    translate: dict[str, str]
