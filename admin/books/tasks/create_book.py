@@ -4,7 +4,7 @@ from books.choices import TypeWord
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
 from books.services import CreateWordsAndSentencesService
 from telegram_users.choices import Language
-from nlp_translate import translate_word
+from nlp_translate import translate_word, translate_text
 
 
 def create_book_task(book_id: int):
@@ -24,6 +24,11 @@ def create_book_task(book_id: int):
                 translates_word[language_code] = translate_word(word=word, language=language_code)
             WordsModel.objects.create(word=word, translation=translates_word, type_word=type_word)
 
+        translates_sentence = {}
+        for language_code, _ in Language.choices():
+            translate_sentence = translate_text(text_on_en=sentence.text, language=language_code)
+            translates_sentence[language_code] = translate_sentence
+
         words = WordsModel.objects.filter(
             Q(word__in=sentence.words) |
             Q(word__in=sentence.idiomatic_expression) |
@@ -35,7 +40,7 @@ def create_book_task(book_id: int):
             order=sentence.index,
             defaults={
                 'text': sentence.text,
-                'translation': sentence.translate,
+                'translation': translates_sentence,
             }
         )
 

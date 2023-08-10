@@ -139,8 +139,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 Q_CLUSTER = {
     'name': 'DjangORM',
     'workers': 8,
-    'timeout': 60,
-    'retry': 120,
+    'timeout': 600,
+    'retry': 720,
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default'
