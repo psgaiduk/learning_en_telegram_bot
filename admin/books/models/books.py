@@ -10,6 +10,9 @@ class BooksModel(Model):
     author = CharField(max_length=128)
     text = TextField()
 
+    def __str__(self):
+        return f'{self.title}'
+
     class Meta:
         verbose_name = 'Book'
         verbose_name_plural = 'Books'
