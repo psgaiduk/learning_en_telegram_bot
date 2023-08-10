@@ -8,5 +8,5 @@ from books.tasks import create_book_task
 
 @receiver(post_save, sender=BooksModel)
 def create_words_and_sentences(sender, instance, created, **kwargs):
-    # if created:
-    async_task(create_book_task, instance.book_id)
+    if created:
+        async_task(create_book_task, instance.book_id)
