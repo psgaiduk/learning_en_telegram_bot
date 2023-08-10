@@ -48,6 +48,14 @@ services:
     env_file:
       - .env
     restart: always
+  api:
+    build: ./api
+    ports:
+      - 8001:80
+    depends_on:
+      - db
+    env_file:
+      - .env
 
 volumes:
   dbdata:
