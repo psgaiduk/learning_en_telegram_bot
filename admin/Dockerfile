@@ -5,6 +5,7 @@ ENV PYTHONPATH "${PYTHONPATH}:/app"
 WORKDIR /app
 
 COPY requirements.txt .
+COPY ../settings.py settings.py
 
 RUN apt-get update && apt-get install -y \
     libmariadb-dev-compat \

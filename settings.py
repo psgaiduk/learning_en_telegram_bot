@@ -12,11 +12,6 @@ class PostgresSettings(BaseSettings):
     password: str = Field(..., env='POSTGRES_PASSWORD')
     db_name: str = Field(..., env='POSTGRES_DB')
 
-    class Config:
-        """Config."""
-
-        env_file = path.join(path.dirname(__file__), '../.env')
-
 
 class MainSettings(BaseSettings):
     """All settings."""
@@ -30,10 +25,6 @@ class MainSettings(BaseSettings):
 
     postgres: PostgresSettings = PostgresSettings()
 
-    class Config:
-        """Config."""
-
-        env_file = path.join(path.dirname(__file__), '../.env')
 
 
 @lru_cache()
