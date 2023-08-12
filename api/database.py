@@ -1,11 +1,19 @@
-from sqlalchemy import MetaData
-from databases import Database
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
 from settings import settings
 
 DATABASE_URL = settings.postgres.database_url
 
-database = Database(DATABASE_URL)
-metadata = MetaData()
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+Base = declarative_base()
 
-Base = declarative_base(metadata=metadata)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
