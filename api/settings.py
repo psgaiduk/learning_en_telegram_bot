@@ -1,5 +1,4 @@
 from functools import lru_cache
-from os import path
 
 from pydantic import BaseSettings, Field
 
@@ -11,6 +10,10 @@ class PostgresSettings(BaseSettings):
     user: str = Field(..., env='POSTGRES_USER')
     password: str = Field(..., env='POSTGRES_PASSWORD')
     db_name: str = Field(..., env='POSTGRES_DB')
+
+    @property
+    def database_url(self) -> str:
+        return f"postgresql://{self.user}:{self.password}@{self.host}/{self.db_name}"
 
 
 class MainSettings(BaseSettings):
