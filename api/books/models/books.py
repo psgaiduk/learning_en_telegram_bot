@@ -13,7 +13,7 @@ class BooksModel(Base):
     title = Column(String(128))
     level_en_id = Column(ForeignKey('levels_en.level_en_id'))
     author = Column(String(128))
-    #
-    # level_en = relationship('LevelsEn', back_populates='books', uselist=False)
+
+    level_en = relationship('LevelsEn', back_populates='books', uselist=False)
     # users_books_history = db.relationship('UsersBooksHistory', back_populates='book', uselist=False)
     # books_sentences = db.relationship('BooksSentences', back_populates='book')
