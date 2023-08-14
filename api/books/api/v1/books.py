@@ -9,7 +9,7 @@ from main.decorators import api_key_required
 v1_books_router = APIRouter()
 
 
-@router.get('/api/v1/books')
+@v1_books_router.get('/api/v1/books')
 @api_key_required
 def get_random_book_for_user(db: Session = Depends(get_db)):
     books = db.query(BooksModel).all()
