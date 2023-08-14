@@ -21,6 +21,7 @@ class MainSettings(BaseSettings):
 
     environment: str = Field(..., env='ENVIRONMENT')
     openai_token: str = Field(..., env='OPEN_AI_TOKEN')
+    api_key: str = Field(..., env='API_KEY')
 
     postgres: PostgresSettings = PostgresSettings()
 
