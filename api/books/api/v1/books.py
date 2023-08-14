@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from books.models import BooksModel
-from main.decorators import api_key_required
+from app.decorators import api_key_required
 
 
 v1_books_router = APIRouter()
