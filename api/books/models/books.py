@@ -16,4 +16,4 @@ class BooksModel(Base):
 
     level_en = relationship('LevelsEn', back_populates='books', uselist=False)
     # users_books_history = db.relationship('UsersBooksHistory', back_populates='book', uselist=False)
-    # books_sentences = db.relationship('BooksSentences', back_populates='book')
+    books_sentences = relationship('BooksSentences', back_populates='book')
