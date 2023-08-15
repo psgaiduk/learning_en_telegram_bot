@@ -9,7 +9,7 @@ from decorators import api_key_required
 v1_books_router = APIRouter()
 
 
-@v1_books_router.get('/api/v1/book/{telegram_id}')
+@v1_books_router.get('/api/v1/book/{telegram_id}', tags=['Books'])
 @api_key_required
 async def get_random_book_for_user(request: Request, telegram_id: int, db: Session = Depends(get_db)):
     """Get random book for user."""
