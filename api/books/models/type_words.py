@@ -12,4 +12,4 @@ class TypeWords(Base):
     type_word_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(128))
 
-    # words = db.relationship('Words', back_populates='type_word')
+    words = relationship('Words', back_populates='type_word')
