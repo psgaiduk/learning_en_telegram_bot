@@ -1,7 +1,7 @@
 from django.db.models import AutoField, CASCADE, TextField, JSONField, IntegerField, ForeignKey, Model, ManyToManyField
 
-from books.models.books import BooksModel
-from books.models.words import WordsModel
+from models.books import BooksModel
+from models.words import WordsModel
 
 
 class BooksSentencesModel(Model):

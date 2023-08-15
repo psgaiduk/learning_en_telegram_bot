@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Column, JSON, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
-from books.models.association_sentenses_words import sentence_word_association
+from models.association_sentenses_words import sentence_word_association
 from database import Base
 
 
