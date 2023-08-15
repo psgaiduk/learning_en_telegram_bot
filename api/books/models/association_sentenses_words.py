@@ -4,7 +4,7 @@ from database import Base
 
 
 sentence_word_association = Table(
-    'sentence_word_association', Base.metadata,
-    Column('sentence_id', Integer, ForeignKey('books_sentences.sentence_id')),
-    Column('word_id', Integer, ForeignKey('words.word_id'))
+    'books_sentences_words', Base.metadata,
+    Column('bookssentencesmodel_id', Integer, ForeignKey('books_sentences.sentence_id')),
+    Column('wordsmodel_id', Integer, ForeignKey('words.word_id'))
 )
