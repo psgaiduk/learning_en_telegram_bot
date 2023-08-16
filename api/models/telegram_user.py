@@ -22,7 +22,7 @@ class Users(Base):
     # friends = db.relationship(
     #     'UsersReferrals', back_populates='friend',  foreign_keys='UsersReferrals.friend_telegram_id')
     # subscribes = db.relationship('UsersSubscribes', back_populates='user')
-    # hero_levels_history = db.relationship('UsersHeroLevelsHistory', back_populates='user')
+    hero_levels_history = relationship('UsersHeroLevelsHistory', back_populates='user')
     # charges_history = db.relationship('UsersChargesHistory', back_populates='user')
     books_history = relationship('UsersBooksHistory', back_populates='user')
     books_sentences_history = relationship('UsersBooksSentencesHistory', back_populates='user')
