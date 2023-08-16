@@ -25,7 +25,7 @@ class Users(Base):
     # hero_levels_history = db.relationship('UsersHeroLevelsHistory', back_populates='user')
     # charges_history = db.relationship('UsersChargesHistory', back_populates='user')
     books_history = relationship('UsersBooksHistory', back_populates='user')
-    # books_sentences_history = db.relationship('UsersBooksSentencesHistory', back_populates='user')
+    books_sentences_history = relationship('UsersBooksSentencesHistory', back_populates='user')
     # achievements_history = db.relationship('UsersAchievementsHistory', back_populates='user')
     # grammar_exercises_history = db.relationship('UsersGrammarExercisesHistory', back_populates='user')
     # words_history = db.relationship('UsersWordsHistory', back_populates='user')

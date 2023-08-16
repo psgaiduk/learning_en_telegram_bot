@@ -18,4 +18,4 @@ class BooksSentences(Base):
 
     book = relationship('BooksModel', back_populates='books_sentences', uselist=False)
     words = relationship('Words', secondary=sentence_word_association, back_populates='sentences')
-    # users_books_sentences_history = db.relationship('UsersBooksSentencesHistory', back_populates='sentence')
+    users_books_sentences_history = relationship('UsersBooksSentencesHistory', back_populates='sentence')
