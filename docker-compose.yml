@@ -6,6 +6,7 @@ services:
       - .env
     volumes:
       - dbdata:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
   bot:
     build: ./bot
     volumes:
