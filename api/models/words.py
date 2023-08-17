@@ -17,4 +17,4 @@ class Words(Base):
 
     type_word = relationship('TypeWords', back_populates='words', uselist=False)
     sentences = relationship('BooksSentences', secondary=sentence_word_association, back_populates='words')
-    # users_words_history = db.relationship('UsersWordsHistory', back_populates='word')
+    users_words_history = relationship('UsersWordsHistory', back_populates='word')
