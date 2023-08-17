@@ -11,7 +11,7 @@ class UsersWordsHistoryModel(Model):
 
     telegram_user = ForeignKey(TelegramUsersModel, on_delete=CASCADE)
     word = ForeignKey(WordsModel, on_delete=CASCADE)
-    is_known = BooleanField(verbose_name='Известное')
+    is_known = BooleanField(default=False)
     count_view = PositiveIntegerField(default=0)
     correct_answers = PositiveIntegerField(default=0)
     incorrect_answers = PositiveIntegerField(default=0)
