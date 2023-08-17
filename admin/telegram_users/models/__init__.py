@@ -5,3 +5,4 @@ from telegram_users.models.history_hero_level import UsersHeroLevelsHistoryModel
 from telegram_users.models.levels_en import LevelsEnModel
 from telegram_users.models.telegram_users import TelegramUsersModel
 from telegram_users.models.main_languages import MainLanguagesModel
+from telegram_users.models.history_words import UsersWordsHistoryModel
