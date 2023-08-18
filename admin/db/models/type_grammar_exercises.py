@@ -8,7 +8,7 @@ class TypeGrammarExercises(db.Model):
 
     type_grammar_exercise_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(128))
-    level_en_id = db.Column(db.ForeignKey('levels_en.level_en_id'))
+    level_en_id = db.Column(db.ForeignKey('levels_en.id'))
     correct_scores = db.Column(db.Integer)
     incorrect_scores = db.Column(db.Integer)
 

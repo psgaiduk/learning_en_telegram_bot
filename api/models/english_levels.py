@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -9,7 +9,7 @@ class LevelsEn(Base):
 
     __tablename__ = 'levels_en'
 
-    level_en_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
     title = Column(String(64))
     order = Column(Integer)
 

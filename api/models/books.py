@@ -11,7 +11,7 @@ class BooksModel(Base):
 
     book_id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(128))
-    level_en_id = Column(ForeignKey('levels_en.level_en_id'))
+    level_en_id = Column(ForeignKey('levels_en.id'))
     author = Column(String(128))
 
     level_en = relationship('LevelsEn', back_populates='books', uselist=False)
