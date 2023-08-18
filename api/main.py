@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
-from api import version_1_telegram_user_router
+from api import version_1_telegram_user_router, version_1_service_router
 
 
 app = FastAPI()
 
 app.include_router(version_1_telegram_user_router)
+app.include_router(version_1_service_router)
