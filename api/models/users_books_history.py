@@ -18,4 +18,4 @@ class UsersBooksHistory(Base):
     end_read = Column(DateTime, nullable=True, default=None)
 
     user = relationship('Users', back_populates='books_history', uselist=False)
-    book = relationship('Books', back_populates='users_books_history', uselist=False)
+    book = relationship('BooksModel', back_populates='users_books_history', uselist=False)
