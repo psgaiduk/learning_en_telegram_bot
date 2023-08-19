@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -18,3 +19,14 @@ class HeroLevels(Base):
 
     users = relationship('Users', back_populates='hero_level')
     heroes_levels_history = relationship('UsersHeroLevelsHistory', back_populates='hero_level')
+
+
+class HeroLevelsModelDTO(BaseModel):
+    """DTO of hero levels."""
+
+    level_id: int
+    title: str
+    need_experience: int
+    count_sentences: int
+    count_games: int
+    order: int
