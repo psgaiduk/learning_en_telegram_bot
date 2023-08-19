@@ -10,7 +10,7 @@ class HeroLevels(Base):
 
     __tablename__ = 'hero_levels'
 
-    level_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(64))
     need_experience = Column(BigInteger)
     count_sentences = Column(Integer)
@@ -24,7 +24,7 @@ class HeroLevels(Base):
 class HeroLevelsModelDTO(BaseModel):
     """DTO of hero levels."""
 
-    level_id: int
+    id: int
     title: str
     need_experience: int
     count_sentences: int

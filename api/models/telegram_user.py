@@ -14,7 +14,7 @@ class Users(Base):
     main_language_id = Column(ForeignKey('main_languages.id'))
     user_name = Column(String(64), nullable=True)
     experience = Column(BigInteger, default=0)
-    hero_level_id = Column(ForeignKey('hero_levels.level_id'))
+    hero_level_id = Column(ForeignKey('hero_levels.id'))
     previous_stage = Column(String(64), nullable=True)
     stage = Column(String(64), nullable=True)
 
