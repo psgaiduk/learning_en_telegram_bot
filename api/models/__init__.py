@@ -3,7 +3,7 @@ from models.books import BooksModel
 from models.books_sentences import BooksSentences
 from models.english_levels import LevelsEn, LevelsEnModelDTO
 from models.hero_level import HeroLevels
-from models.main_language import MainLanguages
+from models.main_language import MainLanguages, MainLanguagesModelDTO
 from models.telegram_user import Users
 from models.type_words import TypeWords
 from models.users_books_history import UsersBooksHistory

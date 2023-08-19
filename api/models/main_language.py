@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -13,3 +14,10 @@ class MainLanguages(Base):
     title = Column(String(64))
 
     users = relationship('Users', back_populates='main_language')
+
+
+class MainLanguagesModelDTO(BaseModel):
+    """DTO of main languages."""
+
+    main_language_id: int
+    title: str
