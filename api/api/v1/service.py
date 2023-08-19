@@ -32,3 +32,10 @@ async def get_hero_levels(db: Session = Depends(get_db)) -> list[HeroLevelsModel
     """Get all hero levels."""
     hero_levels = db.query(HeroLevels).all()
     return [HeroLevelsModelDTO(**level.__dict__) for level in hero_levels]
+
+
+@version_1_service_router.get('/hero_levels/{number}/')
+async def get_hero_levels_by_number(number: int, db: Session = Depends(get_db)) -> HeroLevelsModelDTO:
+    """Get all hero levels."""
+    hero_levels = db.query(HeroLevels).filter(HeroLevels.order == number).first()
+    return HeroLevelsModelDTO(**hero_levels.__dict__)
