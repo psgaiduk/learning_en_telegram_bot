@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from functions import api_key_required
-from models import LevelsEn, LevelsEnModelDTO, MainLanguages, MainLanguagesModelDTO
+from models import LevelsEn, LevelsEnModelDTO, MainLanguages, MainLanguagesModelDTO, HeroLevels, HeroLevelsModelDTO
 
 
 version_1_service_router = APIRouter(
@@ -26,3 +26,9 @@ async def get_languages(db: Session = Depends(get_db)) -> list[MainLanguagesMode
     languages = db.query(MainLanguages).all()
     return [MainLanguagesModelDTO(**level.__dict__) for level in languages]
 
+
+@version_1_service_router.get('/hero_levels/')
+async def get_hero_levels(db: Session = Depends(get_db)) -> list[HeroLevelsModelDTO]:
+    """Get all hero levels."""
+    hero_levels = db.query(HeroLevels).all()
+    return [HeroLevelsModelDTO(**level.__dict__) for level in hero_levels]
