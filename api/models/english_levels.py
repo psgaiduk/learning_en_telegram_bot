@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -16,3 +17,11 @@ class LevelsEn(Base):
     users = relationship('Users', back_populates='level_en')
     # type_grammar_exercises = relationship('TypeGrammarExercises', back_populates='level_en')
     books = relationship('BooksModel', back_populates='level_en')
+
+
+class LevelsEnDTO(BaseModel):
+    """DTO of level of english."""
+
+    id: int
+    title: str
+    order: int
