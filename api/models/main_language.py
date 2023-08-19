@@ -10,7 +10,7 @@ class MainLanguages(Base):
 
     __tablename__ = 'main_languages'
 
-    main_language_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(64))
 
     users = relationship('Users', back_populates='main_language')
@@ -19,5 +19,5 @@ class MainLanguages(Base):
 class MainLanguagesModelDTO(BaseModel):
     """DTO of main languages."""
 
-    main_language_id: int
+    id: int
     title: str
