@@ -6,9 +6,10 @@ from telegram_users.choices import Language
 class MainLanguagesModel(Model):
     """Model of main languages."""
     title = CharField(max_length=64, choices=Language.choices())
+    description = CharField(max_length=128)
 
     def __str__(self) -> str:
-        return f'{self.get_title_display()}'
+        return f'{self.description}'
 
     class Meta:
         verbose_name = 'Main language'

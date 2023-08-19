@@ -12,6 +12,7 @@ class MainLanguages(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(64))
+    description = Column(String(128))
 
     users = relationship('Users', back_populates='main_language')
 
@@ -21,3 +22,4 @@ class MainLanguagesModelDTO(BaseModel):
 
     id: int
     title: str
+    description: str

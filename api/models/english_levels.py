@@ -12,6 +12,7 @@ class LevelsEn(Base):
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     title = Column(String(64))
+    description = Column(String(128))
     order = Column(Integer)
 
     users = relationship('Users', back_populates='level_en')
@@ -24,4 +25,5 @@ class LevelsEnModelDTO(BaseModel):
 
     id: int
     title: str
+    description: str
     order: int
