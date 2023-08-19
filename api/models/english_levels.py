@@ -19,7 +19,7 @@ class LevelsEn(Base):
     books = relationship('BooksModel', back_populates='level_en')
 
 
-class LevelsEnDTO(BaseModel):
+class LevelsEnModelDTO(BaseModel):
     """DTO of level of english."""
 
     id: int
