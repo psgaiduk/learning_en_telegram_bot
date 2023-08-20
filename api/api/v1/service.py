@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -38,4 +38,6 @@ async def get_hero_levels(db: Session = Depends(get_db)) -> list[HeroLevelsModel
 async def get_hero_levels_by_number(number: int, db: Session = Depends(get_db)) -> HeroLevelsModelDTO:
     """Get all hero levels."""
     hero_levels = db.query(HeroLevels).filter(HeroLevels.order == number).first()
+    if not hero_levels:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Hero level not found')
     return HeroLevelsModelDTO(**hero_levels.__dict__)
