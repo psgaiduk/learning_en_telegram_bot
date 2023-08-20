@@ -9,7 +9,8 @@ from models import LevelsEn, LevelsEnModelDTO, MainLanguages, MainLanguagesModel
 version_1_service_router = APIRouter(
     prefix='/api/v1/service',
     tags=['Service'],
-    dependencies=[Depends(api_key_required)]
+    dependencies=[Depends(api_key_required)],
+    responses={status.HTTP_401_UNAUTHORIZED: {'description': 'Invalid API Key'}},
 )
 
 
@@ -34,7 +35,12 @@ async def get_hero_levels(db: Session = Depends(get_db)) -> list[HeroLevelsModel
     return [HeroLevelsModelDTO(**level.__dict__) for level in hero_levels]
 
 
-@version_1_service_router.get('/hero_levels/{number}/')
+@version_1_service_router.get(
+    '/hero_levels/{number}/',
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Hero level not found'},
+    },
+)
 async def get_hero_levels_by_number(number: int, db: Session = Depends(get_db)) -> HeroLevelsModelDTO:
     """Get all hero levels."""
     hero_levels = db.query(HeroLevels).filter(HeroLevels.order == number).first()
