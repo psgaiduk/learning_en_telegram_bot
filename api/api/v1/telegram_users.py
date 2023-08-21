@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
 from dto import TelegramUserDTO
@@ -36,3 +36,20 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
     finally:
         db.close()
     return user
+
+
+@version_1_telegram_user_router.get('/{telegram_id}/')
+async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramUserDTO:
+
+    telegram_user = (
+        db.query(Users)
+        .options(joinedload(Users.main_language))
+        .filter(Users.telegram_id == telegram_id)
+        .first()
+    )
+
+    telegram_user_dict = telegram_user.__dict__
+    main_language_dict = telegram_user.main_language.__dict__
+    telegram_user_dict["main_language"] = main_language_dict
+
+    return TelegramUserDTO(**telegram_user_dict)
