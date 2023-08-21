@@ -12,7 +12,7 @@ class UsersBooksSentencesHistory(Base):
     __tablename__ = 'users_books_sentences_history'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    telegram_id = Column(ForeignKey('users.telegram_id'))
+    telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
     sentence_id = Column(ForeignKey('books_sentences.sentence_id'))
     check_words = Column(JSON, nullable=True)
     is_read = Column(Boolean, default=False)

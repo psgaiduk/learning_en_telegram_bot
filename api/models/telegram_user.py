@@ -7,7 +7,7 @@ from database import Base
 class Users(Base):
     """Model of user."""
 
-    __tablename__ = 'users'
+    __tablename__ = 'telegram_users'
 
     telegram_id = Column(BigInteger, primary_key=True)
     level_en_id = Column(ForeignKey('levels_en.id'), nullable=True)

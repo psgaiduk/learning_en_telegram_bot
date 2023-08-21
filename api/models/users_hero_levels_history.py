@@ -12,7 +12,7 @@ class UsersHeroLevelsHistory(Base):
     __tablename__ = 'users_hero_levels_history'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    telegram_id = Column(ForeignKey('users.telegram_id'))
+    telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
     hero_level_id = Column(ForeignKey('hero_levels.id'))
     created_at = Column(DateTime, default=datetime.utcnow())
 
