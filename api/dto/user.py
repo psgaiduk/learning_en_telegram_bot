@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -10,5 +12,5 @@ class TelegramUserDTO(BaseModel):
     user_name: str = 'New client'
     experience: int = 0
     hero_level_id: int
-    previous_stage: str
-    stage: str
+    previous_stage: Optional[str]
+    stage: Optional[str]
