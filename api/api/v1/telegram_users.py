@@ -14,6 +14,31 @@ version_1_telegram_user_router = APIRouter(
 )
 
 
+async def get_user_by_telegram_id(telegram_id: int, db: Session = Depends(get_db)) -> Users:
+    """Get user by telegram id."""
+
+    telegram_user = (
+        db.query(Users)
+        .options(joinedload(Users.main_language))
+        .filter(Users.telegram_id == telegram_id)
+        .first()
+    )
+
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+    return telegram_user
+
+
+async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
+    """Get telegram user DTO."""
+
+    telegram_user_dict = telegram_user.__dict__
+    telegram_user_dict["main_language"] = telegram_user.main_language.__dict__
+    telegram_user_dict["level_en"] = telegram_user.level_en.__dict__
+
+    return TelegramUserDTO(**telegram_user_dict)
+
+
 @version_1_telegram_user_router.post('/', response_model=TelegramUserDTO)
 async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 
@@ -41,27 +66,14 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 @version_1_telegram_user_router.get('/{telegram_id}/')
 async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramUserDTO:
 
-    telegram_user = (
-        db.query(Users)
-        .options(joinedload(Users.main_language))
-        .filter(Users.telegram_id == telegram_id)
-        .first()
-    )
-
-    telegram_user_dict = telegram_user.__dict__
-    main_language_dict = telegram_user.main_language.__dict__
-    telegram_user_dict["main_language"] = main_language_dict
-
-    return TelegramUserDTO(**telegram_user_dict)
+    telegram_user = await get_user_by_telegram_id(telegram_id, db)
+    return await get_telegram_user_dto(telegram_user)
 
 
 @version_1_telegram_user_router.patch('/{telegram_id}/')
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
-    existing_user = (
-        db.query(Users)
-        .options(joinedload(Users.main_language), joinedload(Users.level_en))
-        .filter(Users.telegram_id == telegram_id)
-        .first())
+
+    existing_user = await get_user_by_telegram_id(telegram_id, db)
 
     if existing_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -75,8 +87,4 @@ async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-    telegram_user_dict = existing_user.__dict__
-    telegram_user_dict["main_language"] = existing_user.main_language.__dict__
-    telegram_user_dict["level_en"] = existing_user.level_en.__dict__
-
-    return TelegramUserDTO(**telegram_user_dict)
+    return await get_telegram_user_dto(existing_user)
