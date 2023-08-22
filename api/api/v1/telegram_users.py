@@ -58,8 +58,7 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    finally:
-        db.close()
+
     return user
 
 
@@ -74,9 +73,6 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramU
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
 
     existing_user = await get_user_by_telegram_id(telegram_id, db)
-
-    if existing_user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     for field, value in updated_data.dict(exclude_unset=True).items():
         setattr(existing_user, field, value)
