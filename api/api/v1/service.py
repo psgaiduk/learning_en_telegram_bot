@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from dto import LevelsEnModelDTO
+from dto.models import LevelsEnModelDTO
 from functions import api_key_required
 from models import LevelsEn, MainLanguages, MainLanguagesModelDTO, HeroLevels, HeroLevelsModelDTO
 

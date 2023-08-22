@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import inspect
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from dto import TelegramUserDTO, UpdateTelegramUserDTO
+from dto.models import TelegramUserDTO, UpdateTelegramUserDTO
 from functions import api_key_required
 from models import Users
 
