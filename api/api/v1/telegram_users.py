@@ -19,7 +19,7 @@ async def get_user_by_telegram_id(telegram_id: int, db: Session = Depends(get_db
 
     telegram_user = (
         db.query(Users)
-        .options(joinedload(Users.main_language))
+        .options(joinedload(Users.main_language), joinedload(Users.level_en), joinedload(Users.hero_level))
         .filter(Users.telegram_id == telegram_id)
         .first()
     )
@@ -35,6 +35,7 @@ async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
     telegram_user_dict = telegram_user.__dict__
     telegram_user_dict["main_language"] = telegram_user.main_language.__dict__
     telegram_user_dict["level_en"] = telegram_user.level_en.__dict__
+    telegram_user_dict["hero_level"] = telegram_user.hero_level.__dict__
 
     return TelegramUserDTO(**telegram_user_dict)
 
