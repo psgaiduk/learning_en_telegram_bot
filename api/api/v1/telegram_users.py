@@ -39,6 +39,17 @@ async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
     return TelegramUserDTO(**telegram_user_dict)
 
 
+async def create_commit(db: Session):
+    """Create and commit user."""
+
+    try:
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+
 @version_1_telegram_user_router.post('/', response_model=TelegramUserDTO)
 async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 
@@ -53,11 +64,8 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
         stage=user.stage
     )
     db.add(new_user)
-    try:
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    await create_commit(db)
 
     return user
 
@@ -77,10 +85,6 @@ async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db:
     for field, value in updated_data.dict(exclude_unset=True).items():
         setattr(existing_user, field, value)
 
-    try:
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    await create_commit(db)
 
     return await get_telegram_user_dto(existing_user)
