@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from dto.models import MainLanguageDTO
+from dto.models import LevelsEnModelDTO, MainLanguageDTO
 
 
 class TelegramUserDTO(BaseModel):
@@ -17,6 +17,7 @@ class TelegramUserDTO(BaseModel):
     previous_stage: Optional[str]
     stage: Optional[str]
     main_language: Optional[MainLanguageDTO]
+    level_en: Optional[LevelsEnModelDTO]
 
 
 class UpdateTelegramUserDTO(TelegramUserDTO):
