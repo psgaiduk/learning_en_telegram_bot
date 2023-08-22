@@ -33,9 +33,9 @@ async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
     """Get telegram user DTO."""
 
     telegram_user_dict = telegram_user.__dict__
-    telegram_user_dict["main_language"] = telegram_user.main_language.__dict__
-    telegram_user_dict["level_en"] = telegram_user.level_en.__dict__
-    telegram_user_dict["hero_level"] = telegram_user.hero_level.__dict__
+    telegram_user_dict['main_language'] = telegram_user.main_language.__dict__
+    telegram_user_dict['level_en'] = telegram_user.level_en.__dict__
+    telegram_user_dict['hero_level'] = telegram_user.hero_level.__dict__
 
     return TelegramUserDTO(**telegram_user_dict)
 
