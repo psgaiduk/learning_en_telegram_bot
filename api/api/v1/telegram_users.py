@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import inspect
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from dto import TelegramUserDTO
+from dto import TelegramUserDTO, UpdateTelegramUserDTO
 from functions import api_key_required
 from models import Users
 
@@ -50,6 +51,34 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramU
 
     telegram_user_dict = telegram_user.__dict__
     main_language_dict = telegram_user.main_language.__dict__
+    telegram_user_dict["main_language"] = main_language_dict
+
+    return TelegramUserDTO(**telegram_user_dict)
+
+
+@version_1_telegram_user_router.patch('/{telegram_id}/')
+async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
+
+    existing_user = (
+        db.query(Users)
+        .options(joinedload(Users.main_language))
+        .filter(Users.telegram_id == telegram_id)
+        .first())
+
+    if existing_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    for field, value in updated_data.dict(exclude_unset=True).items():
+        setattr(existing_user, field, value)
+
+    try:
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        
+    telegram_user_dict = existing_user.__dict__
+    main_language_dict = existing_user.main_language.__dict__
     telegram_user_dict["main_language"] = main_language_dict
 
     return TelegramUserDTO(**telegram_user_dict)
