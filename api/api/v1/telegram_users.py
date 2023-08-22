@@ -49,7 +49,6 @@ async def create_commit(db: Session):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-
 @version_1_telegram_user_router.post('/', response_model=TelegramUserDTO)
 async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 
