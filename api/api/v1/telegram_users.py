@@ -57,10 +57,9 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramU
 
 @version_1_telegram_user_router.patch('/{telegram_id}/')
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
-
     existing_user = (
         db.query(Users)
-        .options(joinedload(Users.main_language))
+        .options(joinedload(Users.main_language), joinedload(Users.level_en))
         .filter(Users.telegram_id == telegram_id)
         .first())
 
@@ -75,9 +74,9 @@ async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db:
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-        
+
     telegram_user_dict = existing_user.__dict__
-    main_language_dict = existing_user.main_language.__dict__
-    telegram_user_dict["main_language"] = main_language_dict
+    telegram_user_dict["main_language"] = existing_user.main_language.__dict__
+    telegram_user_dict["level_en"] = existing_user.level_en.__dict__
 
     return TelegramUserDTO(**telegram_user_dict)
