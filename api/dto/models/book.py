@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from dto.models import BooksSentencesModelDTO
+from dto.models.books_sentences import BooksSentencesModelDTO
 
 
 class BooksModelDTO(BaseModel):
@@ -10,4 +10,4 @@ class BooksModelDTO(BaseModel):
     title: str
     level_en_id: int
     author: str
-    books_sentences: BooksSentencesModelDTO
+    books_sentences: list[BooksSentencesModelDTO]
