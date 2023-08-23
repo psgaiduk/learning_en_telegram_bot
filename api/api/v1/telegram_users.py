@@ -70,14 +70,14 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
     return user
 
 
-@version_1_telegram_user_router.get('/{telegram_id}/')
-async def get_user(telegram_id: int, db: Session = Depends(get_db)) -> TelegramUserDTO:
+@version_1_telegram_user_router.get('/{telegram_id}/', response_model=TelegramUserDTO)
+async def get_user(telegram_id: int, db: Session = Depends(get_db)):
 
     telegram_user = await get_user_by_telegram_id(telegram_id, db)
     return await get_telegram_user_dto(telegram_user)
 
 
-@version_1_telegram_user_router.patch('/{telegram_id}/')
+@version_1_telegram_user_router.patch('/{telegram_id}/', response_model=TelegramUserDTO)
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
 
     existing_user = await get_user_by_telegram_id(telegram_id, db)
