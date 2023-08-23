@@ -1,25 +1,39 @@
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from models import BooksModel
-from decorators import api_key_required
+from dto.models import BooksModelDTO
+from functions import api_key_required
+from models import BooksModel, BooksSentences
 
 
-v1_books_router = APIRouter()
+version_1_books_router = APIRouter(
+    prefix='/api/v1/books',
+    tags=['Books'],
+    dependencies=[Depends(api_key_required)],
+    responses={status.HTTP_401_UNAUTHORIZED: {'description': 'Invalid API Key'}},
+)
 
 
-@v1_books_router.get('/api/v1/book/{telegram_id}', tags=['Books'])
-@api_key_required
-async def get_random_book_for_user(request: Request, telegram_id: int, db: Session = Depends(get_db)):
-    """Get random book for user."""
-    books = db.query(BooksModel).all()
-    for book in books:
-        sentences = book.books_sentences
-        for sentence in sentences:
-            print(sentence.text)
-            print(sentence.translation)
-            words = sentence.words
-            for word in words:
-                print(word.word)
-    return [{"book_id": book.book_id, "title": book.title, "author": book.author} for book in books]
+@version_1_books_router.get('/{book_id}/')
+async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
+    """Get book by id."""
+    book = (
+        db.query(BooksModel)
+        .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+        .filter(BooksModel.book_id == book_id)
+        .first()
+    )
+
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+
+    book_dict = book.__dict__
+    book_dict['books_sentences'] = [sentence.__dict__ for sentence in book.books_sentences]
+    for sentence in book_dict['books_sentences']:
+        sentence['words'] = [word.__dict__ for word in sentence['words']]
+
+    return BooksModelDTO(**book_dict)
+
+
+
