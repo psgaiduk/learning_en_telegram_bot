@@ -52,6 +52,7 @@ async def create_commit(db: Session):
 
 @version_1_telegram_user_router.post('/', response_model=TelegramUserDTO)
 async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
+    """Create telegram user."""
 
     new_user = Users(
         telegram_id=user.telegram_id,
@@ -72,6 +73,7 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 
 @version_1_telegram_user_router.get('/{telegram_id}/', response_model=TelegramUserDTO)
 async def get_user(telegram_id: int, db: Session = Depends(get_db)):
+    """Get telegram user."""
 
     telegram_user = await get_user_by_telegram_id(telegram_id, db)
     return await get_telegram_user_dto(telegram_user)
@@ -79,6 +81,7 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
 
 @version_1_telegram_user_router.patch('/{telegram_id}/', response_model=TelegramUserDTO)
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
+    """Update telegram user."""
 
     existing_user = await get_user_by_telegram_id(telegram_id, db)
 
