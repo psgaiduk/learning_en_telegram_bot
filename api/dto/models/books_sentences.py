@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from dto.models import WordsModelDTO
+from dto.models.words import WordsModelDTO
 
 
 class BooksSentencesModelDTO(BaseModel):
@@ -9,6 +9,6 @@ class BooksSentencesModelDTO(BaseModel):
     sentence_id: int
     book_id: int
     order: int
-    text: dict
+    text: str
     translation: dict
     words: list[WordsModelDTO]
