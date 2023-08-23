@@ -1,3 +1,4 @@
+from dto.models.book import BooksModelDTO
 from dto.models.books_sentences import BooksSentencesModelDTO
 from dto.models.hero_level import HeroLevelsModelDTO
 from dto.models.level_en import LevelsEnModelDTO
