@@ -14,11 +14,11 @@ class TelegramUserDTO(BaseModel):
     user_name: str = 'New client'
     experience: int = 0
     hero_level_id: int
-    previous_stage: Optional[str]
-    stage: Optional[str]
-    main_language: Optional[MainLanguageDTO]
-    level_en: Optional[LevelsEnModelDTO]
-    hero_level: Optional[HeroLevelsModelDTO]
+    previous_stage: Optional[str] = None
+    stage: Optional[str] = None
+    main_language: Optional[MainLanguageDTO] = None
+    level_en: Optional[LevelsEnModelDTO] = None
+    hero_level: Optional[HeroLevelsModelDTO] = None
 
 
 class UpdateTelegramUserDTO(TelegramUserDTO):
