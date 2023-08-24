@@ -28,7 +28,7 @@ async def get_book_dto(book: BooksModel) -> BooksModelDTO:
     return BooksModelDTO(**book_dict)
 
 
-@version_1_books_router.get('/{book_id}/')
+@version_1_books_router.get('/{book_id}/', response_model=BooksModelDTO)
 async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
     """Get book by id."""
     book = (
@@ -44,7 +44,7 @@ async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
     return await get_book_dto(book)
 
 
-@version_1_books_router.get('/get-random-book/{telegram_id}/')
+@version_1_books_router.get('/get-random-book/{telegram_id}/', response_model=BooksModelDTO)
 async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends(get_db)):
     """Get random book by telegram id."""
 
