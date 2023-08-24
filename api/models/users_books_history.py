@@ -12,7 +12,7 @@ class UsersBooksHistory(Base):
     __tablename__ = 'users_books_history'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
+    telegram_user_id = Column(ForeignKey('telegram_users.telegram_id'))
     book_id = Column(ForeignKey('books.book_id'))
     start_read = Column(DateTime, default=datetime.utcnow())
     end_read = Column(DateTime, nullable=True, default=None)
