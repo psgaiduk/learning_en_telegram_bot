@@ -55,7 +55,7 @@ async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends
     )
 
     if not user_level_id:
-        raise ValueError("User does not have a level_en_id.")
+        raise ValueError('User does not have a level_en_id.')
 
     read_books = (
         db.query(UsersBooksHistory.book_id)
