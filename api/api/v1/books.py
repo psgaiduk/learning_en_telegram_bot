@@ -44,4 +44,40 @@ async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
     return await get_book_dto(book)
 
 
+@version_1_books_router.get('/get-random-book/{telegram_id}/')
+async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends(get_db)):
+    """Get random book by telegram id."""
+
+    user_level_id = (
+        db.query(Users.level_en_id)
+        .filter(Users.telegram_id == telegram_id)
+        .scalar()
+    )
+
+    if not user_level_id:
+        raise ValueError("User does not have a level_en_id.")
+
+    read_books = (
+        db.query(UsersBooksHistory.book_id)
+        .filter(UsersBooksHistory.telegram_user_id == telegram_id)
+        .subquery()
+    )
+
+    random_book = (
+        db.query(BooksModel)
+        .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+        .filter(
+            BooksModel.level_en_id == user_level_id,
+            ~BooksModel.book_id.in_(read_books)
+        )
+        .order_by(func.random())
+        .first()
+    )
+
+    if not random_book:
+        return None
+
+    return await get_book_dto(book=random_book)
+
+
 
