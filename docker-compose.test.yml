@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db_tests:
+    image: postgres:13.2
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    volumes:
+      - test_dbdata:/var/lib/postgresql/data
+
+  tests:
+    build: ./tests
+    command: pytest
+    volumes:
+      - ./api/tests:/app/api/tests
+#      - ./bot/tests:/app/bot/tests
+    depends_on:
+      - db_tests
+
+volumes:
+  test_dbdata:
