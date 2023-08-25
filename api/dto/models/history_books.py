@@ -13,5 +13,5 @@ class BooksHistoryModelDTO(BaseModel):
     telegram_user_id: int
     book_id: int
     start_read: Optional[datetime]
-    end_read = Optional[datetime]
+    end_read: Optional[datetime]
     book: BooksModelDTO
