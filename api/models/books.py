@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -13,6 +13,7 @@ class BooksModel(Base):
     title = Column(String(128))
     level_en_id = Column(ForeignKey('levels_en.id'))
     author = Column(String(128))
+    text = Column(Text)
 
     level_en = relationship('LevelsEn', back_populates='books', uselist=False)
     users_books_history = relationship('UsersBooksHistory', back_populates='book', uselist=False)
