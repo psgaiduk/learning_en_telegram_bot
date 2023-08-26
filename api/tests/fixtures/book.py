@@ -1,34 +1,33 @@
 from pytest import fixture
 
+from database import get_db
+from models import Words
+
 
 @fixture
-def mock_book():
-    word = {
-        'word_id': 1,
-        'type_word_id': 1,
-        'word': "Hello",
-        'translation': {"ru": "Привет"}
-    }
+def word_mock():
 
-    sentence = {
-        'sentence_id': 1,
-        'book_id': 1,
-        'order': 1,
-        'text': "Hello world",
-        'translation': {"ru": "Привет, мир"},
-        'words': [word]
-    }
+    with get_db() as db:
+        word1 = Words(
+            type_word_id=1,
+            word="Hello",
+            translation={"ru": "Привет"}
+        )
 
-    book = {
-        'book_id': 1,
-        'title': "Test Book",
-        'level_en_id': 1,
-        'author': "Author",
-        'books_sentences': [sentence]
-    }
+        word2 = Words(
+            type_word_id=2,
+            word="World",
+            translation={"ru": "Мир"}
+        )
 
-    class MockModel:
-        def __init__(self, **kwargs):
-            self.__dict__ = kwargs
+        word3 = Words(
+            type_word_id=3,
+            word="Python",
+            translation={"ru": "Питон"}
+        )
 
-    return MockModel(**book)
+        db.add(word1)
+        db.add(word2)
+        db.add(word3)
+
+        db.commit()

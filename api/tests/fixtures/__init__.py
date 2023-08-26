@@ -1,1 +1,1 @@
-from tests.fixtures.book import mock_book
+from tests.fixtures.book import word_mock
