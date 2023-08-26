@@ -1,22 +1,36 @@
 version: "3.9"
-services:
-  db_tests:
-    image: postgres:13.2
-    environment:
-      POSTGRES_DB: test_db
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: test_password
-    volumes:
-      - test_dbdata:/var/lib/postgresql/data
 
-  tests:
-    build: ./tests
-    command: pytest
+services:
+  db_test:
+    image: postgres:13.2
+    env_file:
+      - .env.test
     volumes:
-      - ./api/tests:/app/api/tests
-#      - ./bot/tests:/app/bot/tests
+      - dbdata:/var/lib/postgresql/data
+#
+#  bot_test:
+#    build: ./bot
+#    volumes:
+#      - ./bot:/app
+#    command: ["pytest", "-v", "./tests"]  # Запуск тестов для bot
+#    depends_on:
+#      - db_test
+#    env_file:
+#      - .env.test
+#    networks:
+#      - isolated_test_network
+
+  api_test:
+    build: ./api
+    ports:
+      - 8002:80
+    command: ["pytest", "-v", "./tests"]  # Запуск тестов для api
     depends_on:
-      - db_tests
+      - db_test
+    env_file:
+      - .env.test
+    volumes:
+      - ./api:/app
 
 volumes:
-  test_dbdata:
+  dbdata:
