@@ -1,33 +1,35 @@
 from pytest import fixture
 
 from database import get_db
-from models import Words
+from models import BooksModel
 
 
 @fixture
-def word_mock():
-
+def book_mock():
     with get_db() as db:
-        word1 = Words(
-            type_word_id=1,
-            word="Hello",
-            translation={"ru": "Привет"}
+        book_first = BooksModel(
+            title='First Book',
+            level_en_id=1,
+            author='First Author',
+            text='Reading practice to help you understand simple information, words and sentences about known topics.'
+                 ' Texts include posters, messages, forms and timetables.',
+        )
+        book_second = BooksModel(
+            title='First Book',
+            level_en_id=1,
+            author='First Author',
+            text='Reading practice to help you understand simple information, words and sentences about known topics.'
+                 ' Texts include posters, messages, forms and timetables.',
+        )
+        book_third = BooksModel(
+            title='First Book',
+            level_en_id=1,
+            author='First Author',
+            text='Reading practice to help you understand simple information, words and sentences about known topics.'
+                 ' Texts include posters, messages, forms and timetables.',
         )
 
-        word2 = Words(
-            type_word_id=2,
-            word="World",
-            translation={"ru": "Мир"}
-        )
-
-        word3 = Words(
-            type_word_id=3,
-            word="Python",
-            translation={"ru": "Питон"}
-        )
-
-        db.add(word1)
-        db.add(word2)
-        db.add(word3)
-
+        db.add(book_first)
+        db.add(book_second)
+        db.add(book_third)
         db.commit()
