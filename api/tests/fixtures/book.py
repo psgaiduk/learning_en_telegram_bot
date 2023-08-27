@@ -15,16 +15,16 @@ def book_mock():
                  ' Texts include posters, messages, forms and timetables.',
         )
         book_second = BooksModel(
-            title='First Book',
+            title='Second Book',
             level_en_id=1,
-            author='First Author',
+            author='Second Author',
             text='Reading practice to help you understand simple information, words and sentences about known topics.'
                  ' Texts include posters, messages, forms and timetables.',
         )
         book_third = BooksModel(
-            title='First Book',
+            title='Third Book',
             level_en_id=1,
-            author='First Author',
+            author='Third Author',
             text='Reading practice to help you understand simple information, words and sentences about known topics.'
                  ' Texts include posters, messages, forms and timetables.',
         )
