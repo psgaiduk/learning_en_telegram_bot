@@ -18,10 +18,12 @@ def book_mock(level_en_mock):
                 ),
             ]
 
+            text_1 = ''.join(book_texts[0])
+
             books_data = [
-                {'title': 'First Book', 'level_en_id': level_en.id, 'author': 'First Author', 'text': book_texts[0]},
-                {'title': 'Second Book', 'level_en_id': level_en.id, 'author': 'Second Author', 'text': book_texts[0]},
-                {'title': 'Third Book', 'level_en_id': level_en.id, 'author': 'Third Author', 'text': book_texts[0]},
+                {'title': 'First Book', 'level_en_id': level_en.id, 'author': 'First Author', 'text': text_1},
+                {'title': 'Second Book', 'level_en_id': level_en.id, 'author': 'Second Author', 'text': text_1},
+                {'title': 'Third Book', 'level_en_id': level_en.id, 'author': 'Third Author', 'text': text_1},
             ]
 
             for book_data in books_data:
