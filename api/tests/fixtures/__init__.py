@@ -1,2 +1,2 @@
-from tests.fixtures.book import book_mock
-from tests.fixtures.services import level_en_mock
+from tests.fixtures.test_fixtures_book import book_mock
+from tests.fixtures.test_fixtures_services import level_en_mock

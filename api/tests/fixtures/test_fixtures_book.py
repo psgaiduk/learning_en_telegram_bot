@@ -2,7 +2,7 @@ from pytest import fixture
 
 from database import get_db
 from models import BooksModel, LevelsEn
-from .services import level_en_mock
+from tests.fixtures.test_fixtures_services import level_en_mock
 
 
 @fixture

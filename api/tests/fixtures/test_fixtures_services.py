@@ -21,18 +21,18 @@ def level_en_mock():
             db.add(level)
         db.commit()
 
-
-@fixture
-def type_words_mock():
-
-    levels_data = [
-        {'type_word_id': 1, 'title': 'word'},
-        {'type_word_id': 2, 'title': 'phrase verb'},
-        {'type_word_id': 3, 'title': 'idiom'},
-    ]
-
-    with get_db() as db:
-        for level_data in levels_data:
-            level = LevelsEn(**level_data)
-            db.add(level)
-        db.commit()
+#
+# @fixture
+# def type_words_mock():
+#
+#     levels_data = [
+#         {'type_word_id': 1, 'title': 'word'},
+#         {'type_word_id': 2, 'title': 'phrase verb'},
+#         {'type_word_id': 3, 'title': 'idiom'},
+#     ]
+#
+#     with get_db() as db:
+#         for level_data in TypeWords:
+#             level = LevelsEn(**level_data)
+#             db.add(level)
+#         db.commit()
