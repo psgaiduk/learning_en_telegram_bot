@@ -1,13 +1,13 @@
 from pytest import fixture
 
-from database import get_db
+from tests.connect_db import db_session
 from models import BooksModel, LevelsEn
 from tests.fixtures.test_fixtures_services import level_en_mock
 
 
 @fixture
 def book_mock(level_en_mock):
-    with get_db() as db:
+    with db_session() as db:
         levels = db.query(LevelsEn).all()
 
         for level_en in levels:
