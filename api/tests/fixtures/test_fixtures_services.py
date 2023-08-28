@@ -1,10 +1,10 @@
 from pytest import fixture
 
-from database import get_db
-from models import LevelsEn, TypeWords
+from tests.connect_db import db_session
+from models import LevelsEn
 
 
-@fixture
+@fixture()
 def level_en_mock():
 
     levels_data = [
@@ -15,24 +15,8 @@ def level_en_mock():
         {'id': 5, 'title': 'C1', 'description': 'Advanced', 'order': 5},
     ]
 
-    with get_db() as db:
+    with db_session() as db:
         for level_data in levels_data:
             level = LevelsEn(**level_data)
             db.add(level)
         db.commit()
-
-#
-# @fixture
-# def type_words_mock():
-#
-#     levels_data = [
-#         {'type_word_id': 1, 'title': 'word'},
-#         {'type_word_id': 2, 'title': 'phrase verb'},
-#         {'type_word_id': 3, 'title': 'idiom'},
-#     ]
-#
-#     with get_db() as db:
-#         for level_data in TypeWords:
-#             level = LevelsEn(**level_data)
-#             db.add(level)
-#         db.commit()
