@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, aliased, joinedload
 
 from database import get_db
 from dto.models import BooksModelDTO
 from functions import api_key_required
-from models import BooksModel, BooksSentences, Users, UsersBooksHistory
+from models import BooksModel, BooksSentences, Users, UsersBooksHistory, Words
 
 
 version_1_books_router = APIRouter(
@@ -31,10 +31,20 @@ async def get_book_dto(book: BooksModel) -> BooksModelDTO:
 @version_1_books_router.get('/{book_id}/', response_model=BooksModelDTO)
 async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
     """Get book by id."""
+
+    book_sentences_alias = aliased(BooksSentences)
+    words_alias = aliased(Words)
+
     book = (
         db.query(BooksModel)
-        .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+        .outerjoin(book_sentences_alias, BooksModel.books_sentences)
+        .outerjoin(words_alias, book_sentences_alias.words)
+        .options(
+            joinedload(BooksModel.books_sentences)
+            .joinedload(BooksSentences.words)
+        )
         .filter(BooksModel.book_id == book_id)
+        .order_by(book_sentences_alias.order, words_alias.word_id)
         .first()
     )
 
