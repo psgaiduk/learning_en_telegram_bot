@@ -1,8 +1,13 @@
+from faker import Faker
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import BooksModel, LevelsEn, BooksSentences
-from tests.fixtures.test_fixtures_services import level_en_mock
+from models import BooksModel, LevelsEn, BooksSentences, Words
+from tests.fixtures.test_fixtures_services import level_en_mock, type_words_mock
+
+
+fake = Faker()
+fake_ru = Faker('ru_RU')
 
 
 @fixture
@@ -60,5 +65,33 @@ def book_sentences_mock():
                 for sentence_data in sentences_data:
                     sentence = BooksSentences(**sentence_data)
                     db.add(sentence)
+
+        db.commit()
+
+
+@fixture
+def words_mock(type_words_mock):
+    with db_session() as db:
+
+        levels = db.query(LevelsEn).all()
+
+        for level_en in levels:
+
+            books_in_level = db.query(BooksModel).filter(BooksModel.level_en_id == level_en.id).all()
+
+            for book in books_in_level:
+
+                for sentence in book.books_sentences:
+
+                    words_data = [
+                        {'type_word_id': 1, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
+                        {'type_word_id': 2, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
+                        {'type_word_id': 3, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
+                    ]
+
+                    for word_data in words_data:
+                        word = Words(**word_data)
+                        db.add(word)
+                        sentence.words.append(word)
 
         db.commit()
