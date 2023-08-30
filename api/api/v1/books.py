@@ -85,7 +85,7 @@ async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends
     )
 
     if not random_book:
-        return None
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Books not found')
 
     return await get_book_dto(book=random_book)
 
