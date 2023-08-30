@@ -44,7 +44,7 @@ async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
             .joinedload(BooksSentences.words)
         )
         .filter(BooksModel.book_id == book_id)
-        .order_by(book_sentences_alias.order, words_alias.word_id)
+        .order_by(BooksModel.book_id, book_sentences_alias.order, words_alias.word_id)
         .first()
     )
 
