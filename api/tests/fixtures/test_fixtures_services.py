@@ -1,7 +1,7 @@
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import LevelsEn, TypeWords
+from models import LevelsEn, TypeWords, MainLanguages
 
 
 @fixture()
@@ -35,4 +35,18 @@ def type_words_mock():
         for level_data in levels_data:
             level = TypeWords(**level_data)
             db.add(level)
+        db.commit()
+
+
+@fixture
+def main_language_mock():
+
+    languages_data = [
+        {'id': 1, 'title': 'ru', 'description': 'Русский язык'},
+    ]
+
+    with db_session() as db:
+        for language_data in languages_data:
+            language = MainLanguages(**language_data)
+            db.add(language)
         db.commit()
