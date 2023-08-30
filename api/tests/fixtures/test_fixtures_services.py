@@ -1,7 +1,7 @@
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import LevelsEn, TypeWords, MainLanguages
+from models import HeroLevels, LevelsEn, TypeWords, MainLanguages
 
 
 @fixture()
@@ -49,4 +49,22 @@ def main_language_mock():
         for language_data in languages_data:
             language = MainLanguages(**language_data)
             db.add(language)
+        db.commit()
+
+
+@fixture
+def hero_level_mock():
+
+    hero_levels_data = [
+        {'id': 1, 'title': '1', 'need_experience': 0, 'count_sentences': 5, 'count_games': 0, 'order': 1},
+        {'id': 2, 'title': '2', 'need_experience': 100, 'count_sentences': 6, 'count_games': 0, 'order': 2},
+        {'id': 3, 'title': '3', 'need_experience': 200, 'count_sentences': 7, 'count_games': 0, 'order': 3},
+        {'id': 4, 'title': '4', 'need_experience': 300, 'count_sentences': 8, 'count_games': 0, 'order': 4},
+        {'id': 5, 'title': '5', 'need_experience': 400, 'count_sentences': 9, 'count_games': 1, 'order': 5},
+    ]
+
+    with db_session() as db:
+        for hero_level_data in hero_levels_data:
+            hero_level = HeroLevels(**hero_level_data)
+            db.add(hero_level)
         db.commit()
