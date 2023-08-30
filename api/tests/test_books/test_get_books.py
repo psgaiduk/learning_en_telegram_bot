@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi.testclient import TestClient
 from main import app
+from sqlalchemy.orm import joinedload
 from fastapi import status
 import pytest
 
@@ -32,10 +33,8 @@ class TestBookAPI:
         with db_session() as db:
             first_book = (
                 db.query(BooksModel)
-                .join(BooksSentences, BooksModel.book_id == BooksSentences.book_id)
-                .join(sentence_word_association)
-                .join(Words)
-                .order_by(BooksModel.book_id, BooksSentences.order)
+                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+                .order_by(BooksSentences.order)
                 .first()
             )
 
@@ -48,8 +47,10 @@ class TestBookAPI:
             response = response.json()
             assert response['title'] == first_book.title
             assert response['author'] == first_book.author
+            assert response['level_en_id'] == first_book.level_en_id
 
             book_first_sentence = response['books_sentences'][0]
+
             assert len(response['books_sentences']) == len(first_book.books_sentences)
             assert book_first_sentence['text'] == first_book.books_sentences[0].text
             assert book_first_sentence['translation'] == first_book.books_sentences[0].translation
