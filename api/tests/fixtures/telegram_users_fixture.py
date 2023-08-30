@@ -2,7 +2,7 @@ from faker import Faker
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import LevelsEn, MainLanguages
+from models import LevelsEn, MainLanguages, Users
 from tests.fixtures.test_fixtures_services import hero_level_mock, level_en_mock, main_language_mock
 
 
@@ -30,6 +30,7 @@ def telegram_users_mock(level_en_mock, main_language_mock, hero_level_mock):
                     'stage': '',
                 }
 
-                db.add(**telegram_user)
+
+                db.add(Users(**telegram_user))
 
         db.commit()
