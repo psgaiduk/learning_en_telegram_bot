@@ -40,7 +40,7 @@ async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
     return TelegramUserDTO(**telegram_user_dict)
 
 
-@version_1_telegram_user_router.post('/', response_model=TelegramUserDTO)
+@version_1_telegram_user_router.post('/', response_model=TelegramUserDTO, status_code=status.HTTP_201_CREATED)
 async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
     """Create telegram user."""
 
