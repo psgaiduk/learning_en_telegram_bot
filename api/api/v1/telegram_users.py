@@ -58,7 +58,7 @@ async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
 
     await create_commit(db)
 
-    return user
+    return await get_user(user.telegram_id, db)
 
 
 @version_1_telegram_user_router.get('/{telegram_id}/', response_model=TelegramUserDTO)
