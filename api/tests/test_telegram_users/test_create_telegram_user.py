@@ -49,6 +49,21 @@ class TestTelegramUserAPI:
             assert telegram_user.previous_stage == params_for_create_user['previous_stage']
             assert telegram_user.stage == params_for_create_user['stage']
 
+    def test_not_create_telegram_user_without_api_key(self):
+        params_for_create_user = {
+            'telegram_id': 123456789,
+            'level_en_id': 1,
+            'main_language_id': 1,
+            'user_name': 'Test User',
+            'experience': 0,
+            'hero_level_id': 1,
+            'previous_stage': '',
+            'stage': '',
+        }
+
+        response = self._client.post(f'/api/v1/telegram_user/', json=params_for_create_user)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
     def test_not_create_telegram_user_without_telegram_id(self):
         params_for_create_user = {
             'level_en_id': 1,
