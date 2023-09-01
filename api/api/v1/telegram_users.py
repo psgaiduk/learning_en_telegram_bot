@@ -73,6 +73,9 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
     """Update telegram user."""
 
+    if not updated_data.dict(exclude_unset=True):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No data provided for update.')
+
     existing_user = await get_user_by_telegram_id(telegram_id, db)
 
     for field, value in updated_data.dict(exclude_unset=True).items():
