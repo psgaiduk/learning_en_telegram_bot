@@ -26,10 +26,9 @@ def telegram_users_mock(level_en_mock, main_language_mock, hero_level_mock):
                     'user_name': fake.name(),
                     'experience': fake.random_int(min=1, max=100000000),
                     'hero_level_id': 1,
-                    'previous_stage': '',
-                    'stage': '',
+                    'previous_stage': fake_ru.word(),
+                    'stage': fake_ru.word(),
                 }
-
 
                 db.add(Users(**telegram_user))
 
