@@ -11,7 +11,7 @@ class UsersBooksHistoryModel(Model):
     end_read = DateTimeField(null=True, default=None)
     
     def __str__(self) -> str:
-        return f'{self.telegram_user.name} - {self.book.title}'
+        return f'{self.telegram_user.telegram_id} - {self.book.title}'
 
     class Meta:
         db_table = 'users_books_history'
