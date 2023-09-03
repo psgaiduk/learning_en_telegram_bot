@@ -35,7 +35,7 @@ class TestAddHistoryBookAPI:
 
         url = f'{self._url}/books/{telegram_user.telegram_id}/{book.book_id}/'
         response = self._client.post(url=url, headers=self._headers)
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_201_CREATED
         response = response.json()
 
         with db_session() as db:
@@ -75,3 +75,12 @@ class TestAddHistoryBookAPI:
         url = f'{self._url}/books/{telegram_id}/{book.book_id}/'
         response = self._client.post(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_not_add_history_book_without_api_key(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).first()
+            book = db.query(BooksModel).first()
+
+        url = f'{self._url}/books/{telegram_user.telegram_id}/{book.book_id}/'
+        response = self._client.post(url=url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
