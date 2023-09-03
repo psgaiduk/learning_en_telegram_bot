@@ -45,3 +45,23 @@ class TestAddHistoryBookAPI:
             assert db_history_book.book_id == response['book_id']
             assert db_history_book.end_read == response['end_read'] is None
             assert db_history_book.start_read == start_read is not None
+
+    def test_not_add_history_book_for_telegram_id_not_found(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            telegram_user_id = telegram_user.telegram_id + 1
+            book = db.query(BooksModel).first()
+
+        url = f'{self._url}/books/{telegram_user_id}/{book.book_id}/'
+        response = self._client.post(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_not_add_history_book_for_book_id_not_found(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).first()
+            book = db.query(BooksModel).order_by(BooksModel.book_id.desc()).first()
+            book_id = book.book_id + 1
+
+        url = f'{self._url}/books/{telegram_user.telegram_id}/{book_id}/'
+        response = self._client.post(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
