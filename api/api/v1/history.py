@@ -22,7 +22,8 @@ version_1_history_router = APIRouter(
     responses={
         status.HTTP_400_BAD_REQUEST: {'description': 'User already read book.'},
         status.HTTP_404_NOT_FOUND: {'description': 'User or book not found.'},
-    }
+    },
+    status_code=status.HTTP_201_CREATED,
 )
 async def add_history_book_for_telegram_id(telegram_id: int, book_id, db: Session = Depends(get_db)):
     """Add history book for telegram id."""
