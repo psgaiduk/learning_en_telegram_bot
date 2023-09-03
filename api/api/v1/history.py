@@ -33,7 +33,7 @@ async def add_history_book_for_telegram_id(telegram_id: int, book_id, db: Sessio
 
     start_read_book = db.query(UsersBooksHistory).filter(
         UsersBooksHistory.telegram_user_id == telegram_id,
-        UsersBooksHistory.end_read is None,
+        UsersBooksHistory.end_read.is_(None),
     ).first()
 
     if start_read_book:
