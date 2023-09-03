@@ -65,3 +65,13 @@ class TestAddHistoryBookAPI:
         url = f'{self._url}/books/{telegram_user.telegram_id}/{book_id}/'
         response = self._client.post(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_not_add_history_book_for_telegram_id_already_read(self, history_book_not_complete_mock):
+        with db_session() as db:
+            history_read = db.query(UsersBooksHistory).first()
+            telegram_id = history_read.telegram_user_id
+            book = db.query(BooksModel).first()
+
+        url = f'{self._url}/books/{telegram_id}/{book.book_id}/'
+        response = self._client.post(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
