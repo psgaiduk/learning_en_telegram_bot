@@ -73,3 +73,24 @@ async def add_history_book_for_telegram_id(telegram_id: int, book_id, db: Sessio
     db.commit()
     
     return await get_book(new_history_book.id, db)
+
+
+@version_1_history_router.patch(
+    path='/books/{history_book_id}',
+    response_model=BooksHistoryModelDTO,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'History book not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def complete_read_book(history_book_id: int, db: Session = Depends(get_db)):
+    """Update history book."""
+
+    history_book_id = db.query(UsersBooksHistory).filter(UsersBooksHistory.id == history_book_id).first()
+    if not history_book_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
+
+    history_book_id.end_read = datetime.now()
+    db.commit()
+
+    return await get_book(history_book_id=history_book_id.id, db=db)
