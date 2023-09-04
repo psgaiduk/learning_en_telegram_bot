@@ -18,6 +18,14 @@ version_1_history_router = APIRouter(
 )
 
 
+async def get_history_book_dto(user_history_book_db: UsersBooksHistory) -> BooksHistoryModelDTO:
+    user_history_book_dict = user_history_book_db.__dict__
+    user_history_book_dict['book'] = await get_book_dto(user_history_book_db.book)
+    user_history_book = BooksHistoryModelDTO(**user_history_book_dict)
+
+    return user_history_book
+
+
 async def get_book(history_book_id: int, db: Session = Depends(get_db)):
     """Get book by history book id."""
 
@@ -33,11 +41,7 @@ async def get_book(history_book_id: int, db: Session = Depends(get_db)):
     if not user_history_book_db:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
 
-    user_history_book_dict = user_history_book_db.__dict__
-    user_history_book_dict['book'] = await get_book_dto(user_history_book_db.book)
-    user_history_book = BooksHistoryModelDTO(**user_history_book_dict)
-
-    return user_history_book
+    return await get_history_book_dto(user_history_book_db=user_history_book_db)
 
 
 @version_1_history_router.post(
@@ -112,3 +116,29 @@ async def get_history_read_book(history_book_id: int, db: Session = Depends(get_
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
 
     return await get_book(history_book_id=history_book_id.id, db=db)
+
+
+@version_1_history_router.get(
+    path='/books/telegram_user/{telegram_id}',
+    response_model=list[BooksHistoryModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'History book for user not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_history_read_books_for_user(telegram_id: int, db: Session = Depends(get_db)):
+    """Get history book by history book id."""
+
+    user_history_books = (
+        db.query(UsersBooksHistory)
+        .options(joinedload(UsersBooksHistory.book)
+                 .joinedload(BooksModel.books_sentences)
+                 .joinedload(BooksSentences.words))
+        .filter(UsersBooksHistory.telegram_user_id == telegram_id)
+        .all()
+    )
+
+    if not user_history_books:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book for user not found.')
+
+    return [await get_history_book_dto(user_history_book_db=history_book) for history_book in user_history_books]
