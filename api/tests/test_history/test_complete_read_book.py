@@ -51,4 +51,21 @@ class TestAddHistoryBookAPI:
         url = f'{self._url}/{history_book.id}/'
         response = self._client.patch(url=url)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    
+        
+    def test_not_complete_history_book_with_wrong_api_key(self, history_book_not_complete_mock):
+        with db_session() as db:
+            history_book = db.query(UsersBooksHistory).first()
+            assert history_book.end_read is None
+
+        url = f'{self._url}/{history_book.id}/'
+        response = self._client.patch(url=url, headers={'X-API-Key': 'wrong_api_key'})
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_not_complete_history_book_not_found(self, history_book_not_complete_mock):
+        with db_session() as db:
+            history_book = db.query(UsersBooksHistory).order_by(UsersBooksHistory.id.desc()).first()
+            history_book_id = history_book.id + 1
+
+        url = f'{self._url}/{history_book_id}/'
+        response = self._client.patch(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
