@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from faker import Faker
 from pytest import fixture
 
@@ -20,6 +22,23 @@ def history_book_not_complete_mock(book_mock, telegram_users_mock):
         history_book = UsersBooksHistory(
             telegram_user_id=telegram_user.telegram_id,
             book_id=book.book_id,
+        )
+
+        db.add(history_book)
+        db.commit()
+
+
+@fixture
+def history_book_complete_mock(book_mock, telegram_users_mock):
+    with db_session() as db:
+        book = db.query(BooksModel).first()
+        telegram_user = db.query(Users).first()
+
+        history_book = UsersBooksHistory(
+            telegram_user_id=telegram_user.telegram_id,
+            book_id=book.book_id,
+            start_read=datetime.utcnow() - timedelta(days=3),
+            end_read=datetime.utcnow(),
         )
 
         db.add(history_book)
