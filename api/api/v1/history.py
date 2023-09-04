@@ -94,3 +94,21 @@ async def complete_read_book(history_book_id: int, db: Session = Depends(get_db)
     db.commit()
 
     return await get_book(history_book_id=history_book_id.id, db=db)
+
+
+@version_1_history_router.get(
+    path='/books/{history_book_id}',
+    response_model=BooksHistoryModelDTO,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'History book not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_history_read_book(history_book_id: int, db: Session = Depends(get_db)):
+    """Get history book by history book id."""
+
+    history_book_id = db.query(UsersBooksHistory).filter(UsersBooksHistory.id == history_book_id).first()
+    if not history_book_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
+
+    return await get_book(history_book_id=history_book_id.id, db=db)
