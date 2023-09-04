@@ -28,7 +28,7 @@ class TestAddHistoryBookAPI:
         cls._client = TestClient(app)
         cls._url = '/api/v1/history/books'
 
-    def test_add_history_book(self, history_book_not_complete_mock):
+    def test_complete_history_book(self, history_book_not_complete_mock):
         with db_session() as db:
             history_book = db.query(UsersBooksHistory).first()
             assert history_book.end_read is None
@@ -42,3 +42,13 @@ class TestAddHistoryBookAPI:
             db_history_book = db.query(UsersBooksHistory).filter(UsersBooksHistory.id == history_book.id).first()
             assert db_history_book.end_read is not None
             assert db_history_book.end_read == datetime.strptime(response['end_read'], '%Y-%m-%dT%H:%M:%S.%f')
+
+    def test_not_complete_history_book_without_api_key(self, history_book_not_complete_mock):
+        with db_session() as db:
+            history_book = db.query(UsersBooksHistory).first()
+            assert history_book.end_read is None
+
+        url = f'{self._url}/{history_book.id}/'
+        response = self._client.patch(url=url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    
