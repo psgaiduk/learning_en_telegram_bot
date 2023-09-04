@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
@@ -14,6 +16,28 @@ version_1_history_router = APIRouter(
     dependencies=[Depends(api_key_required)],
     responses={status.HTTP_401_UNAUTHORIZED: {'description': 'Invalid API Key'}},
 )
+
+
+async def get_book(history_book_id: int, db: Session = Depends(get_db)):
+    """Get book by history book id."""
+
+    user_history_book_db = (
+        db.query(UsersBooksHistory)
+        .options(joinedload(UsersBooksHistory.book)
+                 .joinedload(BooksModel.books_sentences)
+                 .joinedload(BooksSentences.words))
+        .filter(UsersBooksHistory.id == history_book_id)
+        .first()
+    )
+
+    if not user_history_book_db:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
+
+    user_history_book_dict = user_history_book_db.__dict__
+    user_history_book_dict['book'] = await get_book_dto(user_history_book_db.book)
+    user_history_book = BooksHistoryModelDTO(**user_history_book_dict)
+
+    return user_history_book
 
 
 @version_1_history_router.post(
@@ -47,21 +71,5 @@ async def add_history_book_for_telegram_id(telegram_id: int, book_id, db: Sessio
     new_history_book = UsersBooksHistory(telegram_user_id=telegram_id, book_id=book_id)
     db.add(new_history_book)
     db.commit()
-
-    user_history_book_db = (
-        db.query(UsersBooksHistory)
-        .options(joinedload(UsersBooksHistory.book)
-                 .joinedload(BooksModel.books_sentences)
-                 .joinedload(BooksSentences.words))
-        .filter(UsersBooksHistory.telegram_user_id == telegram_id, UsersBooksHistory.book_id == book_id)
-        .first()
-    )
-
-    if not user_history_book_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book not found.')
-
-    user_history_book_dict = user_history_book_db.__dict__
-    user_history_book_dict['book'] = await get_book_dto(user_history_book_db.book)
-    user_history_book = BooksHistoryModelDTO(**user_history_book_dict)
-
-    return user_history_book
+    
+    return await get_book(new_history_book.id, db)
