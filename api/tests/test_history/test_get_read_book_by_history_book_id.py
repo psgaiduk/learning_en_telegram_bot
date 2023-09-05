@@ -29,7 +29,7 @@ class TestGetHistoryBookByIdAPI:
         cls._client = TestClient(app)
         cls._url = '/api/v1/history/books'
 
-    def test_complete_history_book(self, history_book_complete_mock):
+    def test_get_history_book_by_id(self, history_book_complete_mock):
         with db_session() as db:
             history_book = db.query(UsersBooksHistory).first()
 
