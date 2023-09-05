@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session, joinedload
 from api.v1.books import get_book_dto
 from functions import api_key_required
 from database import get_db
-from dto.models import BooksHistoryModelDTO
-from models import UsersBooksHistory, BooksModel, BooksSentences, Users
+from dto.models import BooksHistoryModelDTO, HistoryWordModelDTO
+from models import UsersBooksHistory, BooksModel, BooksSentences, Users, UsersWordsHistory, Words
 
 
 version_1_history_router = APIRouter(
@@ -142,3 +142,43 @@ async def get_history_read_books_for_user(telegram_id: int, db: Session = Depend
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History book for user not found.')
 
     return [await get_history_book_dto(user_history_book_db=history_book) for history_book in user_history_books]
+
+
+@version_1_history_router.post(
+    path='/words/{telegram_id}/{word_id}',
+    response_model=HistoryWordModelDTO,
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or word not found.'},
+        status.HTTP_400_BAD_REQUEST: {'description': 'User already know word.'},
+    },
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_history_word_for_telegram_id(telegram_id: int, word_id: int, db: Session = Depends(get_db)):
+    """Get history book by history book id."""
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    word = db.query(Words).filter(Words.word_id == word_id).first()
+    if not word:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Word not found.')
+
+    old_history_word = db.query(UsersWordsHistory).filter(
+        UsersWordsHistory.telegram_user_id == telegram_id,
+        UsersWordsHistory.word_id == word_id,
+    ).first()
+
+    if old_history_word:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User already know word.')
+
+    new_history_word = UsersWordsHistory(
+        telegram_user_id=telegram_id,
+        word_id=word_id,
+    )
+    db.add(new_history_word)
+    db.commit()
+
+    history_word = db.query(UsersWordsHistory).filter(UsersWordsHistory.id == new_history_word.id).first()
+
+    return HistoryWordModelDTO(**history_word.__dict__)
