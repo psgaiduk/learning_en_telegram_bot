@@ -12,7 +12,7 @@ class UsersWordsHistory(Base):
     __tablename__ = 'users_words_history'
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
+    telegram_user_id = Column(ForeignKey('telegram_users.telegram_id'))
     word_id = Column(ForeignKey('words.word_id'))
     is_known = Column(Boolean, default=False)
     count_view = Column(Integer, default=0)

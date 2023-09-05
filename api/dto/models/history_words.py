@@ -7,7 +7,7 @@ class HistoryWordModelDTO(BaseModel):
     """History word DTO."""
 
     id: int
-    telegram_id: int
+    telegram_user_id: int
     word_id: int
     is_known: bool
     count_view: int
