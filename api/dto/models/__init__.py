@@ -6,3 +6,6 @@ from dto.models.level_en import LevelsEnModelDTO
 from dto.models.main_language import MainLanguageDTO
 from dto.models.user import TelegramUserDTO, UpdateTelegramUserDTO
 from dto.models.words import WordsModelDTO
+from dto.models.history_words import HistoryWordModelDTO
+
+
