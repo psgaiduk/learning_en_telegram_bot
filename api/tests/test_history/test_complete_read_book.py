@@ -20,7 +20,7 @@ from tests.connect_db import db_session
 
 
 @mark.usefixtures('create_test_database', 'telegram_users_mock', 'book_mock')
-class TestAddHistoryBookAPI:
+class TestCompleteHistoryBookPI:
 
     @classmethod
     def setup_class(cls):

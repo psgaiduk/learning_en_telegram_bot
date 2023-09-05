@@ -21,7 +21,7 @@ from tests.connect_db import db_session
 
 
 @mark.usefixtures('create_test_database', 'telegram_users_mock', 'book_mock')
-class TestAddHistoryBookAPI:
+class TestGetHistoryBookByIdAPI:
 
     @classmethod
     def setup_class(cls):
