@@ -93,3 +93,16 @@ class TestCreateHistoryWordAPI:
         url = f'{self._url}/{telegram_user_id}/{word.word_id}/'
         response = self._client.post(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_not_create_word_history_again(self):
+        with db_session() as db:
+            word = db.query(Words).first()
+            telegram_user = db.query(Users).first()
+
+        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
+        response = self._client.post(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
+        response = self._client.post(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
