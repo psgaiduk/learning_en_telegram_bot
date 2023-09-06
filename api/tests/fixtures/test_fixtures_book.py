@@ -70,7 +70,7 @@ def book_sentences_mock():
 
 
 @fixture
-def words_mock(type_words_mock):
+def words_mock(level_en_mock, type_words_mock, book_mock, book_sentences_mock):
     with db_session() as db:
 
         levels = db.query(LevelsEn).all()
