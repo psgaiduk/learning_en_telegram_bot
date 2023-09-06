@@ -88,7 +88,7 @@ class TestCreateHistoryWordAPI:
         with db_session() as db:
             word = db.query(Words).first()
             telegram_user = db.query(Users).order_by(Users.telegram_id).first()
-            telegram_user_id = telegram_user.telegram_id - 1
+            telegram_user_id = telegram_user.telegram_id + 1
 
         url = f'{self._url}/{telegram_user_id}/{word.word_id}/'
         response = self._client.post(url=url, headers=self._headers)
