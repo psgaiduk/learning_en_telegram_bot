@@ -45,7 +45,7 @@ async def get_book(history_book_id: int, db: Session = Depends(get_db)):
 
 
 @version_1_history_router.post(
-    path='/books/{telegram_id}/{book_id}', 
+    path='/books/{telegram_id}/{book_id}',
     response_model=BooksHistoryModelDTO,
     responses={
         status.HTTP_400_BAD_REQUEST: {'description': 'User already read book.'},
@@ -75,7 +75,7 @@ async def add_history_book_for_telegram_id(telegram_id: int, book_id, db: Sessio
     new_history_book = UsersBooksHistory(telegram_user_id=telegram_id, book_id=book_id)
     db.add(new_history_book)
     db.commit()
-    
+
     return await get_book(new_history_book.id, db)
 
 
@@ -179,6 +179,50 @@ async def create_history_word_for_telegram_id(telegram_id: int, word_id: int, db
     db.add(new_history_word)
     db.commit()
 
-    history_word = db.query(UsersWordsHistory).filter(UsersWordsHistory.id == new_history_word.id).first()
+    history_word = (
+        db.query(UsersWordsHistory)
+        .options(joinedload(UsersWordsHistory.word))
+        .filter(UsersWordsHistory.id == new_history_word.id).first())
 
-    return HistoryWordModelDTO(**history_word.__dict__)
+    return await get_words_history_dto(history_word.__dict__)
+
+
+@version_1_history_router.get(
+    path='/words/{telegram_id}/',
+    response_model=list[HistoryWordModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'User not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_words_history_by_telegram_id(
+        telegram_id: int,
+        is_known: bool = None,
+        db: Session = Depends(get_db),
+):
+    """Get history book by history book id."""
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    query = (
+        db.query(UsersWordsHistory)
+        .options(joinedload(UsersWordsHistory.word))
+        .filter(UsersWordsHistory.telegram_user_id == telegram_id))
+
+    if is_known is not None:
+        query = query.filter(UsersWordsHistory.is_known == is_known)
+
+    history_words = query.all()
+
+    return [await get_words_history_dto(words_history=history_word.__dict__) for history_word in history_words]
+
+
+async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
+    word_info = words_history['word'].__dict__
+    words_history['type_word_id'] = word_info['type_word_id']
+    words_history['word'] = word_info['word']
+    words_history['translation'] = word_info['translation']
+
+    return HistoryWordModelDTO(**words_history)
