@@ -1,9 +1,12 @@
 from fastapi import Depends, HTTPException, status
+from math import ceil
 from sqlalchemy.orm import Session, joinedload
 
 from api.v1.history import version_1_history_router
 from database import get_db
 from dto.models import CreateHistoryWordModelDTO, HistoryWordModelDTO
+from dto.requests import GetHistoryWordsDTO
+from dto.responses import PaginatedResponseDTO
 from models import Users, UsersWordsHistory, Words
 
 
@@ -55,7 +58,7 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordModelDTO
 
 @version_1_history_router.get(
     path='/words/{telegram_id}/',
-    response_model=list[HistoryWordModelDTO],
+    response_model=PaginatedResponseDTO[HistoryWordModelDTO],
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'User not found.'},
     },
@@ -63,7 +66,7 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordModelDTO
 )
 async def get_words_history_by_telegram_id(
         telegram_id: int,
-        is_known: bool = None,
+        request: GetHistoryWordsDTO,
         db: Session = Depends(get_db),
 ):
     """Get history book by history book id."""
@@ -72,17 +75,63 @@ async def get_words_history_by_telegram_id(
     if not telegram_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
 
+    if request.page < 1:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Page must be greater than zero.')
+    if request.limit < 1:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Limit must be greater than zero.')
+    if request.limit > 200:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Limit must be less than 200.')
+
     query = (
         db.query(UsersWordsHistory)
         .options(joinedload(UsersWordsHistory.word))
         .filter(UsersWordsHistory.telegram_user_id == telegram_id))
 
-    if is_known is not None:
-        query = query.filter(UsersWordsHistory.is_known == is_known)
+    if request.word_id:
+        query = query.filter(UsersWordsHistory.word_id == request.word_id)
 
-    history_words = query.all()
+    if request.is_known:
+        query = query.filter(UsersWordsHistory.is_known == request.is_known)
 
-    return [await get_words_history_dto(words_history=history_word.__dict__) for history_word in history_words]
+    if request.count_view_gte:
+        query = query.filter(UsersWordsHistory.count_view >= request.count_view_gte)
+
+    if request.count_view_lte:
+        query = query.filter(UsersWordsHistory.count_view <= request.count_view_lte)
+        
+    if request.correct_answers_gte:
+        query = query.filter(UsersWordsHistory.correct_answers >= request.correct_answers_gte)
+        
+    if request.correct_answers_lte:
+        query = query.filter(UsersWordsHistory.correct_answers <= request.correct_answers_lte)
+
+    if request.incorrect_answers_gte:
+        query = query.filter(UsersWordsHistory.incorrect_answers >= request.incorrect_answers_gte)
+
+    if request.incorrect_answers_lte:
+        query = query.filter(UsersWordsHistory.incorrect_answers <= request.incorrect_answers_lte)
+
+    if request.correct_answers_in_row_gte:
+        query = query.filter(UsersWordsHistory.correct_answers_in_row >= request.correct_answers_in_row_gte)
+
+    if request.correct_answers_in_row_lte:
+        query = query.filter(UsersWordsHistory.correct_answers_in_row <= request.correct_answers_in_row_lte)
+
+    skip = (request.page - 1) * request.limit
+    total_count = query.count()
+    total_pages = ceil(total_count / request.limit)
+    history_words = query.offset(skip).limit(request.limit).all()
+    per_page = len(history_words)
+
+    results = [await get_words_history_dto(words_history=history_word.__dict__) for history_word in history_words]
+
+    return PaginatedResponseDTO(
+        results=results,
+        page=request.page,
+        per_page=per_page,
+        total=total_count,
+        total_pages=total_pages,
+    )
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
