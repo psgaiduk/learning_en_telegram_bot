@@ -1,0 +1,1 @@
+from dto.requests.history_words.get_history_words import GetHistoryWordsDTO
