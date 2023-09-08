@@ -35,8 +35,13 @@ class TestCreateHistoryWordAPI:
             word = db.query(Words).first()
             telegram_user = db.query(Users).first()
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
-        response = self._client.post(url=url, headers=self._headers)
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+            'word_id': word.word_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_201_CREATED
         response = response.json()
 
@@ -48,6 +53,9 @@ class TestCreateHistoryWordAPI:
             assert words_history.id == response['id']
             assert words_history.telegram_user_id == response['telegram_user_id'] == telegram_user.telegram_id
             assert words_history.word_id == response['word_id'] == word.word_id
+            assert words_history.word.word == response['word'] == word.word
+            assert words_history.word.translation == response['translation'] == word.translation
+            assert words_history.word.type_word_id == response['type_word_id'] == word.type_word_id
             assert words_history.is_known == response['is_known'] is False
             assert words_history.count_view == response['count_view'] == 0
             assert words_history.correct_answers == response['correct_answers'] == 0
@@ -60,49 +68,98 @@ class TestCreateHistoryWordAPI:
         with db_session() as db:
             word = db.query(Words).first()
             telegram_user = db.query(Users).first()
+            
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+            'word_id': word.word_id,
+        }
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
-        response = self._client.post(url=url)
+        url = f'{self._url}/'
+        response = self._client.post(url=url, json=data_for_create)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_not_create_history_word_with_wrong_api_key(self):
         with db_session() as db:
             word = db.query(Words).first()
             telegram_user = db.query(Users).first()
+            
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+            'word_id': word.word_id,
+        }
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
-        response = self._client.post(url=url, headers={'X-API-Key': 'wrong_api_key'})
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers={'X-API-Key': 'wrong_api_key'}, json=data_for_create)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_not_create_history_word_with_wrong_book_id(self):
+    def test_not_create_history_word_with_wrong_word_id(self):
         with db_session() as db:
             word = db.query(Words).order_by(Words.word_id.desc()).first()
             word_id = word.word_id + 1
             telegram_user = db.query(Users).first()
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word_id}/'
-        response = self._client.post(url=url, headers=self._headers)
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+            'word_id': word_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        
+
+    def test_not_create_history_word_without_word_id(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).first()
+
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
     def test_not_create_history_word_with_wrong_user_id(self):
         with db_session() as db:
             word = db.query(Words).first()
             telegram_user = db.query(Users).order_by(Users.telegram_id).first()
             telegram_user_id = telegram_user.telegram_id + 1
 
-        url = f'{self._url}/{telegram_user_id}/{word.word_id}/'
-        response = self._client.post(url=url, headers=self._headers)
+        data_for_create = {
+            'telegram_user_id': telegram_user_id,
+            'word_id': word.word_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_not_create_history_word_without_user_id(self):
+        with db_session() as db:
+            word = db.query(Words).first()
+
+        data_for_create = {
+            'word_id': word.word_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_not_create_word_history_again(self):
         with db_session() as db:
             word = db.query(Words).first()
             telegram_user = db.query(Users).first()
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
-        response = self._client.post(url=url, headers=self._headers)
+        data_for_create = {
+            'telegram_user_id': telegram_user.telegram_id,
+            'word_id': word.word_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_201_CREATED
 
-        url = f'{self._url}/{telegram_user.telegram_id}/{word.word_id}/'
-        response = self._client.post(url=url, headers=self._headers)
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
