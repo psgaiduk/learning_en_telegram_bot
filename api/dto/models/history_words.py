@@ -49,3 +49,5 @@ class GetHistoryWordModelDTO(BaseModel):
     incorrect_answers_lte: Optional[int]
     correct_answers_in_row_gte: Optional[int]
     correct_answers_in_row_lte: Optional[int]
+    page: int = 1
+    limit: int = 100
