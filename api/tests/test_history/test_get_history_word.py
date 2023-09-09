@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import ceil
 from random import choice, randint
 
 from fastapi.testclient import TestClient
@@ -52,3 +53,94 @@ class TestGetHistoryWordAPI:
         assert response['results'][0]['created_at'] == history_word.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
         assert response['results'][0]['updated_at'] == history_word.updated_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
 
+    def test_get_word_history_with_filter(self, words_mock):
+        with db_session() as db:
+            history_word = db.query(UsersWordsHistory).first()
+            telegram_user_id = history_word.telegram_user_id
+            words = db.query(Words).all()
+            for word in words:
+                if word.word_id == history_word.word_id:
+                    continue
+
+                history_word = UsersWordsHistory(
+                    telegram_user_id=telegram_user_id,
+                    word_id=word.word_id,
+                    is_known=choice([True, False]),
+                    count_view=randint(0, 100),
+                    correct_answers=randint(0, 100),
+                    incorrect_answers=randint(0, 100),
+                    correct_answers_in_row=randint(0, 100),
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow(),
+                )
+
+                db.add(history_word)
+            db.commit()
+
+        with db_session() as db:
+            limit = 100
+            page = 1
+            
+            history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id
+            )
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            history_user_words = history_user_words_query.all()
+
+            total_count = len(history_user_words)
+            total_pages = ceil(total_count / limit)
+            per_page = total_count - (limit * (page - 1))
+            if per_page > limit:
+                per_page = limit
+
+            assert response['total'] == total_count
+            assert response['total_pages'] == total_pages
+            assert response['per_page'] == per_page
+            assert response['page'] == page
+
+            page = 2
+            params_for_get_history_words = {
+                'page': page,
+            }
+
+            per_page = total_count - (limit * (page - 1))
+            if per_page > limit:
+                per_page = limit
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == total_count
+            assert response['total_pages'] == total_pages
+            assert response['per_page'] == per_page
+            assert response['page'] == page
+
+            page = 3
+            limit = 10
+
+            total_pages = ceil(total_count / limit)
+            per_page = total_count - (limit * (page - 1))
+            if per_page > limit:
+                per_page = limit
+
+            params_for_get_history_words = {
+                'page': page,
+                'limit': limit,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == total_count
+            assert response['total_pages'] == total_pages
+            assert response['per_page'] == per_page
+            assert response['page'] == page
