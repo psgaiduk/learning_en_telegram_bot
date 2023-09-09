@@ -66,7 +66,7 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordModelDTO
 )
 async def get_words_history_by_telegram_id(
         telegram_id: int,
-        request: GetHistoryWordsDTO,
+        request: GetHistoryWordsDTO = Depends(),
         db: Session = Depends(get_db),
 ):
     """Get history book by history book id."""
