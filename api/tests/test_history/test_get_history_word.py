@@ -1,28 +1,15 @@
-from datetime import datetime
 from math import ceil
-from random import choice, randint
 
 from fastapi.testclient import TestClient
 from fastapi import status
 from pytest import mark
 
 from main import app
-from models import UsersWordsHistory, Words
+from models import UsersWordsHistory
 from settings import settings
-from tests.fixtures import (
-    create_test_database,
-    telegram_users_mock,
-    words_mock,
-    book_mock,
-    book_sentences_mock,
-    type_words_mock,
-    level_en_mock,
-    main_language_mock,
-    hero_level_mock,
-    history_word_mock,
-    history_all_words_mock,
-)
 from tests.connect_db import db_session
+
+from tests.fixtures import *
 
 
 @mark.usefixtures('create_test_database')
