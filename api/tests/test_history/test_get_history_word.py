@@ -118,7 +118,7 @@ class TestGetHistoryWordAPI:
         with db_session() as db:
             telegram_user_id = db.query(UsersWordsHistory).first().telegram_user_id
 
-            history_user_words_query = db.query(UsersWordsHistory).filter(
+            history_user_words_true = db.query(UsersWordsHistory).filter(
                 UsersWordsHistory.telegram_user_id == telegram_user_id,
                 UsersWordsHistory.is_known == True,
             ).all()
@@ -132,9 +132,9 @@ class TestGetHistoryWordAPI:
             assert response.status_code == status.HTTP_200_OK
             response = response.json()
 
-            assert response['total'] == len(history_user_words_query)
+            assert response['total'] == len(history_user_words_true)
 
-            history_user_words_query = db.query(UsersWordsHistory).filter(
+            history_user_words_false = db.query(UsersWordsHistory).filter(
                 UsersWordsHistory.telegram_user_id == telegram_user_id,
                 UsersWordsHistory.is_known == False,
             ).all()
@@ -148,7 +148,56 @@ class TestGetHistoryWordAPI:
             assert response.status_code == status.HTTP_200_OK
             response = response.json()
 
-            assert response['total'] == len(history_user_words_query)
+            assert response['total'] == len(history_user_words_false)
+
+            all_history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+            ).all()
+
+            assert len(all_history_user_words_query) == len(history_user_words_true) + len(history_user_words_false)
+
+    def test_get_word_history_filter_count_view(self, history_all_words_mock):
+
+        with db_session() as db:
+            telegram_user_id = db.query(UsersWordsHistory).first().telegram_user_id
+
+            history_user_words_gte = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                UsersWordsHistory.count_view >= 10,
+            ).all()
+
+            params_for_get_history_words = {
+                'count_view_gte': 10,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == len(history_user_words_gte)
+
+            history_user_words_lte = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                UsersWordsHistory.count_view <= 9,
+            ).all()
+
+            params_for_get_history_words = {
+                'count_view_lte': 9,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == len(history_user_words_lte)
+
+            all_history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+            ).all()
+
+            assert len(all_history_user_words_query) == len(history_user_words_gte) + len(history_user_words_lte)
 
     def test_get_word_history_filter_word_id(self, history_all_words_mock):
 
