@@ -19,12 +19,13 @@ from tests.fixtures import (
     level_en_mock,
     main_language_mock,
     hero_level_mock,
-    history_word_mock
+    history_word_mock,
+    history_all_words_mock,
 )
 from tests.connect_db import db_session
 
 
-@mark.usefixtures('create_test_database', 'telegram_users_mock', 'history_word_mock')
+@mark.usefixtures('create_test_database')
 class TestGetHistoryWordAPI:
 
     @classmethod
@@ -33,7 +34,7 @@ class TestGetHistoryWordAPI:
         cls._client = TestClient(app)
         cls._url = '/api/v1/history/words'
 
-    def test_get_word_history(self):
+    def test_get_word_history(self, history_word_mock):
         with db_session() as db:
             history_word = db.query(UsersWordsHistory).first()
 
@@ -53,31 +54,11 @@ class TestGetHistoryWordAPI:
         assert response['results'][0]['created_at'] == history_word.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
         assert response['results'][0]['updated_at'] == history_word.updated_at.strftime('%Y-%m-%dT%H:%M:%S.%f')
 
-    def test_get_word_history_with_filter(self, words_mock):
-        with db_session() as db:
-            history_word = db.query(UsersWordsHistory).first()
-            telegram_user_id = history_word.telegram_user_id
-            words = db.query(Words).all()
-            for word in words:
-                if word.word_id == history_word.word_id:
-                    continue
-
-                history_word = UsersWordsHistory(
-                    telegram_user_id=telegram_user_id,
-                    word_id=word.word_id,
-                    is_known=choice([True, False]),
-                    count_view=randint(0, 100),
-                    correct_answers=randint(0, 100),
-                    incorrect_answers=randint(0, 100),
-                    correct_answers_in_row=randint(0, 100),
-                    created_at=datetime.utcnow(),
-                    updated_at=datetime.utcnow(),
-                )
-
-                db.add(history_word)
-            db.commit()
+    def test_get_word_history_pagination(self, history_all_words_mock):
 
         with db_session() as db:
+            telegram_user_id = db.query(UsersWordsHistory).first().telegram_user_id
+
             limit = 100
             page = 1
             
@@ -144,3 +125,40 @@ class TestGetHistoryWordAPI:
             assert response['total_pages'] == total_pages
             assert response['per_page'] == per_page
             assert response['page'] == page
+
+    def test_get_word_history_filter_is_known(self, history_all_words_mock):
+
+        with db_session() as db:
+            telegram_user_id = db.query(UsersWordsHistory).first().telegram_user_id
+
+            history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                UsersWordsHistory.is_known == True,
+            ).all()
+
+            params_for_get_history_words = {
+                'is_known': True,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == len(history_user_words_query)
+
+            history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                UsersWordsHistory.is_known == False,
+            ).all()
+
+            params_for_get_history_words = {
+                'is_known': False,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == len(history_user_words_query)
