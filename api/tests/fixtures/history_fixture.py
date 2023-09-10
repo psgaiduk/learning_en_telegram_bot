@@ -69,10 +69,10 @@ def history_word_mock(words_mock, telegram_users_mock):
 
 
 @fixture
-def history_all_history_words_mock(words_mock, telegram_users_mock):
+def history_all_words_mock(words_mock, telegram_users_mock):
     with db_session() as db:
-        history_word = db.query(UsersWordsHistory).first()
-        telegram_user_id = history_word.telegram_user_id
+        telegram_user = db.query(Users).first()
+        telegram_user_id = telegram_user.telegram_id
         words = db.query(Words).all()
         for word in words:
 
