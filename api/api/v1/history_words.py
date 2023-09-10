@@ -90,7 +90,7 @@ async def get_words_history_by_telegram_id(
     if request.word_id:
         query = query.filter(UsersWordsHistory.word_id == request.word_id)
 
-    if request.is_known:
+    if request.is_known is not None:
         query = query.filter(UsersWordsHistory.is_known == request.is_known)
 
     if request.count_view_gte:
