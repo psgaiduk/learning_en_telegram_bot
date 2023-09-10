@@ -149,3 +149,21 @@ class TestGetHistoryWordAPI:
             response = response.json()
 
             assert response['total'] == len(history_user_words_query)
+
+    def test_get_word_history_filter_word_id(self, history_all_words_mock):
+
+        with db_session() as db:
+            word_history_for_user = db.query(UsersWordsHistory).first()
+            telegram_user_id = word_history_for_user.telegram_user_id
+            word_id = word_history_for_user.word_id
+
+            params_for_get_history_words = {
+                'word_id': word_id,
+            }
+
+            url = f'{self._url}/{telegram_user_id}/'
+            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+            assert response.status_code == status.HTTP_200_OK
+            response = response.json()
+
+            assert response['total'] == 1
