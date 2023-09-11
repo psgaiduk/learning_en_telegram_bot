@@ -1,1 +1,2 @@
 from dto.requests.history_words.get_history_words import GetHistoryWordsDTO
+from dto.requests.history_words.update_history_word import UpdateHistoryWordDTO
