@@ -230,4 +230,25 @@ class TestGetHistoryWordAPI:
         response = self._client.get(url=url)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
+    def test_not_get_word_history_with_wrong_api_key(self, history_word_mock):
+        with db_session() as db:
+            history_word = db.query(UsersWordsHistory).first()
 
+        url = f'{self._url}/{history_word.telegram_user_id}/'
+        response = self._client.get(url=url, headers={'X-API-Key': 'test'})
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @mark.parametrize('page, limit', [(0, 50), (2, 201)])
+    def test_not_get_word_history_invalid_page_limit(self, page, limit, history_word_mock):
+        with db_session() as db:
+            history_word = db.query(UsersWordsHistory).first()
+
+        params_for_get_history_words = {
+            'page': page,
+            'limit': limit,
+        }
+
+        url = f'{self._url}/{history_word.telegram_user_id}/'
+        response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
