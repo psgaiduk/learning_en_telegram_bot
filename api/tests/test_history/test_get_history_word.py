@@ -137,65 +137,50 @@ class TestGetHistoryWordAPI:
             ).all()
             assert len(all_history_user_words_query) == total_from_db
 
-    def test_get_word_history_other_filters(self, history_all_words_mock):
+    @mark.parametrize('attribute, name_filter', [
+        (UsersWordsHistory.count_view, 'count_view'),
+        (UsersWordsHistory.correct_answers, 'correct_answers'),
+        (UsersWordsHistory.incorrect_answers, 'incorrect_answers'),
+        (UsersWordsHistory.correct_answers_in_row, 'correct_answers_in_row'),
+    ])
+    def test_get_word_history_other_filters(self, attribute, name_filter, history_all_words_mock):
 
         with db_session() as db:
             telegram_user_id = db.query(UsersWordsHistory).first().telegram_user_id
 
-            filters_for_user_history = [
-                {
-                    'attribute': UsersWordsHistory.count_view,
-                    'name_get_param': 'count_view',
-                },
-                {
-                    'attribute': UsersWordsHistory.correct_answers,
-                    'name_get_param': 'correct_answers',
-                },
-                {
-                    'attribute': UsersWordsHistory.incorrect_answers,
-                    'name_get_param': 'incorrect_answers',
-                },
-                {
-                    'attribute': UsersWordsHistory.correct_answers_in_row,
-                    'name_get_param': 'correct_answers_in_row',
-                },
-            ]
+            history_user_words_gte = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                attribute >= 10,
+            ).all()
 
-            for filter_data in filters_for_user_history:
+            params_for_get_history_words_gte = {f'{name_filter}_gte': 10}
 
-                history_user_words_gte = db.query(UsersWordsHistory).filter(
-                    UsersWordsHistory.telegram_user_id == telegram_user_id,
-                    filter_data['attribute'] >= 10,
-                ).all()
+            response_total = self._send_request_and_get_response_total(
+                telegram_user_id=telegram_user_id,
+                params_for_get_history_words=params_for_get_history_words_gte,
+            )
 
-                params_for_get_history_words_gte = {f'{filter_data["name_get_param"]}_gte': 10}
+            assert response_total == len(history_user_words_gte)
 
-                response_total = self._send_request_and_get_response_total(
-                    telegram_user_id=telegram_user_id,
-                    params_for_get_history_words=params_for_get_history_words_gte,
-                )
+            history_user_words_lte = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+                attribute <= 9,
+            ).all()
 
-                assert response_total == len(history_user_words_gte)
+            params_for_get_history_words_lte = {f'{name_filter}_lte': 9}
 
-                history_user_words_lte = db.query(UsersWordsHistory).filter(
-                    UsersWordsHistory.telegram_user_id == telegram_user_id,
-                    filter_data['attribute'] <= 9,
-                ).all()
+            response_total = self._send_request_and_get_response_total(
+                telegram_user_id=telegram_user_id,
+                params_for_get_history_words=params_for_get_history_words_lte,
+            )
 
-                params_for_get_history_words_lte = {f'{filter_data["name_get_param"]}_lte': 9}
+            assert response_total == len(history_user_words_lte)
 
-                response_total = self._send_request_and_get_response_total(
-                    telegram_user_id=telegram_user_id,
-                    params_for_get_history_words=params_for_get_history_words_lte,
-                )
+            all_history_user_words_query = db.query(UsersWordsHistory).filter(
+                UsersWordsHistory.telegram_user_id == telegram_user_id,
+            ).all()
 
-                assert response_total == len(history_user_words_lte)
-
-                all_history_user_words_query = db.query(UsersWordsHistory).filter(
-                    UsersWordsHistory.telegram_user_id == telegram_user_id,
-                ).all()
-
-                assert len(all_history_user_words_query) == len(history_user_words_gte) + len(history_user_words_lte)
+            assert len(all_history_user_words_query) == len(history_user_words_gte) + len(history_user_words_lte)
 
     def test_get_word_history_filter_word_id(self, history_all_words_mock):
 
