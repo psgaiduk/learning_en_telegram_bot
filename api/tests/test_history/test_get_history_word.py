@@ -252,3 +252,12 @@ class TestGetHistoryWordAPI:
         response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+    
+    def test_not_get_word_history_with_wrong_telegram_id(self, history_word_mock):
+        with db_session() as db:
+            history_word = db.query(UsersWordsHistory).order_by(UsersWordsHistory.telegram_user_id.desc()).first()
+            telegram_id = history_word.telegram_user_id + 1
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
