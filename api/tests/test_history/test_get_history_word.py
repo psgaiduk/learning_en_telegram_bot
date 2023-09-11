@@ -221,3 +221,13 @@ class TestGetHistoryWordAPI:
         assert response.status_code == status.HTTP_200_OK
         response = response.json()
         return response['total']
+
+    def test_not_get_word_history_without_api_key(self, history_word_mock):
+        with db_session() as db:
+            history_word = db.query(UsersWordsHistory).first()
+
+        url = f'{self._url}/{history_word.telegram_user_id}/'
+        response = self._client.get(url=url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
