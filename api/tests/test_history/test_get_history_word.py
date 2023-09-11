@@ -137,13 +137,6 @@ class TestGetHistoryWordAPI:
             ).all()
             assert len(all_history_user_words_query) == total_from_db
 
-    def _send_request_and_get_response_total(self, telegram_user_id, params_for_get_history_words):
-        url = f'{self._url}/{telegram_user_id}/'
-        response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
-        assert response.status_code == status.HTTP_200_OK
-        response = response.json()
-        return response['total']
-
     def test_get_word_history_filter_count_view(self, history_all_words_mock):
 
         with db_session() as db:
@@ -154,32 +147,28 @@ class TestGetHistoryWordAPI:
                 UsersWordsHistory.count_view >= 10,
             ).all()
 
-            params_for_get_history_words = {
-                'count_view_gte': 10,
-            }
+            params_for_get_history_words_gte = {'count_view_gte': 10}
 
-            url = f'{self._url}/{telegram_user_id}/'
-            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
-            assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response_total = self._send_request_and_get_response_total(
+                telegram_user_id=telegram_user_id,
+                params_for_get_history_words=params_for_get_history_words_gte,
+            )
 
-            assert response['total'] == len(history_user_words_gte)
+            assert response_total == len(history_user_words_gte)
 
             history_user_words_lte = db.query(UsersWordsHistory).filter(
                 UsersWordsHistory.telegram_user_id == telegram_user_id,
                 UsersWordsHistory.count_view <= 9,
             ).all()
 
-            params_for_get_history_words = {
-                'count_view_lte': 9,
-            }
+            params_for_get_history_words_lte = {'count_view_lte': 9}
 
-            url = f'{self._url}/{telegram_user_id}/'
-            response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
-            assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response_total = self._send_request_and_get_response_total(
+                telegram_user_id=telegram_user_id,
+                params_for_get_history_words=params_for_get_history_words_lte,
+            )
 
-            assert response['total'] == len(history_user_words_lte)
+            assert response_total == len(history_user_words_lte)
 
             all_history_user_words_query = db.query(UsersWordsHistory).filter(
                 UsersWordsHistory.telegram_user_id == telegram_user_id,
@@ -204,3 +193,10 @@ class TestGetHistoryWordAPI:
             response = response.json()
 
             assert response['total'] == 1
+
+    def _send_request_and_get_response_total(self, telegram_user_id, params_for_get_history_words):
+        url = f'{self._url}/{telegram_user_id}/'
+        response = self._client.get(url=url, headers=self._headers, params=params_for_get_history_words)
+        assert response.status_code == status.HTTP_200_OK
+        response = response.json()
+        return response['total']
