@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from api.v1.history import version_1_history_router
 from database import get_db
-from dto.models import CreateHistoryWordModelDTO, HistoryWordModelDTO
-from dto.requests import GetHistoryWordsDTO, UpdateHistoryWordDTO
+from dto.models import HistoryWordModelDTO
+from dto.requests import CreateHistoryWordDTO, GetHistoryWordsDTO, UpdateHistoryWordDTO
 from dto.responses import OneResponseDTO, PaginatedResponseDTO
 from models import Users, UsersWordsHistory, Words
 
@@ -21,7 +21,7 @@ from models import Users, UsersWordsHistory, Words
     },
     status_code=status.HTTP_201_CREATED,
 )
-async def create_history_word_for_telegram_id(request: CreateHistoryWordModelDTO, db: Session = Depends(get_db)):
+async def create_history_word_for_telegram_id(request: CreateHistoryWordDTO, db: Session = Depends(get_db)):
     """Get history book by history book id."""
 
     telegram_id = request.telegram_user_id
