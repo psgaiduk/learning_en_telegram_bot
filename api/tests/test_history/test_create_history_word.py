@@ -50,19 +50,19 @@ class TestCreateHistoryWordAPI:
                 UsersWordsHistory.telegram_user_id == telegram_user.telegram_id,
                 UsersWordsHistory.word_id == word.word_id,
             ).first()
-            assert words_history.id == response['id']
-            assert words_history.telegram_user_id == response['telegram_user_id'] == telegram_user.telegram_id
-            assert words_history.word_id == response['word_id'] == word.word_id
-            assert words_history.word.word == response['word'] == word.word
-            assert words_history.word.translation == response['translation'] == word.translation
-            assert words_history.word.type_word_id == response['type_word_id'] == word.type_word_id
-            assert words_history.is_known == response['is_known'] is False
-            assert words_history.count_view == response['count_view'] == 0
-            assert words_history.correct_answers == response['correct_answers'] == 0
-            assert words_history.incorrect_answers == response['incorrect_answers'] == 0
-            assert words_history.correct_answers_in_row == response['correct_answers_in_row'] == 0
-            assert words_history.created_at == datetime.strptime(response['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
-            assert words_history.updated_at == datetime.strptime(response['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            assert words_history.id == response['detail']['id']
+            assert words_history.telegram_user_id == response['detail']['telegram_user_id'] == telegram_user.telegram_id
+            assert words_history.word_id == response['detail']['word_id'] == word.word_id
+            assert words_history.word.word == response['detail']['word'] == word.word
+            assert words_history.word.translation == response['detail']['translation'] == word.translation
+            assert words_history.word.type_word_id == response['detail']['type_word_id'] == word.type_word_id
+            assert words_history.is_known == response['detail']['is_known'] is False
+            assert words_history.count_view == response['detail']['count_view'] == 0
+            assert words_history.correct_answers == response['detail']['correct_answers'] == 0
+            assert words_history.incorrect_answers == response['detail']['incorrect_answers'] == 0
+            assert words_history.correct_answers_in_row == response['detail']['correct_answers_in_row'] == 0
+            assert words_history.created_at == datetime.strptime(response['detail']['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            assert words_history.updated_at == datetime.strptime(response['detail']['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
 
     def test_not_create_history_word_without_api_key(self):
         with db_session() as db:

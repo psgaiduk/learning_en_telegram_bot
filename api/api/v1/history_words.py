@@ -14,7 +14,7 @@ from models import Users, UsersWordsHistory, Words
 
 @version_1_history_router.post(
     path='/words/',
-    response_model=HistoryWordModelDTO,
+    response_model=OneResponseDTO[HistoryWordModelDTO],
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or word not found.'},
         status.HTTP_400_BAD_REQUEST: {'description': 'User already know word.'},
@@ -55,7 +55,9 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordDTO, db:
         .options(joinedload(UsersWordsHistory.word))
         .filter(UsersWordsHistory.id == new_history_word.id).first())
 
-    return await get_words_history_dto(history_word.__dict__)
+    history_word_dto = await get_words_history_dto(history_word.__dict__)
+
+    return OneResponseDTO(detail=history_word_dto)
 
 
 @version_1_history_router.get(
