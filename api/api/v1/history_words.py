@@ -135,6 +135,7 @@ async def get_words_history_by_telegram_id(
         total_pages=total_pages,
     )
 
+
 @version_1_history_router.patch(
     path='/words/',
     response_model=OneResponseDTO[HistoryWordModelDTO],
