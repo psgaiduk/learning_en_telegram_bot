@@ -7,4 +7,4 @@ DataT = TypeVar('DataT')
 class OneResponseDTO(GenericModel, Generic[DataT]):
     """One response DTO."""
 
-    detail: list[DataT]
+    detail: DataT
