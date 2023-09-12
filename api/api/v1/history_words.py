@@ -1,12 +1,14 @@
-from fastapi import Depends, HTTPException, status
+from datetime import datetime
 from math import ceil
+
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
 from api.v1.history import version_1_history_router
 from database import get_db
 from dto.models import CreateHistoryWordModelDTO, HistoryWordModelDTO
-from dto.requests import GetHistoryWordsDTO
-from dto.responses import PaginatedResponseDTO
+from dto.requests import GetHistoryWordsDTO, UpdateHistoryWordDTO
+from dto.responses import OneResponseDTO, PaginatedResponseDTO
 from models import Users, UsersWordsHistory, Words
 
 
@@ -132,6 +134,60 @@ async def get_words_history_by_telegram_id(
         total=total_count,
         total_pages=total_pages,
     )
+
+@version_1_history_router.patch(
+    path='/words/',
+    response_model=OneResponseDTO[HistoryWordModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or word not found.'},
+        status.HTTP_400_BAD_REQUEST: {'description': 'User early not see this word.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db: Session = Depends(get_db)):
+    """Update history book by history book id."""
+
+    telegram_id = request.telegram_user_id
+    word_id = request.word_id
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    word = db.query(Words).filter(Words.word_id == word_id).first()
+    if not word:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Word not found.')
+
+    history_word = db.query(UsersWordsHistory).filter(
+        UsersWordsHistory.telegram_user_id == telegram_id,
+        UsersWordsHistory.word_id == word_id,
+    ).first()
+
+    if not history_word:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User early not see this word.')
+
+    if request.is_known is not None:
+        history_word.is_known = request.is_known
+    if request.count_view is not None:
+        history_word.count_view = request.count_view
+    if request.correct_answers is not None:
+        history_word.correct_answers = request.correct_answers
+    if request.incorrect_answers is not None:
+        history_word.incorrect_answers = request.incorrect_answers
+    if request.correct_answers_in_row is not None:
+        history_word.correct_answers_in_row = request.correct_answers_in_row
+
+    history_word.updated_at = datetime.utcnow()
+    db.commit()
+
+    history_word = (
+        db.query(UsersWordsHistory)
+        .options(joinedload(UsersWordsHistory.word))
+        .filter(UsersWordsHistory.id == word_id, UsersWordsHistory.telegram_user_id == telegram_id).first())
+
+    history_word_dto = await get_words_history_dto(history_word.__dict__)
+
+    return OneResponseDTO(detail=history_word_dto)
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
