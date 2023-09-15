@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -6,16 +7,16 @@ from pydantic import BaseModel
 class HistoryWordModelDTO(BaseModel):
     """History word DTO."""
 
-    id: int
-    telegram_user_id: int
+    id: Optional[int]
+    telegram_user_id: Optional[int]
     type_word_id: int
     word_id: int
     word: str
-    is_known: bool
-    count_view: int
-    correct_answers: int
-    incorrect_answers: int
-    correct_answers_in_row: int
-    translation: dict
-    created_at: datetime
-    updated_at: datetime
+    is_known: Optional[bool]
+    count_view: Optional[int]
+    correct_answers: Optional[int]
+    incorrect_answers: Optional[int]
+    correct_answers_in_row: Optional[int]
+    translation: Optional[dict]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
