@@ -153,3 +153,31 @@ class TestCreateHistorySentenceAPI:
 
         response = self._client.post(url=url, headers=self._headers, json=data_for_create)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_not_create_sentence_history_without_api_key(self):
+        with db_session() as db:
+            sentence = db.query(BooksSentences).first()
+            telegram_user = db.query(Users).first()
+
+        data_for_create = {
+            'telegram_id': telegram_user.telegram_id,
+            'sentence_id': sentence.sentence_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, json=data_for_create)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_not_create_sentence_history_with_wrong_api_key(self):
+        with db_session() as db:
+            sentence = db.query(BooksSentences).first()
+            telegram_user = db.query(Users).first()
+
+        data_for_create = {
+            'telegram_id': telegram_user.telegram_id,
+            'sentence_id': sentence.sentence_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, json=data_for_create, headers={'X-API-Key': 'test'})
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
