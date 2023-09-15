@@ -106,3 +106,34 @@ class TestCreateHistorySentenceAPI:
                 assert word['correct_answers_in_row'] == 0
                 assert word['created_at'] is not None
                 assert word['updated_at'] is not None
+
+    def test_not_create_sentence_history_with_wrong_telegram_id(self):
+        with db_session() as db:
+            sentence = db.query(BooksSentences).first()
+            telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            telegram_id = telegram_user.telegram_id + 1
+
+        data_for_create = {
+            'telegram_id': telegram_id,
+            'sentence_id': sentence.sentence_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_not_create_sentence_history_with_wrong_sentence_id(self):
+        with db_session() as db:
+            sentence = db.query(BooksSentences).order_by(BooksSentences.sentence_id.desc()).first()
+            telegram_user = db.query(Users).first()
+            sentence_id = sentence.sentence_id + 1
+
+        data_for_create = {
+            'telegram_id': telegram_user.telegram_id,
+            'sentence_id': sentence_id,
+        }
+
+        url = f'{self._url}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_create)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
