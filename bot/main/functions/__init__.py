@@ -1,1 +1,0 @@
-from main.functions.get_today_timestamp import get_today_timestamp
