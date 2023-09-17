@@ -114,3 +114,39 @@ async def create_history_sentences_for_telegram_id(request: CreateBooksSentences
     history_word_dto = await get_sentence_history_dto(history_sentence.__dict__)
 
     return OneResponseDTO(detail=history_word_dto)
+
+
+@version_1_history_router.patch(
+    path='/sentences/',
+    response_model=OneResponseDTO[HistoryBookSentenceModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or sentence or history sentence not found.'},
+        status.HTTP_400_BAD_REQUEST: {'description': 'User already know word.'},
+    },
+    status_code=status.HTTP_201_CREATED,
+)
+async def update_history_sentences_for_telegram_id(request: CreateBooksSentencesDTO, db: Session = Depends(get_db)):
+    """Create history sentence for telegram user."""
+
+    telegram_id = request.telegram_id
+    sentence_id = request.sentence_id
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == sentence_id).first()
+    if not sentence:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Sentence not found.')
+
+    history_sentence = db.query(UsersBooksSentencesHistory).filter(
+        UsersBooksSentencesHistory.telegram_id == telegram_id,
+        UsersBooksSentencesHistory.sentence_id == sentence_id,
+    ).first()
+
+    if not history_sentence:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History sentence not found.')
+
+    history_sentence.is_read = request.is_read
+    db.commit()
+
