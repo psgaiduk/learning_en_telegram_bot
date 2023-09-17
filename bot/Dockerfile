@@ -15,6 +15,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python -m spacy download en_core_web_sm && python -m nltk.downloader punkt averaged_perceptron_tagger
-
 CMD ["python", "bot.py"]
