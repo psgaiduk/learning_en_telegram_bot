@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from database import create_commit, get_db
 from dto.models import TelegramUserDTO, UpdateTelegramUserDTO
+from dto.requests.telegram_users import CreateTelegramUserDTO
+from dto.responses import OneResponseDTO
 from functions import api_key_required
 from models import Users
 
@@ -29,7 +31,7 @@ async def get_user_by_telegram_id(telegram_id: int, db: Session = Depends(get_db
     return telegram_user
 
 
-async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
+async def get_telegram_user_dto(telegram_user: Users) -> OneResponseDTO[TelegramUserDTO]:
     """Get telegram user DTO."""
 
     telegram_user_dict = telegram_user.__dict__
@@ -37,31 +39,38 @@ async def get_telegram_user_dto(telegram_user: Users) -> TelegramUserDTO:
     telegram_user_dict['level_en'] = telegram_user.level_en.__dict__
     telegram_user_dict['hero_level'] = telegram_user.hero_level.__dict__
 
-    return TelegramUserDTO(**telegram_user_dict)
+    return OneResponseDTO(detail=TelegramUserDTO(**telegram_user_dict))
 
 
-@version_1_telegram_user_router.post('/', response_model=TelegramUserDTO, status_code=status.HTTP_201_CREATED)
-async def create_user(user: TelegramUserDTO, db: Session = Depends(get_db)):
+@version_1_telegram_user_router.post(
+    path='/',
+    response_model=OneResponseDTO[TelegramUserDTO],
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_user(request: CreateTelegramUserDTO, db: Session = Depends(get_db)):
     """Create telegram user."""
 
     new_user = Users(
-        telegram_id=user.telegram_id,
-        level_en_id=user.level_en_id,
-        main_language_id=user.main_language_id,
-        user_name=user.user_name,
-        experience=user.experience,
-        hero_level_id=user.hero_level_id,
-        previous_stage=user.previous_stage,
-        stage=user.stage
+        telegram_id=request.telegram_id,
+        level_en_id=request.level_en_id,
+        main_language_id=request.main_language_id,
+        user_name=request.user_name,
+        experience=request.experience,
+        hero_level_id=request.hero_level_id,
+        previous_stage=request.previous_stage,
+        stage=request.stage
     )
     db.add(new_user)
 
     await create_commit(db)
 
-    return await get_user(user.telegram_id, db)
+    return await get_user(request.telegram_id, db)
 
 
-@version_1_telegram_user_router.get('/{telegram_id}/', response_model=TelegramUserDTO)
+@version_1_telegram_user_router.get(
+    path='/{telegram_id}/',
+    response_model=OneResponseDTO[TelegramUserDTO],
+)
 async def get_user(telegram_id: int, db: Session = Depends(get_db)):
     """Get telegram user."""
 
@@ -69,7 +78,10 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
     return await get_telegram_user_dto(telegram_user)
 
 
-@version_1_telegram_user_router.patch('/{telegram_id}/', response_model=TelegramUserDTO)
+@version_1_telegram_user_router.patch(
+    path='/{telegram_id}/',
+    response_model=OneResponseDTO[TelegramUserDTO],
+)
 async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
     """Update telegram user."""
 
