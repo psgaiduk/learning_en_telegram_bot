@@ -72,7 +72,8 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            assert response.json()['detail']
+            response = response.json()['detail']
             new_telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
             db.refresh(new_telegram_user)
             assert new_telegram_user.experience == new_experience
@@ -111,7 +112,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['stage'] == old_telegram_user.stage
 
     def test_update_telegram_user_without_previous_stage(self):
@@ -134,7 +135,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['previous_stage'] == old_telegram_user.previous_stage
 
     def test_update_telegram_user_without_name(self):
@@ -156,7 +157,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['user_name'] == old_telegram_user.user_name
 
     def test_update_telegram_user_without_level_id(self):
@@ -177,7 +178,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['level_en_id'] == old_telegram_user.level_en_id
 
     def test_update_telegram_user_without_experience(self):
@@ -197,7 +198,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['experience'] == old_telegram_user.experience
 
     def test_update_telegram_user_without_hero_level_id(self):
@@ -216,7 +217,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['hero_level_id'] == old_telegram_user.hero_level_id
 
     def test_update_telegram_user_without_main_language_id(self):
@@ -234,7 +235,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['main_language_id'] == old_telegram_user.main_language_id
 
     def test_update_telegram_user_without_telegram_id(self):
@@ -252,7 +253,7 @@ class TestUpdateTelegramUserAPI:
                 json=params_for_update_user,
             )
             assert response.status_code == status.HTTP_200_OK
-            response = response.json()
+            response = response.json()['detail']
             assert response['hero_level_id'] == 2
 
     def test_not_update_telegram_user_without_data(self):
