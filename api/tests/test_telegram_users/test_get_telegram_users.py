@@ -38,14 +38,14 @@ class TestUpdateTelegramUserAPI:
             )
             assert response.status_code == status.HTTP_200_OK
             response = response.json()
-            assert response['experience'] == telegram_user.experience
-            assert response['level_en_id'] == telegram_user.level_en_id
-            assert response['level_en']['id'] == telegram_user.level_en_id
-            assert response['user_name'] == telegram_user.user_name
-            assert response['hero_level_id'] == telegram_user.hero_level_id
-            assert response['hero_level']['id'] == telegram_user.hero_level_id
-            assert response['previous_stage'] == telegram_user.previous_stage
-            assert response['stage'] == telegram_user.stage
+            assert response['detail']['experience'] == telegram_user.experience
+            assert response['detail']['level_en_id'] == telegram_user.level_en_id
+            assert response['detail']['level_en']['id'] == telegram_user.level_en_id
+            assert response['detail']['user_name'] == telegram_user.user_name
+            assert response['detail']['hero_level_id'] == telegram_user.hero_level_id
+            assert response['detail']['hero_level']['id'] == telegram_user.hero_level_id
+            assert response['detail']['previous_stage'] == telegram_user.previous_stage
+            assert response['detail']['stage'] == telegram_user.stage
 
     def test_not_get_telegram_user_without_api_key(self):
         with db_session() as db:
