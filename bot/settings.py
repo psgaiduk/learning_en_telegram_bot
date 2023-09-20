@@ -8,6 +8,7 @@ class MainSettings(BaseSettings):
 
     environment: str = Field(..., env='ENVIRONMENT')
     telegram_token: str = Field(..., env='TELEGRAM_BOT_TOKEN')
+    url_api: str = Field('api:8001', env='URL_API')
 
 
 @lru_cache()
