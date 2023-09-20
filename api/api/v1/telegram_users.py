@@ -5,7 +5,7 @@ from database import create_commit, get_db
 from dto.models import TelegramUserDTO
 from dto.requests.telegram_users import CreateTelegramUserDTO, UpdateTelegramUserDTO
 from dto.responses import OneResponseDTO
-from functions import api_key_required
+from functions import api_key_required, patch_data
 from models import Users
 
 
@@ -92,20 +92,7 @@ async def update_user(
 
     existing_user = await get_user_by_telegram_id(telegram_id, db)
 
-    if request.level_en_id is not None:
-        existing_user.level_en_id = request.level_en_id
-    if request.main_language_id is not None:
-        existing_user.main_language_id = request.main_language_id
-    if request.user_name is not None:
-        existing_user.user_name = request.user_name
-    if request.experience is not None:
-        existing_user.experience = request.experience
-    if request.hero_level_id is not None:
-        existing_user.hero_level_id = request.hero_level_id
-    if request.previous_stage is not None:
-        existing_user.previous_stage = request.previous_stage
-    if request.stage is not None:
-        existing_user.stage = request.stage
+    existing_user = patch_data(object_from_db=existing_user, request=request)
 
     await create_commit(db)
 
