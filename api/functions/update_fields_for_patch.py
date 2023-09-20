@@ -1,9 +1,9 @@
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 T = TypeVar('T')
 
 
-def patch_data(object_from_db: T, request: T) -> T:
+def patch_data(object_from_db: T, request: Generic[T]) -> T:
     """Patch data from request to object from db."""
 
     for field_name, field_value in vars(request).items():
