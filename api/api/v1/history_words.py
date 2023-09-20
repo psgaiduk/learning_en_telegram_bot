@@ -9,6 +9,7 @@ from database import get_db
 from dto.models import HistoryWordModelDTO
 from dto.requests import CreateHistoryWordDTO, GetHistoryWordsDTO, UpdateHistoryWordDTO
 from dto.responses import OneResponseDTO, PaginatedResponseDTO
+from functions import patch_data
 from models import Users, UsersWordsHistory, Words
 
 
@@ -169,17 +170,7 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
     if not history_word:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User early not see this word.')
 
-    if request.is_known is not None:
-        history_word.is_known = request.is_known
-    if request.count_view is not None:
-        history_word.count_view = request.count_view
-    if request.correct_answers is not None:
-        history_word.correct_answers = request.correct_answers
-    if request.incorrect_answers is not None:
-        history_word.incorrect_answers = request.incorrect_answers
-    if request.correct_answers_in_row is not None:
-        history_word.correct_answers_in_row = request.correct_answers_in_row
-
+    history_word = patch_data(object_from_db=history_word, request=request)
     history_word.updated_at = datetime.utcnow()
     db.commit()
 
