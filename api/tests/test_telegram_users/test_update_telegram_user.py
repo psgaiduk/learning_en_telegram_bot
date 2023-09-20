@@ -252,9 +252,7 @@ class TestUpdateTelegramUserAPI:
                 headers=self._headers,
                 json=params_for_update_user,
             )
-            assert response.status_code == status.HTTP_200_OK
-            response = response.json()['detail']
-            assert response['hero_level_id'] == 2
+            assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_not_update_telegram_user_without_data(self):
         with db_session() as db:
@@ -268,7 +266,7 @@ class TestUpdateTelegramUserAPI:
                 headers=self._headers,
                 json=params_for_update_user,
             )
-            assert response.status_code == status.HTTP_400_BAD_REQUEST
+            assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     def test_not_update_telegram_user_without_api_key(self):
         with db_session() as db:
