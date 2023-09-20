@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 
 from database import create_commit, get_db
-from dto.models import TelegramUserDTO, UpdateTelegramUserDTO
-from dto.requests.telegram_users import CreateTelegramUserDTO
+from dto.models import TelegramUserDTO
+from dto.requests.telegram_users import CreateTelegramUserDTO, UpdateTelegramUserDTO
 from dto.responses import OneResponseDTO
 from functions import api_key_required
 from models import Users
@@ -80,18 +80,32 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
 
 @version_1_telegram_user_router.patch(
     path='/{telegram_id}/',
+    responses={status.HTTP_404_NOT_FOUND: {'description': 'User not found.'}},
     response_model=OneResponseDTO[TelegramUserDTO],
 )
-async def update_user(telegram_id: int, updated_data: UpdateTelegramUserDTO, db: Session = Depends(get_db)):
+async def update_user(
+        telegram_id: int,
+        request: UpdateTelegramUserDTO,
+        db: Session = Depends(get_db),
+):
     """Update telegram user."""
-
-    if not updated_data.dict(exclude_unset=True):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No data provided for update.')
 
     existing_user = await get_user_by_telegram_id(telegram_id, db)
 
-    for field, value in updated_data.dict(exclude_unset=True).items():
-        setattr(existing_user, field, value)
+    if request.level_en_id is not None:
+        existing_user.level_en_id = request.level_en_id
+    if request.main_language_id is not None:
+        existing_user.main_language_id = request.main_language_id
+    if request.user_name is not None:
+        existing_user.user_name = request.user_name
+    if request.experience is not None:
+        existing_user.experience = request.experience
+    if request.hero_level_id is not None:
+        existing_user.hero_level_id = request.hero_level_id
+    if request.previous_stage is not None:
+        existing_user.previous_stage = request.previous_stage
+    if request.stage is not None:
+        existing_user.stage = request.stage
 
     await create_commit(db)
 
