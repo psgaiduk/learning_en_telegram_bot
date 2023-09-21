@@ -13,7 +13,7 @@ services:
     build: ./bot
     volumes:
       - ./bot:/app
-    command: ["python", "-u", "./bot.py"]
+    command: ["python", "-u", "./main.py"]
     depends_on:
       - db
     env_file:

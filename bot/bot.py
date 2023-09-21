@@ -1,9 +1,11 @@
-from aiogram.utils import executor
+from aiogram import Bot, Dispatcher
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from telegram_bot_app.core import dispatcher
-from telegram_bot_app.commands import *
+from settings import settings
 
 
-if __name__ == '__main__':
-    print('start work')
-    executor.start_polling(dispatcher, skip_updates=True)
+bot = Bot(token=settings.telegram_token)
+
+storage = MemoryStorage()
+dispatcher = Dispatcher(bot, storage=storage)
+
