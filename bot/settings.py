@@ -8,7 +8,12 @@ class MainSettings(BaseSettings):
 
     environment: str = Field(..., env='ENVIRONMENT')
     telegram_token: str = Field(..., env='TELEGRAM_BOT_TOKEN')
-    url_api: str = Field('api:8001', env='URL_API')
+    api_url: str = Field(..., env='URL_API')
+    api_token: str = Field(..., env='API_KEY')
+
+    @property
+    def api_headers(self) -> dict:
+        return {'X-API-Key': self.api_token}
 
 
 @lru_cache()
