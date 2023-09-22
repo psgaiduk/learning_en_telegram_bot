@@ -18,9 +18,8 @@ class Users(Base):
     previous_stage = Column(String(64), nullable=True)
     stage = Column(String(64), nullable=True)
 
-    # referrals = db.relationship('UsersReferrals', back_populates='user',  foreign_keys='UsersReferrals.telegram_id')
-    # friends = db.relationship(
-    #     'UsersReferrals', back_populates='friend',  foreign_keys='UsersReferrals.friend_telegram_id')
+    referrals = relationship('UsersReferrals', back_populates='user',  foreign_keys='UsersReferrals.telegram_id')
+    friends = relationship('UsersReferrals', back_populates='friend',  foreign_keys='UsersReferrals.friend_telegram_id')
     # subscribes = db.relationship('UsersSubscribes', back_populates='user')
     hero_levels_history = relationship('UsersHeroLevelsHistory', back_populates='user')
     # charges_history = db.relationship('UsersChargesHistory', back_populates='user')
