@@ -5,6 +5,7 @@ from api import (
     version_1_service_router,
     version_1_books_router,
     version_1_history_router,
+    version_1_referral_router,
 )
 
 
@@ -14,3 +15,4 @@ app.include_router(version_1_telegram_user_router)
 app.include_router(version_1_service_router)
 app.include_router(version_1_books_router)
 app.include_router(version_1_history_router)
+app.include_router(version_1_referral_router)
