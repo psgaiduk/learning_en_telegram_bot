@@ -40,22 +40,14 @@ async def create_referral_user(request: CreateReferralUserDTO, db: Session = Dep
     if not friend_telegram_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Friend telegram user not found.')
     
-    if db.query(UsersReferrals).filter(
-            UsersReferrals.telegram_id == telegram_id,
-            UsersReferrals.friend_telegram_id == friend_telegram_id,
-    ).first():
+    if db.query(UsersReferrals).filter(UsersReferrals.friend_telegram_id == friend_telegram_id).first():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Referral already exist.')
 
-    new_referral = UsersReferrals(
-        telegram_id=telegram_id,
-        friend_telegram_id=friend_telegram_id,
-    )
+    new_referral = UsersReferrals(telegram_id=telegram_id, friend_telegram_id=friend_telegram_id)
     db.add(new_referral)
     db.commit()
 
-    friends = (
-        db.query(Users)
-        .filter(Users.telegram_id == telegram_id).first())
+    friends = db.query(Users).filter(Users.telegram_id == telegram_id).first()
 
     referrals = friends.__dict__
     referrals['friends'] = [referral.friend.telegram_id for referral in friends.referrals]
