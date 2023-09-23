@@ -3,7 +3,7 @@ from fastapi import status
 from pytest import mark
 
 from main import app
-from models import Users, UsersWordsHistory, Words
+from models import Users
 from settings import settings
 from tests.connect_db import db_session
 
@@ -84,3 +84,25 @@ class TestCreateReferralAPI:
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_not_create_referral_user_if_wrong_telegram_id(self):
+        with db_session() as db:
+            telegram_users = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            first_telegram_user = telegram_users
+            wrong_telegram_id = first_telegram_user.telegram_id + 1
+
+        data_for_create_referral = {
+            'telegram_user_id': first_telegram_user.telegram_id,
+            'friend_telegram_id': wrong_telegram_id,
+        }
+
+        response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+        data_for_create_referral = {
+            'telegram_user_id': wrong_telegram_id,
+            'friend_telegram_id': first_telegram_user.telegram_id,
+        }
+
+        response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
