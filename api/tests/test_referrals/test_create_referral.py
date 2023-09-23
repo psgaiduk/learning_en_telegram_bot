@@ -3,7 +3,7 @@ from fastapi import status
 from pytest import mark
 
 from main import app
-from models import Users
+from models import Users, UsersReferrals
 from settings import settings
 from tests.connect_db import db_session
 
@@ -49,6 +49,15 @@ class TestCreateReferralAPI:
         assert response['detail']['telegram_id'] == first_telegram_user.telegram_id
         assert len(response['detail']['friends']) == 2
         assert response['detail']['friends'] == [second_telegram_user.telegram_id, third_telegram_user.telegram_id]
+
+        with db_session() as db:
+            assert db.query(UsersReferrals).count() == 2
+            assert db.query(UsersReferrals).filter(
+                UsersReferrals.friend_telegram_id == second_telegram_user.telegram_id).first()
+            assert db.query(UsersReferrals).filter(
+                UsersReferrals.friend_telegram_id == third_telegram_user.telegram_id).first()
+            assert db.query(UsersReferrals).filter(
+                UsersReferrals.telegram_id == first_telegram_user.telegram_id).count() == 2
 
     def test_not_create_again_referral_user(self):
         with db_session() as db:
