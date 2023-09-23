@@ -13,5 +13,5 @@ class UsersReferrals(Base):
     telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
     friend_telegram_id = Column(ForeignKey('telegram_users.telegram_id'))
 
-    user = relationship('Users', back_populates='referral_users', uselist=False)
-    referral = relationship('Users', back_populates='referral_users_friend', uselist=False)
+    user = relationship('Users', back_populates='referrals', foreign_keys=[telegram_id], uselist=False)
+    friend = relationship('Users', back_populates='friends', foreign_keys=[friend_telegram_id], uselist=False)
