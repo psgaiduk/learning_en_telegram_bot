@@ -6,8 +6,8 @@ from telegram_users.models.telegram_users import TelegramUsersModel
 class UserReferralsModel(Model):
     """Users referrals model."""
 
-    telegram_id = ForeignKey(TelegramUsersModel, on_delete=CASCADE)
-    friend_telegram_id = ForeignKey(
+    telegram = ForeignKey(TelegramUsersModel, on_delete=CASCADE)
+    friend_telegram = ForeignKey(
         TelegramUsersModel,
         on_delete=SET_NULL,
         null=True,
@@ -16,7 +16,7 @@ class UserReferralsModel(Model):
     )
 
     def __str__(self) -> str:
-        return f'{self.telegram_id.user_name} - пригласил {self.friend_telegram_id.user_name}'
+        return f'{self.telegram.user_name} - пригласил {self.friend_telegram.user_name}'
 
     class Meta:
         verbose_name = 'User referrals'
