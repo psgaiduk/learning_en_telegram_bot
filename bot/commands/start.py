@@ -16,6 +16,7 @@ async def handle_start(message: types.Message):
     response = get(url=url_get_user, headers=settings.api_headers)
 
     if response.status_code == HTTPStatus.NOT_FOUND:
+
         url_create_user = f'{settings.api_url}/v1/telegram_user/'
         data_for_create_user = {
             'telegram_id': telegram_id,
@@ -26,8 +27,7 @@ async def handle_start(message: types.Message):
             'previous_stage': '',
             'stage': 'UPDATE_PROFILE',
         }
-        # response = post(url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
-        # print(response.json())
+        post(url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
         text_greeting_answer = (
             '👊 Добро пожаловать в Английский Клуб!\n\n'
             'Перед тем как начать, ты должен знать основные правила:\n\n'
@@ -38,5 +38,22 @@ async def handle_start(message: types.Message):
             '3️⃣ Третье правило: Если ты тут, то должен выполнить задание на день.'
         )
         await message.answer(text_greeting_answer)
+
+        text_first_day_tasks_answer = (
+            '📝 Задание на первый день:\n\n'
+            '1️⃣ Заполни свой профиль. Для этого нажми на кнопку "Профиль" внизу экрана.\n'
+            '2️⃣ Прочитать 5 предложений.\n'
+        )
+
+        await message.answer(text_first_day_tasks_answer)
+
+        if '/start' in message.text:
+            friend_telegram_id = int(message.text.split('/start ')[1])
+            url_create_referral = f'{settings.api_url}/v1/referrals/'
+            data_for_create_referral = {
+                'telegram_user_id': friend_telegram_id,
+                'friend_telegram_id': telegram_id,
+            }
+            post(url=url_create_referral, headers=settings.api_headers, json=data_for_create_referral)
 
     await message.answer("Привет! Это ваш бот.")
