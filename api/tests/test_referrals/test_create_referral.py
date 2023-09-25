@@ -115,3 +115,31 @@ class TestCreateReferralAPI:
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_no_create_without_api_key(self):
+        with db_session() as db:
+            telegram_users = db.query(Users).all()
+            first_telegram_user = telegram_users[0]
+            second_telegram_user = telegram_users[1]
+
+        data_for_create_referral = {
+            'telegram_user_id': first_telegram_user.telegram_id,
+            'friend_telegram_id': second_telegram_user.telegram_id,
+        }
+
+        response = self._client.post(url=self._url, json=data_for_create_referral)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_no_create_with_wrong_api_key(self):
+        with db_session() as db:
+            telegram_users = db.query(Users).all()
+            first_telegram_user = telegram_users[0]
+            second_telegram_user = telegram_users[1]
+
+        data_for_create_referral = {
+            'telegram_user_id': first_telegram_user.telegram_id,
+            'friend_telegram_id': second_telegram_user.telegram_id,
+        }
+
+        response = self._client.post(url=self._url, json=data_for_create_referral, headers={'X-API-Key': 'test'})
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
