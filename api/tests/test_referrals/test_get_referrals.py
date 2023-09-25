@@ -33,7 +33,7 @@ class TestGetReferralAPI:
                 assert len(response['detail']['friends']) == len(friends)
                 assert response['detail']['friends'] == friends
 
-    def test_get_referral_for_user_not_found(self):
+    def test_not_get_referral_for_user_not_found(self):
         with db_session() as db:
             telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
             telegram_user_id = telegram_user.telegram_id + 1
