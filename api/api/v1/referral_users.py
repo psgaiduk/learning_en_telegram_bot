@@ -53,3 +53,24 @@ async def create_referral_user(request: CreateReferralUserDTO, db: Session = Dep
     referrals['friends'] = [referral.friend.telegram_id for referral in friends.referrals]
 
     return OneResponseDTO(detail=ReferralUserModelDTO(**referrals))
+
+
+@version_1_referral_router.get(
+    path='/{telegram_id}/',
+    response_model=OneResponseDTO[ReferralUserModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_referrals_user(telegram_id: int, db: Session = Depends(get_db)):
+    """Get referrals for user."""
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Telegram user not found.')
+
+    referrals = telegram_user.__dict__
+    referrals['friends'] = [referral.friend.telegram_id for referral in telegram_user.referrals]
+
+    return OneResponseDTO(detail=ReferralUserModelDTO(**referrals))
