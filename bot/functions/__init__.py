@@ -1,0 +1,1 @@
+from functions.encryption import encode_telegram_id, decode_telegram_id
