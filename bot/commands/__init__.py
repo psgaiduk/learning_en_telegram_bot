@@ -1,2 +1,2 @@
-from commands.start import handle_start
+from commands.registration import handle_registration
 
