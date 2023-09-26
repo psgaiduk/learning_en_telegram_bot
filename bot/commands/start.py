@@ -25,7 +25,7 @@ async def handle_start(message: types.Message):
             'experience': 0,
             'hero_level_id': 1,
             'previous_stage': '',
-            'stage': 'UPDATE_PROFILE',
+            'stage': 'WAIT_NAME',
         }
         post(url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
         text_greeting_answer = (
@@ -56,4 +56,5 @@ async def handle_start(message: types.Message):
             }
             post(url=url_create_referral, headers=settings.api_headers, json=data_for_create_referral)
 
-    await message.answer("Привет! Это ваш бот.")
+    else:
+        await message.answer('Привет! Это ваш бот.')
