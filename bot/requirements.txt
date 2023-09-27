@@ -1,5 +1,6 @@
 aiogram==2.25.1
 aiohttp==3.8.4
+backoff==2.2.1
 openai==0.27.0
 pydantic==1.10.5
 python-dotenv==1.0.0
