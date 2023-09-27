@@ -1,7 +1,7 @@
 from aiogram import types
-from requests import post
 
 from bot import dispatcher
+from context_managers.aio_http_client import http_client
 from functions import decode_telegram_id, encode_telegram_id
 from settings import settings
 
@@ -21,7 +21,13 @@ async def handle_registration(message: types.Message):
         'previous_stage': '',
         'stage': 'WAIT_NAME',
     }
-    post(url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
+    async with http_client() as client:
+        response_data = await client.get(url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
+
+    if response_data.status != 201:
+        text_somthing_wrong_answer = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+        await message.answer(text_somthing_wrong_answer)
+
     telegram_id_encode = await encode_telegram_id(telegram_id)
     telegram_link = f'https://t.me/{settings.bot_name}?start={telegram_id_encode}'
     text_greeting_answer = (
@@ -53,4 +59,5 @@ async def handle_registration(message: types.Message):
             'telegram_user_id': decode_friend_telegram_id,
             'friend_telegram_id': telegram_id,
         }
-        post(url=url_create_referral, headers=settings.api_headers, json=data_for_create_referral)
+        async with http_client() as client:
+            await client.get(url=url_create_referral, headers=settings.api_headers, json=data_for_create_referral)
