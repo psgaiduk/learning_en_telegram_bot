@@ -10,6 +10,7 @@ class MainSettings(BaseSettings):
     telegram_token: str = Field(..., env='TELEGRAM_BOT_TOKEN')
     api_url: str = Field(..., env='URL_API')
     api_token: str = Field(..., env='API_KEY')
+    bot_name: str = Field(..., env='BOT_NAME')
 
     @property
     def api_headers(self) -> dict:
