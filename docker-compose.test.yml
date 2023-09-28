@@ -7,18 +7,14 @@ services:
       - .env.test
     volumes:
       - dbdata:/var/lib/postgresql/data
-#
-#  bot_test:
-#    build: ./bot
-#    volumes:
-#      - ./bot:/app
-#    command: ["pytest", "-v", "./tests"]  # Запуск тестов для bot
-#    depends_on:
-#      - db_test
-#    env_file:
-#      - .env.test
-#    networks:
-#      - isolated_test_network
+
+  bot_test:
+    build: ./bot
+    volumes:
+      - ./bot:/app
+    command: ["pytest", "-v", "./tests"]  # Запуск тестов для bot
+    env_file:
+      - .env.test
 
   api_test:
     build: ./api
