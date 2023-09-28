@@ -1,6 +1,6 @@
 from aiogram import types
 
-from context_managers.aio_http_client import http_client
+from context_managers import http_client
 from functions import decode_telegram_id, encode_telegram_id
 from settings import settings
 
