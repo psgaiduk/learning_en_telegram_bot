@@ -100,3 +100,49 @@ class TestRegistrationService:
             '1️⃣ Заполни свой профиль. Для этого нажми на кнопку "Профиль" внизу экрана.\n'
             '2️⃣ Прочитать 5 предложений.\n'
         )
+
+    @pytest.mark.asyncio
+    async def test_create_referral(self):
+        self._message.from_user.id = 12345
+        self._message.text = '/start a'
+        self._message.answer = AsyncMock()
+        self._service = RegistrationService(message=self._message)
+        response_mock = AsyncMock(spec=ClientResponse)
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+            await self._service._create_referral()
+
+        mocked_post.assert_awaited_once_with(
+            url=f'{settings.api_url}/v1/referrals/',
+            headers=settings.api_headers,
+            json={
+                'telegram_user_id': 1,
+                'friend_telegram_id': 12345,
+            }
+        )
+
+    @pytest.mark.asyncio
+    async def test_not_create_referral_without_link(self):
+        self._message.from_user.id = 12345
+        self._message.text = '/start'
+        self._message.answer = AsyncMock()
+        self._service = RegistrationService(message=self._message)
+        response_mock = AsyncMock(spec=ClientResponse)
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+            await self._service._create_referral()
+
+        mocked_post.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_not_create_referral_without_link(self):
+        self._message.from_user.id = 12345
+        self._message.text = '/start 123'
+        self._message.answer = AsyncMock()
+        self._service = RegistrationService(message=self._message)
+        response_mock = AsyncMock(spec=ClientResponse)
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+            await self._service._create_referral()
+
+        mocked_post.assert_not_called()
