@@ -70,6 +70,8 @@ class RegistrationService:
         if not friend_telegram_id:
             return None
         decode_friend_telegram_id = await decode_telegram_id(friend_telegram_id)
+        if not decode_friend_telegram_id:
+            return None
         url_create_referral = f'{settings.api_url}/v1/referrals/'
         data_for_create_referral = {
             'telegram_user_id': decode_friend_telegram_id,
