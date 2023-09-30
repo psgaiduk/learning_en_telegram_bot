@@ -86,3 +86,17 @@ class TestRegistrationService:
             f'Кстати вот ссылка https://t.me/{settings.bot_name}?start=rfu, чтобы рассказать всем.\n'
             f'3️⃣ Третье правило: Если ты тут, то должен выполнить задание на день.'
         )
+
+    @pytest.mark.asyncio
+    async def test_send_tasks_today(self):
+        self._message.from_user.id = 12345
+        self._message.answer = AsyncMock()
+        self._service = RegistrationService(message=self._message)
+
+        await self._service._send_tasks_today()
+
+        self._message.answer.assert_called_once_with(
+            '📝 Задание на первый день:\n\n'
+            '1️⃣ Заполни свой профиль. Для этого нажми на кнопку "Профиль" внизу экрана.\n'
+            '2️⃣ Прочитать 5 предложений.\n'
+        )
