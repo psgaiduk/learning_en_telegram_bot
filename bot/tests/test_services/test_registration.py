@@ -12,16 +12,17 @@ class TestRegistrationService:
     @classmethod
     def setup_class(cls):
         cls._message = Mock()
+        cls._message.from_user.id = 12345
+        cls._post_method_target = 'context_managers.aio_http_client.AsyncHttpClient.post'
 
     @pytest.mark.asyncio
     async def test_create_user(self):
-        self._message.from_user.id = 12345
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
         response_mock = AsyncMock(spec=ClientResponse)
         response_mock.status = 201
 
-        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
             await self._service._create_user()
 
         mocked_post.assert_awaited_once_with(
@@ -42,13 +43,12 @@ class TestRegistrationService:
 
     @pytest.mark.asyncio
     async def test_create_user_mistake(self):
-        self._message.from_user.id = 12345
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
         response_mock = AsyncMock(spec=ClientResponse)
         response_mock.status = 404
 
-        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
             await self._service._create_user()
 
         mocked_post.assert_awaited_once_with(
@@ -71,7 +71,6 @@ class TestRegistrationService:
 
     @pytest.mark.asyncio
     async def test_send_greeting_message(self):
-        self._message.from_user.id = 12345
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
 
@@ -89,7 +88,6 @@ class TestRegistrationService:
 
     @pytest.mark.asyncio
     async def test_send_tasks_today(self):
-        self._message.from_user.id = 12345
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
 
@@ -103,13 +101,12 @@ class TestRegistrationService:
 
     @pytest.mark.asyncio
     async def test_create_referral(self):
-        self._message.from_user.id = 12345
         self._message.text = '/start a'
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
         response_mock = AsyncMock(spec=ClientResponse)
 
-        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
             await self._service._create_referral()
 
         mocked_post.assert_awaited_once_with(
@@ -123,26 +120,24 @@ class TestRegistrationService:
 
     @pytest.mark.asyncio
     async def test_not_create_referral_without_link(self):
-        self._message.from_user.id = 12345
         self._message.text = '/start'
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
         response_mock = AsyncMock(spec=ClientResponse)
 
-        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
             await self._service._create_referral()
 
         mocked_post.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_not_create_referral_without_link(self):
-        self._message.from_user.id = 12345
         self._message.text = '/start 123'
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
         response_mock = AsyncMock(spec=ClientResponse)
 
-        with patch('context_managers.aio_http_client.AsyncHttpClient.post', return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
             await self._service._create_referral()
 
         mocked_post.assert_not_called()
