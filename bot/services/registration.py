@@ -64,7 +64,9 @@ class RegistrationService:
         await self._message.answer(text_first_day_tasks_answer)
 
     async def _create_referral(self) -> None:
-        friend_telegram_id = self._message.text.split('/start ')[1]
+        friend_telegram_id = None
+        if '/start ' in self._message.text:
+            friend_telegram_id = self._message.text.split('/start ')[1]
         if not friend_telegram_id:
             return None
         decode_friend_telegram_id = await decode_telegram_id(friend_telegram_id)
