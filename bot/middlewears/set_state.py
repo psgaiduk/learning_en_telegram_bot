@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
-from aiohttp import ClientSession
+from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.storage import FSMContext
-from aiogram import types
 
+from context_managers import http_client
 from settings import settings
 
 
@@ -19,12 +19,12 @@ class SetStateMiddleware(BaseMiddleware):
         telegram_id = message.chat.id
         url_get_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
 
-        async with ClientSession() as session:
-            async with session.get(url_get_user, headers=settings.api_headers) as response:
-                if response.status == HTTPStatus.NOT_FOUND:
-                    state = 'REGISTRATION'
-                else:
-                    state = (await response.json())['detail']['stage']
+        async with http_client() as client:
+            response = await client.get(url=url_get_user, headers=settings.api_headers)
+            if response.status == HTTPStatus.NOT_FOUND:
+                state = 'REGISTRATION'
+            else:
+                state = (await response.json())['detail']['stage']
 
         storage = self.dispatcher.storage
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
