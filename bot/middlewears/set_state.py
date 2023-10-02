@@ -43,10 +43,10 @@ class SetStateMiddleware(BaseMiddleware):
         if self._message.text == '/profile':
             return 'UPDATE_PROFILE'
 
-        if self._state != 'UPDATE_PROFILE' and self._message.text in {'/records', '/achives'}:
+        if self._state != 'UPDATE_PROFILE' and self._message.text in {'/records', '/achievements'}:
             if self._message.text == '/records':
                 return 'RECORDS'
-            return 'ACHIVES'
+            return 'ACHIEVEMENTS'
 
         return self._state
 
