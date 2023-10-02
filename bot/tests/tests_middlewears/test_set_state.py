@@ -49,11 +49,12 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
     @pytest.mark.asyncio
-    async def test_get_state_from_user(self, mocker):
+    @pytest.mark.parametrize('stage', [('WAIT_NAME',), ('WAIT_EN_LEVEL',), ('READ_BOOK',), ('CHECK_WORDS',), ('GRAMMAR',)])
+    async def test_get_state_from_user(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
         response_mock = mocker.AsyncMock(spec=ClientResponse)
         response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': 'WAIT_NAME'}})
+        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -71,7 +72,7 @@ class TestSetStateMiddleware:
 
         fsm_context_constructor_mock.assert_called()
         fsm_context_constructor_mock.assert_called_once_with(storage=self._storage_mock, chat=self._chat, user=self._user)
-        expected_state = 'WAIT_NAME'
+        expected_state = stage
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
 
