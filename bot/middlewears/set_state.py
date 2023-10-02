@@ -40,6 +40,14 @@ class SetStateMiddleware(BaseMiddleware):
         if self._state in {'CHECK_WORDS', 'REGISTRATION', 'GRAMMAR'}:
             return self._state
 
+        if self._message.text == '/profile':
+            return 'UPDATE_PROFILE'
+
+        if self._state != 'UPDATE_PROFILE' and self._message.text in {'/records', '/achives'}:
+            if self._message.text == '/records':
+                return 'RECORDS'
+            return 'ACHIVES'
+
         return self._state
 
 
