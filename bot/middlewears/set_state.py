@@ -28,12 +28,17 @@ class SetStateMiddleware(BaseMiddleware):
             if response.status == HTTPStatus.NOT_FOUND:
                 self._state = 'REGISTRATION'
             else:
-                self._state = (await response.json())['detail']['stage']
+                response_data = (await response.json())['detail']
+                self._state = response_data['stage']
 
         state = await self.get_real_state()
 
         storage = self.dispatcher.storage
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
+
+        if response.status == HTTPStatus.OK:
+            await fsm_context.set_data(data=response_data)
+
         await fsm_context.set_state(state=state)
 
     async def get_real_state(self):
