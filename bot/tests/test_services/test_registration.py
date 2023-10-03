@@ -30,7 +30,6 @@ class TestRegistrationService:
             headers=settings.api_headers,
             json={
                 'telegram_id': 12345,
-                'level_en_id': 1,
                 'main_language_id': 1,
                 'experience': 0,
                 'hero_level_id': 1,
@@ -56,7 +55,6 @@ class TestRegistrationService:
             headers=settings.api_headers,
             json={
                 'telegram_id': 12345,
-                'level_en_id': 1,
                 'main_language_id': 1,
                 'experience': 0,
                 'hero_level_id': 1,

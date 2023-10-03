@@ -25,7 +25,6 @@ class RegistrationService:
         url_create_user = f'{settings.api_url}/v1/telegram_user/'
         data_for_create_user = {
             'telegram_id': self._telegram_id,
-            'level_en_id': 1,
             'main_language_id': 1,
             'experience': 0,
             'hero_level_id': 1,
