@@ -78,20 +78,6 @@ class TestTelegramUserAPI:
         response = self._client.post(f'/api/v1/telegram_user/', headers=self._headers, json=params_for_create_user)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
-    def test_not_create_telegram_user_without_level_en_id(self):
-        params_for_create_user = {
-            'telegram_id': 123456789,
-            'main_language_id': 1,
-            'user_name': 'Test User',
-            'experience': 0,
-            'hero_level_id': 1,
-            'previous_stage': '',
-            'stage': '',
-        }
-
-        response = self._client.post(f'/api/v1/telegram_user/', headers=self._headers, json=params_for_create_user)
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-
     def test_not_create_telegram_user_without_main_language_id(self):
         params_for_create_user = {
             'telegram_id': 123456789,
@@ -123,6 +109,23 @@ class TestTelegramUserAPI:
         with db_session() as db:
             telegram_user = db.query(Users).filter(Users.telegram_id == params_for_create_user['telegram_id']).first()
             assert telegram_user.user_name == 'New client'
+
+    def test_create_telegram_user_without_level_en_id(self):
+        params_for_create_user = {
+            'telegram_id': 123456789,
+            'main_language_id': 1,
+            'experience': 0,
+            'hero_level_id': 1,
+            'previous_stage': '',
+            'stage': '',
+        }
+
+        response = self._client.post(f'/api/v1/telegram_user/', headers=self._headers, json=params_for_create_user)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        with db_session() as db:
+            telegram_user = db.query(Users).filter(Users.telegram_id == params_for_create_user['telegram_id']).first()
+            assert telegram_user.level_en_id is None
 
     def test_create_telegram_user_without_experience(self):
         params_for_create_user = {

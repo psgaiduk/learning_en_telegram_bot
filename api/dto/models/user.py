@@ -9,7 +9,7 @@ class TelegramUserDTO(BaseModel):
     """Telegram user DTO."""
 
     telegram_id: int
-    level_en_id: int
+    level_en_id: Optional[int]
     main_language_id: int
     user_name: str = 'New client'
     experience: int = 0

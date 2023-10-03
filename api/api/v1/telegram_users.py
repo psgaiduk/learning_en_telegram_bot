@@ -36,7 +36,10 @@ async def get_telegram_user_dto(telegram_user: Users) -> OneResponseDTO[Telegram
 
     telegram_user_dict = telegram_user.__dict__
     telegram_user_dict['main_language'] = telegram_user.main_language.__dict__
-    telegram_user_dict['level_en'] = telegram_user.level_en.__dict__
+    if telegram_user.level_en:
+        telegram_user_dict['level_en'] = telegram_user.level_en.__dict__
+    else:
+        telegram_user_dict['level_en'] = None
     telegram_user_dict['hero_level'] = telegram_user.hero_level.__dict__
 
     return OneResponseDTO(detail=TelegramUserDTO(**telegram_user_dict))
