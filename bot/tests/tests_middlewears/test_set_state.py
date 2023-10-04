@@ -26,8 +26,6 @@ class TestSetStateMiddleware:
     async def test_get_state_registration(self, mocker):
 
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.NOT_FOUND
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -35,7 +33,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -55,10 +53,7 @@ class TestSetStateMiddleware:
     )
     async def test_get_state_from_user(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
         response_data = {'detail': {'stage': stage}}
-        response_mock.json = mocker.AsyncMock(return_value=response_data)
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -66,7 +61,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -86,9 +81,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_update_profile(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -96,7 +89,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -113,9 +106,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR'])
     async def test_not_get_state_update_profile(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -123,7 +114,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -140,9 +131,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_records(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/records', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -150,7 +139,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -167,9 +156,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_records(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/records', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -177,7 +164,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -194,9 +181,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_achievements(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/achievements', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -204,7 +189,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
@@ -221,9 +206,7 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_achievements(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/achievements', spec=types.Message)
-        response_mock = mocker.AsyncMock(spec=ClientResponse)
-        response_mock.status = HTTPStatus.OK
-        response_mock.json = mocker.AsyncMock(return_value={'detail': {'stage': stage}})
+        response_data = {'detail': {'stage': stage}}
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -231,7 +214,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state = mocker.AsyncMock()
         fsm_context_constructor_mock = mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
-        with patch(self._get_method_target, return_value=response_mock) as mocked_get:
+        with patch(self._get_method_target, return_value=(response_data, HTTPStatus.OK)) as mocked_get:
             await self._service.on_pre_process_message(message=message, data={})
 
         mocked_get.assert_called_once_with(
