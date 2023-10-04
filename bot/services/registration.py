@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from aiogram import types
 
 from context_managers import http_client
@@ -32,10 +34,10 @@ class RegistrationService:
             'stage': 'WAIT_NAME',
         }
         async with http_client() as client:
-            response_data = await client.post(
+            _, response_status = await client.post(
                 url=url_create_user, headers=settings.api_headers, json=data_for_create_user)
 
-        if response_data.status != 201:
+        if response_status != HTTPStatus.CREATED:
             text_somthing_wrong_answer = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
             await self._message.answer(text_somthing_wrong_answer)
 

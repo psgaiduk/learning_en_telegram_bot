@@ -1,5 +1,7 @@
-import pytest
+from http import HTTPStatus
+
 from aiohttp import ClientResponse
+from pytest import mark
 from unittest.mock import AsyncMock, Mock, patch
 
 from settings import settings
@@ -15,14 +17,12 @@ class TestRegistrationService:
         cls._message.from_user.id = 12345
         cls._post_method_target = 'context_managers.aio_http_client.AsyncHttpClient.post'
 
-    @pytest.mark.asyncio
-    async def test_create_user(self):
+    @mark.asyncio
+    async def test_create_user(self, mocker):
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
-        response_mock = AsyncMock(spec=ClientResponse)
-        response_mock.status = 201
 
-        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=({}, HTTPStatus.CREATED)) as mocked_post:
             await self._service._create_user()
 
         mocked_post.assert_awaited_once_with(
@@ -40,14 +40,12 @@ class TestRegistrationService:
 
         self._message.answer.assert_not_called()
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_create_user_mistake(self):
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
-        response_mock = AsyncMock(spec=ClientResponse)
-        response_mock.status = 404
 
-        with patch(self._post_method_target, return_value=response_mock) as mocked_post:
+        with patch(self._post_method_target, return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_post:
             await self._service._create_user()
 
         mocked_post.assert_awaited_once_with(
@@ -67,7 +65,7 @@ class TestRegistrationService:
             '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
         )
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_send_greeting_message(self):
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
@@ -84,7 +82,7 @@ class TestRegistrationService:
             f'3️⃣ Третье правило: Если ты тут, то должен выполнить задание на день.'
         )
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_send_tasks_today(self):
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)
@@ -97,7 +95,7 @@ class TestRegistrationService:
             '2️⃣ Прочитать 5 предложений.\n'
         )
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_create_referral(self):
         self._message.text = '/start a'
         self._message.answer = AsyncMock()
@@ -116,7 +114,7 @@ class TestRegistrationService:
             }
         )
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_not_create_referral_without_link(self):
         self._message.text = '/start'
         self._message.answer = AsyncMock()
@@ -128,7 +126,7 @@ class TestRegistrationService:
 
         mocked_post.assert_not_called()
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_not_create_referral_without_link(self):
         self._message.text = '/start 123'
         self._message.answer = AsyncMock()
