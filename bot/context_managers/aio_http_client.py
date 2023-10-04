@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Any, Optional
 
-from aiohttp import ClientSession, ClientResponse, ClientResponseError
+from aiohttp import ClientSession, ClientResponseError
 from backoff import expo, on_exception
 from contextlib import asynccontextmanager
 
@@ -12,17 +12,17 @@ class AsyncHttpClient:
         self.session = ClientSession()
 
     @on_exception(expo, ClientResponseError, max_tries=3)
-    async def _request(self, method: str, url: str, **kwargs) -> Optional[ClientResponse]:
+    async def _request(self, method: str, url: str, **kwargs) -> tuple[Optional[Any], Optional[int]]:
         """Выполнение запроса к API."""
         try:
             async with self.session.request(method, url, **kwargs) as response:
-                return response
+                return await response.json(), response.status
         except ClientResponseError as e:
             print(f"HTTP Error: {e}")
             raise
         except Exception as e:
             print(f"Unexpected error: {e}")
-            return None
+            return None, None
 
     async def get(self, url, headers=None, params=None):
         """Выполнение GET запроса к API."""
