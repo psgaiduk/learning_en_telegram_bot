@@ -24,19 +24,21 @@ class SetStateMiddleware(BaseMiddleware):
         self._message = message
 
         async with http_client() as client:
-            response = await client.get(url=url_get_user, headers=settings.api_headers)
-            if response.status == HTTPStatus.NOT_FOUND:
+            response, response_status = await client.get(url=url_get_user, headers=settings.api_headers)
+            if response_status == HTTPStatus.NOT_FOUND:
                 self._state = 'REGISTRATION'
-            else:
-                response_data = (await response.json())['detail']
+            elif response_status == HTTPStatus.OK:
+                response_data = response['detail']
                 self._state = response_data['stage']
+            else:
+                self._state = 'ERROR'
 
         state = await self.get_real_state()
 
         storage = self.dispatcher.storage
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
 
-        if response.status == HTTPStatus.OK:
+        if response_status == HTTPStatus.OK:
             await fsm_context.set_data(data=response_data)
 
         await fsm_context.set_state(state=state)
