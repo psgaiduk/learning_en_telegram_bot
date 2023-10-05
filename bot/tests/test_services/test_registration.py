@@ -56,7 +56,7 @@ class TestRegistrationService:
                 'main_language_id': 1,
                 'experience': 0,
                 'hero_level_id': 1,
-                'previous_stage': '',
+                'previous_stage': 'NEW_CLIENT',
                 'stage': 'WAIT_NAME',
             }
         )
