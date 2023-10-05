@@ -74,7 +74,7 @@ class TestSetStateMiddleware:
         expected_state = stage
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
-        expected_data = response_data['detail']
+        expected_data = {'user': response_data['detail']}
         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
 
     @pytest.mark.asyncio

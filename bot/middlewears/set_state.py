@@ -39,7 +39,7 @@ class SetStateMiddleware(BaseMiddleware):
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
 
         if response_status == HTTPStatus.OK:
-            await fsm_context.set_data(data=response_data)
+            await fsm_context.set_data(data={'user': response_data})
 
         await fsm_context.set_state(state=state)
 
