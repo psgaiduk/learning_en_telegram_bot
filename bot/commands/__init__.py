@@ -1,2 +1,2 @@
 from commands.registration import handle_registration
-
+from commands.wait_name import handle_wait_name, handle_wait_name_incorrect_work
