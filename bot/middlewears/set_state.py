@@ -4,7 +4,9 @@ from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.storage import FSMContext
 
+from choices import State
 from context_managers import http_client
+from dto import TelegramUserDTOModel
 from settings import settings
 
 
@@ -26,12 +28,12 @@ class SetStateMiddleware(BaseMiddleware):
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_user, headers=settings.api_headers)
             if response_status == HTTPStatus.NOT_FOUND:
-                self._state = 'REGISTRATION'
+                self._state = State.registration
             elif response_status == HTTPStatus.OK:
                 response_data = response['detail']
                 self._state = response_data['stage']
             else:
-                self._state = 'ERROR'
+                self._state = State.error
 
         state = await self.get_real_state()
 
@@ -39,21 +41,21 @@ class SetStateMiddleware(BaseMiddleware):
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
 
         if response_status == HTTPStatus.OK:
-            await fsm_context.set_data(data={'user': response_data})
+            await fsm_context.set_data(data={'user': TelegramUserDTOModel(**response_data)})
 
         await fsm_context.set_state(state=state)
 
     async def get_real_state(self):
-        if self._state in {'CHECK_WORDS', 'REGISTRATION', 'GRAMMAR'}:
+        if self._state in {State.check_words, State.registration, State.grammar}:
             return self._state
 
         if self._message.text == '/profile':
-            return 'UPDATE_PROFILE'
+            return State.update_profile
 
-        if self._state != 'UPDATE_PROFILE' and self._message.text in {'/records', '/achievements'}:
+        if self._state != State.update_profile and self._message.text in {'/records', '/achievements'}:
             if self._message.text == '/records':
-                return 'RECORDS'
-            return 'ACHIEVEMENTS'
+                return State.records
+            return State.achievements
 
         return self._state
 
