@@ -11,3 +11,4 @@ class State(StrEnum):
     check_words = 'CHECK_WORDS'
     grammar = 'GRAMMAR'
     update_profile = 'UPDATE_PROFILE'
+    registration = 'REGISTRATION'
