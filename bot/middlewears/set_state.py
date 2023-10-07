@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from aiogram import types
+from aiogram import types, dispatcher as aiogram_dispatcher
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.storage import FSMContext
 
@@ -11,15 +11,19 @@ from settings import settings
 
 
 class SetStateMiddleware(BaseMiddleware):
+    """Set state middleware."""
 
     _state: str
+    _message: types.Message
 
-    def __init__(self, dispatcher):
+    def __init__(self, dispatcher: aiogram_dispatcher) -> None:
+        """Init."""
         self.dispatcher = dispatcher
         super(SetStateMiddleware, self).__init__()
         self._state = ''
 
-    async def on_pre_process_message(self, message: types.Message, data: dict):
+    async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
+        """Set state."""
         user = message.from_user.id
         telegram_id = message.chat.id
         url_get_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
@@ -45,7 +49,8 @@ class SetStateMiddleware(BaseMiddleware):
 
         await fsm_context.set_state(state=state)
 
-    async def get_real_state(self):
+    async def get_real_state(self) -> str:
+        """Get real state."""
         if self._state in {State.check_words.value, State.registration.value, State.grammar.value}:
             return self._state
 
