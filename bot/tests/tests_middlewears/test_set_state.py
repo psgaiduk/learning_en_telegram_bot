@@ -21,6 +21,18 @@ class TestSetStateMiddleware:
         cls._get_method_target = 'context_managers.aio_http_client.AsyncHttpClient.get'
         cls._storage_mock = Mock(spec=BaseStorage)
         cls._service = SetStateMiddleware(dispatcher=Mock(storage=cls._storage_mock))
+        cls._response_data = {
+            'detail': {
+                'stage': '',
+                'user_name': 'test_name',
+                'experience': 0,
+                'previous_stage': '',
+                'telegram_id': 12345,
+                'hero_level': None,
+                'level_en': None,
+                'main_language': None,
+            }
+        }
 
     @pytest.mark.asyncio
     async def test_get_state_registration(self, mocker):
@@ -53,7 +65,8 @@ class TestSetStateMiddleware:
     )
     async def test_get_state_from_user(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -81,7 +94,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_update_profile(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -106,7 +120,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR'])
     async def test_not_get_state_update_profile(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -131,7 +146,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_records(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/records', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -156,7 +172,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_records(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/records', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -181,7 +198,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
     async def test_get_state_achievements(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/achievements', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -206,7 +224,8 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_achievements(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/achievements', spec=types.Message)
-        response_data = {'detail': {'stage': stage}}
+        response_data = self._response_data
+        response_data['detail']['stage'] = stage
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
