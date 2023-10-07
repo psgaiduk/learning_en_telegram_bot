@@ -12,3 +12,4 @@ class State(StrEnum):
     grammar = 'GRAMMAR'
     update_profile = 'UPDATE_PROFILE'
     registration = 'REGISTRATION'
+    error = 'ERROR'
