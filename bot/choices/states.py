@@ -14,3 +14,4 @@ class State(StrEnum):
     registration = 'REGISTRATION'
     error = 'ERROR'
     records = 'RECORDS'
+    achievements = 'ACHIEVEMENTS'
