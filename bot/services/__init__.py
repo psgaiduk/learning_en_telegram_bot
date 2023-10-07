@@ -1,1 +1,2 @@
 from services.registration import RegistrationService
+from services.wait_name import WaitNameService
