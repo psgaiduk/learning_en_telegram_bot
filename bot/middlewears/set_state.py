@@ -28,12 +28,12 @@ class SetStateMiddleware(BaseMiddleware):
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_user, headers=settings.api_headers)
             if response_status == HTTPStatus.NOT_FOUND:
-                self._state = State.registration
+                self._state = State.registration.value
             elif response_status == HTTPStatus.OK:
                 response_data = response['detail']
                 self._state = response_data['stage']
             else:
-                self._state = State.error
+                self._state = State.error.value
 
         state = await self.get_real_state()
 
@@ -46,16 +46,16 @@ class SetStateMiddleware(BaseMiddleware):
         await fsm_context.set_state(state=state)
 
     async def get_real_state(self):
-        if self._state in {State.check_words, State.registration, State.grammar}:
+        if self._state in {State.check_words.value, State.registration.value, State.grammar.value}:
             return self._state
 
         if self._message.text == '/profile':
-            return State.update_profile
+            return State.update_profile.value
 
-        if self._state != State.update_profile and self._message.text in {'/records', '/achievements'}:
+        if self._state != State.update_profile.value and self._message.text in {'/records', '/achievements'}:
             if self._message.text == '/records':
-                return State.records
-            return State.achievements
+                return State.records.value
+            return State.achievements.value
 
         return self._state
 

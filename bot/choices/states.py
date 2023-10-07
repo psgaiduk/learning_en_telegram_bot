@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class State(StrEnum):
+class State(Enum):
     """States for FSM."""
 
     new_client = 'NEW_CLIENT'
