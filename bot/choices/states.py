@@ -13,3 +13,4 @@ class State(StrEnum):
     update_profile = 'UPDATE_PROFILE'
     registration = 'REGISTRATION'
     error = 'ERROR'
+    records = 'RECORDS'
