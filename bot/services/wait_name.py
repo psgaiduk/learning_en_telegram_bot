@@ -44,7 +44,7 @@ class WaitNameService:
         self._telegram_user = data['user']
         
     async def _update_name_for_new_client(self):
-        self._stage = 'WAIT_EN_LEVEL'
+        self._stage = State.wait_name.value
         self._message_text = (
             f'Имя профиля изменено на {self._new_name}.\n'
             f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
@@ -65,7 +65,7 @@ class WaitNameService:
                 self._inline_kb.add(InlineKeyboardButton(text=button['text'], callback_data=button['callback_data']))
 
     async def _update_name_for_old_client(self):
-        self._stage = 'UPDATE_PROFILE'
+        self._stage = State.update_profile.value
         self._inline_kb.add(InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level'))
         self._inline_kb.add(InlineKeyboardButton(text='Change name', callback_data='user_pofile_change_name'))
         self._inline_kb.add(InlineKeyboardButton(text='Close', callback_data='user_profile_close'))
