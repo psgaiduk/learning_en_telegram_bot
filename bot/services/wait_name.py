@@ -45,9 +45,11 @@ class WaitNameService:
         
     async def _update_name_for_new_client(self):
         self._stage = 'WAIT_EN_LEVEL'
-        self._message_text = (f'Имя профиля изменено на {self._new_name}.\n'
-                        f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
-                        f'но с увлечинием уровня, будут открываться новые уровни знаний.')
+        self._message_text = (
+            f'Имя профиля изменено на {self._new_name}.\n'
+            f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
+            f'но с увлечинием уровня, будут открываться новые уровни знаний.'
+        )
         self._inline_kb.add(InlineKeyboardButton(text='A1 - Beginner', callback_data='level_en_1'))
         self._inline_kb.add(InlineKeyboardButton(text='A2 - Elementary', callback_data='level_en_2'))
 
