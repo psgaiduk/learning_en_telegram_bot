@@ -29,19 +29,19 @@ class WaitNameService:
     async def do(self) -> None:
         """Wait name."""
         await self._get_user()
-
-        if self._telegram_user.previous_stage == State.new_client.value:
-            await self._update_name_for_new_client()
-        else:
-            await self._update_name_for_old_client()
-
+        await self._get_message_text()
         await self._update_user()
-
         await self._message.answer(text=self._message_text, reply_markup=self._inline_kb)
 
     async def _get_user(self):
         data = await self._state.get_data()
         self._telegram_user = data['user']
+
+    async def _get_message_text(self):
+        if self._telegram_user.previous_stage == State.new_client.value:
+            await self._update_name_for_new_client()
+        else:
+            await self._update_name_for_old_client()
         
     async def _update_name_for_new_client(self):
         self._stage = State.wait_name.value
