@@ -247,3 +247,25 @@ class TestWaitNameService:
 
         self._service._update_name_for_new_client.assert_called_once()
         self._service._update_name_for_old_client.assert_not_called()
+
+    @mark.asyncio
+    async def test_get_message_text_old_client(self):
+        self._service = WaitNameService(message=self._message, state=self._state)
+        self._service._update_name_for_new_client = AsyncMock()
+        self._service._update_name_for_old_client = AsyncMock()
+
+        self._service._telegram_user = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        await self._service._get_message_text()
+
+        self._service._update_name_for_new_client.assert_not_called()
+        self._service._update_name_for_old_client.assert_called_once()
