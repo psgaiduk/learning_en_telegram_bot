@@ -96,3 +96,46 @@ class TestWaitNameService:
 
         assert self._service._inline_kb.inline_keyboard == expected_buttons[:buttons_count]
 
+    @mark.asyncio
+    async def test_update_name_for_old_client(self):
+        self._message.text = 'NewName'
+        self._message.answer = AsyncMock()
+
+        hero_level = HeroLevelDTOModel(
+            id=1,
+            title='Level',
+            order=1,
+            need_experience=0,
+            count_sentences=0,
+            count_games=0,
+        )
+
+        telegram_user_model = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='PreviousStage',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=hero_level,
+        )
+
+        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+
+        self._service = WaitNameService(message=self._message, state=self._state)
+        self._service._telegram_user = telegram_user_model
+
+        await self._service._update_name_for_old_client()
+
+        assert self._service._stage == State.update_profile.value
+        message_text = 'Имя профиля изменено на Newname.\nВыберите дальнейшее действие:'
+        assert message_text == self._service._message_text
+
+        expected_buttons = [
+            [InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level')],
+            [InlineKeyboardButton(text='Change name', callback_data='user_pofile_change_name')],
+            [InlineKeyboardButton(text='Close', callback_data='user_profile_close')],
+        ]
+
+        assert self._service._inline_kb.inline_keyboard == expected_buttons
