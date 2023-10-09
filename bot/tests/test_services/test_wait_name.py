@@ -185,3 +185,43 @@ class TestWaitNameService:
             [InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level')]
         )
 
+    @mark.asyncio
+    async def test_update_user_with_mistake(self, mocker):
+        self._message.text = 'NewName'
+        self._message.answer = AsyncMock()
+
+        telegram_user_model = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='PreviousStage',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._service = WaitNameService(message=self._message, state=self._state)
+        self._service._telegram_user = telegram_user_model
+        self._service._message_text = 'MessageText'
+        self._service._stage = 'Stage'
+        self._service._inline_kb = InlineKeyboardMarkup(
+            [InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level')]
+        )
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.patch', return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_post:
+            await self._service._update_user()
+
+        mocked_post.assert_awaited_once_with(
+            url=f'{settings.api_url}/v1/telegram_user/{telegram_user_model.telegram_id}',
+            headers=settings.api_headers,
+            json={
+                'telegram_id': telegram_user_model.telegram_id,
+                'user_name': 'Newname',
+                'stage': 'Stage',
+            }
+        )
+
+        assert self._service._message_text == '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+        assert self._service._inline_kb is None
