@@ -225,3 +225,25 @@ class TestWaitNameService:
 
         assert self._service._message_text == '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
         assert self._service._inline_kb is None
+
+    @mark.asyncio
+    async def test_get_message_text_new_client(self):
+        self._service = WaitNameService(message=self._message, state=self._state)
+        self._service._update_name_for_new_client = AsyncMock()
+        self._service._update_name_for_old_client = AsyncMock()
+
+        self._service._telegram_user = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage=State.new_client.value,
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        await self._service._get_message_text()
+
+        self._service._update_name_for_new_client.assert_called_once()
+        self._service._update_name_for_old_client.assert_not_called()
