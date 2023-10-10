@@ -100,6 +100,9 @@ class CreateWordsAndSentencesService:
         for token in tokens:
             token = token.strip()
 
+            if search(r'\d', token):
+                continue
+            
             if token in self._missed_words or token.istitle() or len(token) < 3:
                 continue
 
