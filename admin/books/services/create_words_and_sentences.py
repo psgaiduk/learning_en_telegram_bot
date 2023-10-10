@@ -1,4 +1,4 @@
-from re import sub
+from re import search, sub
 
 from nltk.tokenize import sent_tokenize
 from nltk import pos_tag
@@ -98,6 +98,8 @@ class CreateWordsAndSentencesService:
 
         tokens = [token.lemma_ for token in doc if not token.is_punct]
         for token in tokens:
+            token = token.strip()
+
             if token in self._missed_words or token.istitle() or len(token) < 3:
                 continue
 
