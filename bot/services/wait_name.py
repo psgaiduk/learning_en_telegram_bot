@@ -44,7 +44,7 @@ class WaitNameService:
             await self._update_name_for_old_client()
         
     async def _update_name_for_new_client(self):
-        self._stage = State.wait_name.value
+        self._stage = State.wait_en_level.value
         self._message_text = (
             f'Имя профиля изменено на {self._new_name}.\n'
             f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
