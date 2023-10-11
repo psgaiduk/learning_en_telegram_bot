@@ -77,7 +77,7 @@ class TestWaitNameService:
 
         await self._service._update_name_for_new_client()
 
-        assert self._service._stage == State.wait_name.value
+        assert self._service._stage == State.wait_en_level.value
         message_text = (
             'Имя профиля изменено на Newname.\n'
             'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, но с увлечинием уровня, '
