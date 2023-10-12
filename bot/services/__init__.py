@@ -1,3 +1,4 @@
 from services.registration import RegistrationService
+from services.update_profile import UpdateProfileService
 from services.wait_en_level import WaitEnLevelService
 from services.wait_name import WaitNameService
