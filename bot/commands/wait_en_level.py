@@ -1,7 +1,7 @@
 from aiogram.dispatcher.storage import FSMContext
 from aiogram.types import CallbackQuery, Message, ContentType
 
-from bot import bot, dispatcher
+from bot import dispatcher
 from choices import State
 from services import WaitEnLevelService
 
