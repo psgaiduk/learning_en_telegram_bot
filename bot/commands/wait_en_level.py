@@ -3,12 +3,13 @@ from aiogram.types import CallbackQuery, Message, ContentType
 
 from bot import bot, dispatcher
 from choices import State
+from services import WaitEnLevelService
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('level_en_'), state=State.wait_en_level.value)
 async def handle_wait_en_level(callback_query: CallbackQuery, state: FSMContext):
     """Handle wait en level."""
-    await callback_query.answer('Уровень английского изменен.')
+    await WaitEnLevelService(callback_query=callback_query, state=state).do()
 
 
 @dispatcher.callback_query_handler(state=State.wait_en_level.value)
