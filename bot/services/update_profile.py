@@ -1,5 +1,4 @@
-from aiogram.dispatcher.storage import FSMContext
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot import bot
 
@@ -9,10 +8,9 @@ class UpdateProfileService:
 
     _start_message_text: str
 
-    def __init__(self, callback_query: CallbackQuery, state: FSMContext, start_message_text: str = ''):
+    def __init__(self, chat_id: int, start_message_text: str = ''):
         """Init."""
-        self._callback_query = callback_query
-        self._state = state
+        self._chat_id = chat_id
         self._start_message_text = start_message_text
 
     async def do(self) -> None:
@@ -27,4 +25,4 @@ class UpdateProfileService:
         keyboard.add(InlineKeyboardButton(text='Change name', callback_data='user_pofile_change_name'))
         keyboard.add(InlineKeyboardButton(text='Close', callback_data='user_profile_close'))
 
-        await bot.send_message(chat_id=self._callback_query.from_user.id, text=message_text, reply_markup=keyboard)
+        await bot.send_message(chat_id=self._chat_id, text=message_text, reply_markup=keyboard)
