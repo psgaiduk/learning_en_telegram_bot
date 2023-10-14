@@ -69,7 +69,7 @@ class WaitEnLevelService:
             data_for_update_user = {
                 'telegram_id': self._telegram_user.telegram_id,
                 'level_en_id': self._new_level,
-                # 'stage': self._stage,
+                'stage': self._stage,
             }
             _, response_status = await client.patch(
                 url=url_update_telegram_user,
