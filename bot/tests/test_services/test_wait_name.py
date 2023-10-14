@@ -11,7 +11,7 @@ from services import WaitNameService
 
 
 class TestWaitNameService:
-    """Tests for RegistrationService."""
+    """Tests for WaitNameService."""
 
     @classmethod
     def setup_class(cls):
