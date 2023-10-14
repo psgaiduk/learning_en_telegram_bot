@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiohttp import ClientResponse
 from pytest import mark
 from unittest.mock import AsyncMock, Mock, patch
 
