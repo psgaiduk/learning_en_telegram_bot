@@ -45,7 +45,7 @@ class WaitEnLevelService:
         self._stage = State.read_book.value
 
         is_update_user = await self._update_user()
-        if not is_update_user:
+        if is_update_user is False:
             return
 
         first_task_complete_text = 'Поздравляю ты выполнил первое задание на день! Теперь ты можешь прочитать первый рассказ.'
@@ -58,7 +58,7 @@ class WaitEnLevelService:
         self._stage = State.update_profile.value
         
         is_update_user = await self._update_user()
-        if not is_update_user:
+        if is_update_user is False:
             return
 
         await UpdateProfileService(chat_id=self._callback_query.from_user.id, start_message_text='🤖 Уровень английского изменён.\n').do()
