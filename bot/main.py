@@ -1,7 +1,7 @@
 from aiogram.utils import executor
 
 from bot import dispatcher
-from commands import *
+from commands import *  # noqa F401, F403
 from middlewears import SetStateMiddleware
 
 

@@ -59,7 +59,7 @@ class WaitEnLevelService:
 
     async def _update_en_level_for_old_client(self) -> None:
         self._stage = State.update_profile.value
-        
+
         is_update_user = await self._update_user()
         if is_update_user is False:
             return

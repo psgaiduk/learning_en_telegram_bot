@@ -2,7 +2,6 @@ import pytest
 
 from aiogram import types
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
-from aiohttp import ClientResponse
 from http import HTTPStatus
 from unittest.mock import Mock, patch
 
@@ -285,7 +284,6 @@ class TestSetStateMiddleware:
         fsm_context_constructor_mock.assert_called_with(storage=self._storage_mock, chat=self._chat, user=self._user)
         expected_state = stage
         fsm_context_mock.set_state.assert_called_with(state=expected_state)
-
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])

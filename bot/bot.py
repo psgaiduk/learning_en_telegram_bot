@@ -8,4 +8,3 @@ bot = Bot(token=settings.telegram_token)
 
 storage = MemoryStorage()
 dispatcher = Dispatcher(bot, storage=storage)
-

@@ -128,7 +128,7 @@ class TestRegistrationService:
         mocked_post.assert_not_called()
 
     @mark.asyncio
-    async def test_not_create_referral_without_link(self):
+    async def test_not_create_referral_without_link_with_message(self):
         self._message.text = '/start 123'
         self._message.answer = AsyncMock()
         self._service = RegistrationService(message=self._message)

@@ -67,5 +67,3 @@ class SetStateMiddleware(BaseMiddleware):
             return State.achievements.value
 
         return self._state
-
-

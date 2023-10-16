@@ -42,7 +42,7 @@ class WaitNameService:
             await self._update_name_for_new_client()
         else:
             await self._update_name_for_old_client()
-        
+
     async def _update_name_for_new_client(self):
         self._stage = State.wait_en_level.value
         self._message_text = (
