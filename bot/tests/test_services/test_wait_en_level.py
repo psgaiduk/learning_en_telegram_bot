@@ -6,7 +6,7 @@ from unittest.mock import ANY, AsyncMock, Mock, patch, call
 
 from bot import bot
 from choices import State
-from dto import HeroLevelDTOModel, TelegramUserDTOModel
+from dto import TelegramUserDTOModel
 from settings import settings
 from services import WaitEnLevelService, UpdateProfileService
 
@@ -19,7 +19,6 @@ class TestWaitEnLevelService:
         cls._callback = Mock()
         cls._post_method_target = 'context_managers.aio_http_client.AsyncHttpClient.post'
         cls._state = Mock()
-
 
     @mark.asyncio
     async def test_get_user(self, mocker):
@@ -214,7 +213,7 @@ class TestWaitEnLevelService:
             mock_send_message.assert_not_awaited()
 
     @mark.parametrize('english_level_id, callback_data', [
-        (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6'),
+        (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6')
     ])
     @mark.asyncio
     async def test_update_user(self, mocker, english_level_id, callback_data):
