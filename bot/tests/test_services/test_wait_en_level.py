@@ -212,3 +212,42 @@ class TestWaitEnLevelService:
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await self._service._update_en_level_for_new_client()
             mock_send_message.assert_not_awaited()
+
+    @mark.parametrize('english_level_id, callback_data', [
+        (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6'),
+    ])
+    @mark.asyncio
+    async def test_update_user(self, mocker, english_level_id, callback_data):
+        chat_id = 12345
+        self._callback.data = callback_data
+        self._callback.from_user.id = chat_id
+        self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
+
+        telegram_user_model = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='PreviousStage',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        self._service._telegram_user = telegram_user_model
+        self._service._stage = 'Stage'
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.patch', return_value=({}, HTTPStatus.OK)) as mocked_post:
+            return_value = await self._service._update_user()
+
+        mocked_post.assert_awaited_once_with(
+            url=f'{settings.api_url}/v1/telegram_user/{telegram_user_model.telegram_id}',
+            headers=settings.api_headers,
+            json={
+                'telegram_id': telegram_user_model.telegram_id,
+                'level_en_id': english_level_id,
+                'stage': 'Stage',
+            }
+        )
+
+        assert return_value is True
