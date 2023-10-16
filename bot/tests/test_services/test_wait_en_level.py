@@ -189,3 +189,26 @@ class TestWaitEnLevelService:
             assert isinstance(reply_markup, ReplyKeyboardMarkup)
             assert reply_markup.resize_keyboard is True
             assert reply_markup.keyboard == [[KeyboardButton(text='Read')]]
+
+    @mark.asyncio
+    async def test_update_en_level_for_new_client_with_mistake(self):
+        chat_id = 12345
+        self._callback.data = 'level_en_1'
+        self._callback.from_user.id = chat_id
+        self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
+        self._service._update_user = AsyncMock(return_value=False)
+
+        self._service._telegram_user = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+            await self._service._update_en_level_for_new_client()
+            mock_send_message.assert_not_awaited()
