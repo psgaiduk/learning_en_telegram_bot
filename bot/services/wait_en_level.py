@@ -18,6 +18,8 @@ class WaitEnLevelService:
     _telegram_user: Optional[TelegramUserDTOModel]
     _stage: str
     _new_level: int
+    _start_message_text: str
+    _chat_id: int
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext):
         """Init."""
@@ -25,6 +27,7 @@ class WaitEnLevelService:
         self._state = state
         self._telegram_user = None
         self._new_level = int(self._callback_query.data.split('_')[-1])
+        self._chat_id = self._callback_query.from_user.id
 
     async def do(self) -> None:
         """Wait en level."""
@@ -61,7 +64,9 @@ class WaitEnLevelService:
         if is_update_user is False:
             return
 
-        await UpdateProfileService(chat_id=self._callback_query.from_user.id, start_message_text='🤖 Уровень английского изменён.\n').do()
+        self._start_message_text = '🤖 Уровень английского изменён.\n'
+
+        await UpdateProfileService(chat_id=self._chat_id, start_message_text=self._start_message_text).do()
 
     async def _update_user(self) -> bool:
         async with http_client() as client:
