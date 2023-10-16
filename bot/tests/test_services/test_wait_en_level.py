@@ -122,3 +122,34 @@ class TestWaitEnLevelService:
         self._service._update_user.assert_awaited_once()
 
         update_profile_service_do_mock.assert_awaited_once()
+
+    @mark.asyncio
+    async def test_update_en_level_for_old_client_with_mistake(self):
+        chat_id = 12345
+        self._callback.data = 'level_en_1'
+        self._callback.from_user.id = chat_id
+        self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
+        self._service._update_user = AsyncMock(return_value=False)
+
+        self._service._telegram_user = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        update_profile_service_do_mock = AsyncMock()
+        with patch.object(UpdateProfileService, 'do', update_profile_service_do_mock):
+            await self._service._update_en_level_for_old_client()
+
+        assert self._service._stage == State.update_profile.value
+        assert self._service._chat_id == chat_id
+        assert not hasattr(self._service, '_start_message_text')
+
+        self._service._update_user.assert_awaited_once()
+
+        update_profile_service_do_mock.assert_not_awaited()
