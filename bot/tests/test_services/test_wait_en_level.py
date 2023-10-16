@@ -251,3 +251,45 @@ class TestWaitEnLevelService:
         )
 
         assert return_value is True
+
+    @mark.asyncio
+    async def test_update_user_with_mistake(self, mocker):
+        chat_id = 12345
+        self._callback.data = 'level_en_1'
+        self._callback.from_user.id = chat_id
+        self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
+
+        telegram_user_model = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='PreviousStage',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        self._service._telegram_user = telegram_user_model
+        self._service._stage = 'Stage'
+
+        with patch('context_managers.aio_http_client.AsyncHttpClient.patch', return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_post:
+            with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+                return_value = await self._service._update_user()
+
+        mocked_post.assert_awaited_once_with(
+            url=f'{settings.api_url}/v1/telegram_user/{telegram_user_model.telegram_id}',
+            headers=settings.api_headers,
+            json={
+                'telegram_id': telegram_user_model.telegram_id,
+                'level_en_id': 1,
+                'stage': 'Stage',
+            }
+        )
+
+        assert return_value is False
+
+        expected_calls = [
+            call(chat_id=chat_id, text='🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'),
+        ]
+        mock_send_message.assert_has_calls(expected_calls, any_order=True)
