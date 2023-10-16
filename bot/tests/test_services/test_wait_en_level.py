@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from pytest import mark
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import ANY, AsyncMock, Mock, patch, call
 
+from bot import bot
 from choices import State
 from dto import HeroLevelDTOModel, TelegramUserDTOModel
 from settings import settings
@@ -153,3 +154,38 @@ class TestWaitEnLevelService:
         self._service._update_user.assert_awaited_once()
 
         update_profile_service_do_mock.assert_not_awaited()
+
+    @mark.asyncio
+    async def test_update_en_level_for_new_client(self):
+        chat_id = 12345
+        self._callback.data = 'level_en_1'
+        self._callback.from_user.id = chat_id
+        self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
+        self._service._update_user = AsyncMock(return_value=True)
+
+        self._service._telegram_user = TelegramUserDTOModel(
+            telegram_id=12345,
+            user_name='UserName',
+            experience=10,
+            previous_stage='',
+            stage='CurrentStage',
+            main_language=None,
+            level_en=None,
+            hero_level=None,
+        )
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+            await self._service._update_en_level_for_new_client()
+
+            expected_calls = [
+                call(chat_id=chat_id, text='Поздравляю ты выполнил первое задание на день! Теперь ты можешь прочитать первый рассказ.'),
+                call(chat_id=chat_id, text='Теперь ты готов к изучению английского языка. Для начала прочитай первый рассказ.', reply_markup=ANY)
+            ]
+            mock_send_message.assert_has_calls(expected_calls, any_order=True)
+
+            reply_markup_call = mock_send_message.call_args_list[1]
+            reply_markup = reply_markup_call.kwargs['reply_markup']
+
+            assert isinstance(reply_markup, ReplyKeyboardMarkup)
+            assert reply_markup.resize_keyboard is True
+            assert reply_markup.keyboard == [[KeyboardButton(text='Read')]]
