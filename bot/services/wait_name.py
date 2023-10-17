@@ -7,6 +7,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from choices import State
 from context_managers import http_client
 from dto.telegram_user import TelegramUserDTOModel
+from services.update_profile import UpdateProfileService
 from settings import settings
 
 
@@ -25,13 +26,12 @@ class WaitNameService:
         self._telegram_user = None
         self._new_name = self._message.text.title()
         self._inline_kb = InlineKeyboardMarkup()
+        self._chat_id = self._message.from_user.id
 
     async def do(self) -> None:
         """Wait name."""
         await self._get_user()
         await self._get_message_text()
-        await self._update_user()
-        await self._message.answer(text=self._message_text, reply_markup=self._inline_kb)
 
     async def _get_user(self):
         data = await self._state.get_data()
@@ -45,6 +45,11 @@ class WaitNameService:
 
     async def _update_name_for_new_client(self):
         self._stage = State.wait_en_level.value
+        
+        is_update_user = await self._update_user()
+        if is_update_user is False:
+            return
+        
         self._message_text = (
             f'Имя профиля изменено на {self._new_name}.\n'
             f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
@@ -64,14 +69,21 @@ class WaitNameService:
             if self._telegram_user.hero_level.order > button['hero_level']:
                 self._inline_kb.add(InlineKeyboardButton(text=button['text'], callback_data=button['callback_data']))
 
+        await self._message.answer(text=self._message_text, reply_markup=self._inline_kb)
+
     async def _update_name_for_old_client(self):
         self._stage = State.update_profile.value
-        self._inline_kb.add(InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level'))
-        self._inline_kb.add(InlineKeyboardButton(text='Change name', callback_data='user_pofile_change_name'))
-        self._inline_kb.add(InlineKeyboardButton(text='Close', callback_data='user_profile_close'))
-        self._message_text = f'Имя профиля изменено на {self._new_name}.\nВыберите дальнейшее действие:'
 
-    async def _update_user(self):
+        is_update_user = await self._update_user()
+        if is_update_user is False:
+            return
+
+        self._message_text = '🤖 Имя обновлено.\n'
+
+        await UpdateProfileService(chat_id=self._chat_id, start_message_text=self._message_text).do()
+
+    async def _update_user(self) -> bool:
+
         async with http_client() as client:
             url_update_telegram_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_user.telegram_id}'
             data_for_update_user = {
@@ -86,5 +98,8 @@ class WaitNameService:
             )
 
         if response_status != HTTPStatus.OK:
-            self._message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
-            self._inline_kb = None
+            message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+            await self._message.answer(text=message_text)
+            return False
+
+        return True
