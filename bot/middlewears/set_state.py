@@ -14,7 +14,7 @@ class SetStateMiddleware(BaseMiddleware):
     """Set state middleware."""
 
     _state: str
-    _message: types.Message
+    _message_text: str
 
     def __init__(self, dispatcher: aiogram_dispatcher) -> None:
         """Init."""
@@ -46,11 +46,12 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
         """Set state for message."""
-        self._message = message
+        self._message_text = message.text
         await self.set_state_data(message.from_user.id, message.chat.id)
 
     async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
         """Set state for callback_query."""
+        self._message_text = callback_query.data
         await self.set_state_data(callback_query.from_user.id, callback_query.message.chat.id)
 
     async def get_real_state(self) -> str:
@@ -58,11 +59,11 @@ class SetStateMiddleware(BaseMiddleware):
         if self._state in {State.check_words.value, State.registration.value, State.grammar.value}:
             return self._state
 
-        if self._message.text == '/profile':
+        if self._message_text == '/profile':
             return State.update_profile.value
 
-        if self._state != State.update_profile.value and self._message.text in {'/records', '/achievements'}:
-            if self._message.text == '/records':
+        if self._state != State.update_profile.value and self._message_text in {'/records', '/achievements'}:
+            if self._message_text == '/records':
                 return State.records.value
             return State.achievements.value
 
