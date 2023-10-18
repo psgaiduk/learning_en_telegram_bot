@@ -22,7 +22,7 @@ class UpdateProfileService:
         )
         keyboard = InlineKeyboardMarkup()
         keyboard.add(InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level'))
-        keyboard.add(InlineKeyboardButton(text='Change name', callback_data='user_pofile_change_name'))
+        keyboard.add(InlineKeyboardButton(text='Change name', callback_data='user_profile_change_name'))
         keyboard.add(InlineKeyboardButton(text='Close', callback_data='user_profile_close'))
 
         await bot.send_message(chat_id=self._chat_id, text=message_text, reply_markup=keyboard)
