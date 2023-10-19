@@ -1,8 +1,11 @@
+from http import HTTPStatus
+
 from context_managers import http_client
+from bot import bot
 from settings import settings
 
 
-async def update_user_state(telegram_id: int, state: str) -> int:
+async def update_user_state(telegram_id: int, state: str) -> bool:
     """
     Update telegram user status.
 
@@ -22,4 +25,9 @@ async def update_user_state(telegram_id: int, state: str) -> int:
             json=data_for_update_user,
         )
 
-    return response_status
+    if response_status != HTTPStatus.OK:
+        message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+        await bot.send_message(chat_id=telegram_id, text=message_text)
+        return False
+
+    return True
