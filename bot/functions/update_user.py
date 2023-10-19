@@ -5,24 +5,21 @@ from bot import bot
 from settings import settings
 
 
-async def update_user_state(telegram_id: int, state: str) -> bool:
+async def update_user(telegram_id: int, params_for_update: dict) -> bool:
     """
     Update telegram user status.
 
     :param telegram_id: telegram id.
-    :param state: new state for user.
+    :param params_for_update: Dict with params for update user by api.
     :return:
     """
     async with http_client() as client:
         url_update_telegram_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
-        data_for_update_user = {
-            'telegram_id': telegram_id,
-            'stage': state,
-        }
+
         _, response_status = await client.patch(
             url=url_update_telegram_user,
             headers=settings.api_headers,
-            json=data_for_update_user,
+            json=params_for_update,
         )
 
     if response_status != HTTPStatus.OK:

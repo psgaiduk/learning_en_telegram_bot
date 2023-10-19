@@ -5,7 +5,7 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot, dispatcher
 from choices import State
 from dto.telegram_user import TelegramUserDTOModel
-from functions import create_keyboard_for_en_levels, update_user_state
+from functions import create_keyboard_for_en_levels, update_user
 from services import UpdateProfileService
 
 
@@ -13,7 +13,12 @@ from services import UpdateProfileService
 async def handle_update_profile(message: Message):
     """Handle update profile."""
 
-    is_update = await update_user_state(telegram_id=message.from_user.id, state=State.update_profile.value)
+    params_for_update_user = {
+        'telegram_id': message.from_user.id,
+        'stage': State.update_profile.value,
+    }
+
+    is_update = await update_user(telegram_id=message.from_user.id, params_for_update=params_for_update_user)
 
     if is_update is False:
         return
@@ -25,7 +30,12 @@ async def handle_update_profile(message: Message):
 async def handle_update_profile_name(callback_query: CallbackQuery):
     """Handle update profile."""
 
-    is_update = await update_user_state(telegram_id=callback_query.from_user.id, state=State.wait_name.value)
+    params_for_update_user = {
+        'telegram_id': callback_query.from_user.id,
+        'stage': State.wait_name.value,
+    }
+
+    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
 
     if is_update is False:
         return
@@ -38,7 +48,12 @@ async def handle_update_profile_name(callback_query: CallbackQuery):
 async def handle_update_profile_en_level(callback_query: CallbackQuery, state: FSMContext):
     """Handle update profile."""
 
-    is_update = await update_user_state(telegram_id=callback_query.from_user.id, state=State.wait_en_level.value)
+    params_for_update_user = {
+        'telegram_id': callback_query.from_user.id,
+        'stage': State.wait_en_level.value,
+    }
+
+    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
 
     if is_update is False:
         return
