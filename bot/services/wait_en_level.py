@@ -20,6 +20,7 @@ class WaitEnLevelService:
     _new_level: int
     _start_message_text: str
     _chat_id: int
+    _previous_stage: str
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext):
         """Init."""
@@ -37,6 +38,7 @@ class WaitEnLevelService:
     async def _get_user(self) -> None:
         data = await self._state.get_data()
         self._telegram_user = data['user']
+        self._previous_stage = self._telegram_user.previous_stage
 
     async def _get_message_text(self) -> None:
         if self._telegram_user.previous_stage == State.new_client.value:
@@ -46,6 +48,7 @@ class WaitEnLevelService:
 
     async def _update_en_level_for_new_client(self) -> None:
         self._stage = State.read_book.value
+        self._previous_stage = ''
 
         is_update_user = await self._update_user()
         if is_update_user is False:
@@ -75,6 +78,7 @@ class WaitEnLevelService:
                 'telegram_id': self._telegram_user.telegram_id,
                 'level_en_id': self._new_level,
                 'stage': self._stage,
+                'previous_stage': self._previous_stage,
             }
             _, response_status = await client.patch(
                 url=url_update_telegram_user,

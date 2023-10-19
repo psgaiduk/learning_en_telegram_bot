@@ -235,6 +235,7 @@ class TestWaitEnLevelService:
 
         self._service._telegram_user = telegram_user_model
         self._service._stage = 'Stage'
+        self._service._previous_stage = 'CurrentStage'
 
         with patch('context_managers.aio_http_client.AsyncHttpClient.patch', return_value=({}, HTTPStatus.OK)) as mocked_post:
             return_value = await self._service._update_user()
@@ -246,6 +247,7 @@ class TestWaitEnLevelService:
                 'telegram_id': telegram_user_model.telegram_id,
                 'level_en_id': english_level_id,
                 'stage': 'Stage',
+                'previous_stage': 'CurrentStage',
             }
         )
 
@@ -271,6 +273,7 @@ class TestWaitEnLevelService:
 
         self._service._telegram_user = telegram_user_model
         self._service._stage = 'Stage'
+        self._service._previous_stage = 'CurrentStage'
 
         with patch('context_managers.aio_http_client.AsyncHttpClient.patch', return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_post:
             with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
@@ -283,6 +286,7 @@ class TestWaitEnLevelService:
                 'telegram_id': telegram_user_model.telegram_id,
                 'level_en_id': 1,
                 'stage': 'Stage',
+                'previous_stage': 'CurrentStage',
             }
         )
 
