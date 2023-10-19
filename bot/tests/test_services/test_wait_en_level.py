@@ -43,6 +43,7 @@ class TestWaitEnLevelService:
 
         await self._service._get_user()
         assert self._service._telegram_user == telegram_user_model
+        assert self._service._previous_stage == self._service._telegram_user.previous_stage
         self._state.get_data.assert_awaited_once()
 
     @mark.asyncio
@@ -188,6 +189,9 @@ class TestWaitEnLevelService:
             assert isinstance(reply_markup, ReplyKeyboardMarkup)
             assert reply_markup.resize_keyboard is True
             assert reply_markup.keyboard == [[KeyboardButton(text='Read')]]
+            
+            assert self._service._stage == State.read_book.value
+            assert self._service._previous_stage == ''
 
     @mark.asyncio
     async def test_update_en_level_for_new_client_with_mistake(self):
@@ -211,6 +215,9 @@ class TestWaitEnLevelService:
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await self._service._update_en_level_for_new_client()
             mock_send_message.assert_not_awaited()
+
+            assert self._service._stage == State.read_book.value
+            assert self._service._previous_stage == ''
 
     @mark.parametrize('english_level_id, callback_data', [
         (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6')
