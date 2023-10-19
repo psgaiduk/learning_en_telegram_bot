@@ -2,11 +2,12 @@ from http import HTTPStatus
 from typing import Optional
 
 from aiogram.dispatcher.storage import FSMContext
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, InlineKeyboardMarkup
 
 from choices import State
 from context_managers import http_client
 from dto.telegram_user import TelegramUserDTOModel
+from functions import create_keyboard_for_en_levels
 from services.update_profile import UpdateProfileService
 from settings import settings
 
@@ -15,9 +16,9 @@ class WaitNameService:
     """Wait name from user."""
 
     _telegram_user: Optional[TelegramUserDTOModel]
-    _inline_kd: InlineKeyboardMarkup
     _stage: str
     _message_text: str
+    _inline_kb: InlineKeyboardMarkup()
 
     def __init__(self, message: Message, state: FSMContext):
         """Init."""
@@ -55,19 +56,8 @@ class WaitNameService:
             f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
             f'но с увлечинием уровня, будут открываться новые уровни знаний.'
         )
-        self._inline_kb.add(InlineKeyboardButton(text='A1 - Beginner', callback_data='level_en_1'))
-        self._inline_kb.add(InlineKeyboardButton(text='A2 - Elementary', callback_data='level_en_2'))
 
-        level_buttons = [
-            {'hero_level': 10, 'text': 'B1 - Pre-intermediate', 'callback_data': 'level_en_3'},
-            {'hero_level': 25, 'text': 'B2 - Intermediate', 'callback_data': 'level_en_4'},
-            {'hero_level': 50, 'text': 'C1 - Upper-intermediate', 'callback_data': 'level_en_5'},
-            {'hero_level': 80, 'text': 'C2 - Advanced', 'callback_data': 'level_en_6'},
-        ]
-
-        for button in level_buttons:
-            if self._telegram_user.hero_level.order > button['hero_level']:
-                self._inline_kb.add(InlineKeyboardButton(text=button['text'], callback_data=button['callback_data']))
+        self._inline_kb = await create_keyboard_for_en_levels(hero_level=self._telegram_user.hero_level.order)
 
         await self._message.answer(text=self._message_text, reply_markup=self._inline_kb)
 
