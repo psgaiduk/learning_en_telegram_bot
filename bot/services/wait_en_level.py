@@ -17,7 +17,6 @@ class WaitEnLevelService:
     _new_level: int
     _start_message_text: str
     _chat_id: int
-    _data_for_update_user: dict
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext):
         """Init."""
@@ -44,14 +43,14 @@ class WaitEnLevelService:
 
     async def _update_en_level_for_new_client(self) -> None:
 
-        self._data_for_update_user = {
+        data_for_update_user = {
             'telegram_id': self._chat_id,
             'level_en_id': self._new_level,
             'stage': State.read_book.value,
             'previous_stage': '',
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=self._data_for_update_user)
+        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
         if is_update_user is False:
             return
 
@@ -63,16 +62,17 @@ class WaitEnLevelService:
 
     async def _update_en_level_for_old_client(self) -> None:
 
-        self._data_for_update_user = {
+        data_for_update_user = {
             'telegram_id': self._telegram_user.telegram_id,
             'level_en_id': self._new_level,
             'stage': State.update_profile.value,
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=self._data_for_update_user)
+        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
         if is_update_user is False:
             return
 
         self._start_message_text = '🤖 Уровень английского изменён.\n'
 
-        await UpdateProfileService(chat_id=self._chat_id, start_message_text=self._start_message_text).do()
+        update_profile = UpdateProfileService(chat_id=self._chat_id, start_message_text=self._start_message_text)
+        await update_profile.do()

@@ -94,10 +94,13 @@ class TestWaitEnLevelService:
     @mark.parametrize('english_level_id, callback_data', [
         (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6')
     ])
+    # @patch('services.wait_en_level.UpdateProfileService.do', new_callable=AsyncMock)
+    @patch('services.wait_en_level.UpdateProfileService')
     @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_update_en_level_for_old_client(self, mock_update_user, english_level_id, callback_data):
+    async def test_update_en_level_for_old_client(self, mock_update_user, mock_update_profile, english_level_id, callback_data):
         mock_update_user.side_effect = [True]
+
         chat_id = 12345
         start_message_text = '🤖 Уровень английского изменён.\n'
         self._callback.data = callback_data
@@ -115,16 +118,17 @@ class TestWaitEnLevelService:
             hero_level=None,
         )
 
-        update_profile_service_do_mock = AsyncMock()
-        with patch.object(UpdateProfileService, 'do', update_profile_service_do_mock):
-            await self._service._update_en_level_for_old_client()
+        mock_update_profile.return_value.do = AsyncMock()
+
+        await self._service._update_en_level_for_old_client()
 
         assert self._service._start_message_text == start_message_text
         assert self._service._chat_id == chat_id
 
-        update_profile_service_do_mock.assert_awaited_once()
+        mock_update_profile.assert_called_once_with(chat_id=chat_id, start_message_text=start_message_text)
+        mock_update_profile.return_value.do.assert_awaited_once()
 
-        assert self._service._data_for_update_user == {
+        expected_data_for_update_user = {
             'telegram_id': chat_id,
             'level_en_id': english_level_id,
             'stage': State.update_profile.value,
@@ -132,12 +136,13 @@ class TestWaitEnLevelService:
 
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
-            params_for_update=self._service._data_for_update_user,
+            params_for_update=expected_data_for_update_user,
         )
 
+    @patch('services.wait_en_level.UpdateProfileService.do', new_callable=AsyncMock)
     @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_update_en_level_for_old_client_with_mistake(self, mock_update_user):
+    async def test_update_en_level_for_old_client_with_mistake(self, mock_update_user, mock_update_profile):
         mock_update_user.side_effect = [False]
         chat_id = 12345
         self._callback.data = 'level_en_1'
@@ -155,16 +160,14 @@ class TestWaitEnLevelService:
             hero_level=None,
         )
 
-        update_profile_service_do_mock = AsyncMock()
-        with patch.object(UpdateProfileService, 'do', update_profile_service_do_mock):
-            await self._service._update_en_level_for_old_client()
+        await self._service._update_en_level_for_old_client()
 
         assert self._service._chat_id == chat_id
         assert not hasattr(self._service, '_start_message_text')
 
-        update_profile_service_do_mock.assert_not_awaited()
+        mock_update_profile.assert_not_awaited()
 
-        assert self._service._data_for_update_user == {
+        expected_data_for_update_user = {
             'telegram_id': chat_id,
             'level_en_id': 1,
             'stage': State.update_profile.value,
@@ -172,7 +175,7 @@ class TestWaitEnLevelService:
 
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
-            params_for_update=self._service._data_for_update_user,
+            params_for_update=expected_data_for_update_user,
         )
 
     @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
@@ -212,7 +215,7 @@ class TestWaitEnLevelService:
             assert reply_markup.resize_keyboard is True
             assert reply_markup.keyboard == [[KeyboardButton(text='Read')]]
 
-            assert self._service._data_for_update_user == {
+            expected_data_for_update_user = {
                 'telegram_id': chat_id,
                 'level_en_id': 1,
                 'stage': State.read_book.value,
@@ -221,7 +224,7 @@ class TestWaitEnLevelService:
 
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
-                params_for_update=self._service._data_for_update_user,
+                params_for_update=expected_data_for_update_user,
             )
 
     @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
@@ -248,7 +251,7 @@ class TestWaitEnLevelService:
             await self._service._update_en_level_for_new_client()
             mock_send_message.assert_not_awaited()
 
-            assert self._service._data_for_update_user == {
+            expected_data_for_update_user = {
                 'telegram_id': chat_id,
                 'level_en_id': 1,
                 'stage': State.read_book.value,
@@ -257,5 +260,5 @@ class TestWaitEnLevelService:
 
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
-                params_for_update=self._service._data_for_update_user,
+                params_for_update=expected_data_for_update_user,
             )
