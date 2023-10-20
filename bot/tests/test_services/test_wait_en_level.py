@@ -94,7 +94,6 @@ class TestWaitEnLevelService:
     @mark.parametrize('english_level_id, callback_data', [
         (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6')
     ])
-    # @patch('services.wait_en_level.UpdateProfileService.do', new_callable=AsyncMock)
     @patch('services.wait_en_level.UpdateProfileService')
     @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
     @mark.asyncio
