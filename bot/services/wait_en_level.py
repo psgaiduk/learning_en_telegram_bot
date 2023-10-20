@@ -1,4 +1,3 @@
-from http import HTTPStatus
 from typing import Optional
 
 from aiogram.dispatcher.storage import FSMContext
@@ -6,21 +5,19 @@ from aiogram.types import CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
 
 from bot import bot
 from choices import State
-from context_managers import http_client
 from dto.telegram_user import TelegramUserDTOModel
+from functions import update_user
 from services.update_profile import UpdateProfileService
-from settings import settings
 
 
 class WaitEnLevelService:
     """Wait en level from user."""
 
     _telegram_user: Optional[TelegramUserDTOModel]
-    _stage: str
     _new_level: int
     _start_message_text: str
     _chat_id: int
-    _previous_stage: str
+    _data_for_update_user: dict
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext):
         """Init."""
@@ -38,7 +35,6 @@ class WaitEnLevelService:
     async def _get_user(self) -> None:
         data = await self._state.get_data()
         self._telegram_user = data['user']
-        self._previous_stage = self._telegram_user.previous_stage
 
     async def _get_message_text(self) -> None:
         if self._telegram_user.previous_stage == State.new_client.value:
@@ -47,10 +43,15 @@ class WaitEnLevelService:
             await self._update_en_level_for_old_client()
 
     async def _update_en_level_for_new_client(self) -> None:
-        self._stage = State.read_book.value
-        self._previous_stage = ''
 
-        is_update_user = await self._update_user()
+        self._data_for_update_user = {
+            'telegram_id': self._chat_id,
+            'level_en_id': self._new_level,
+            'stage': State.read_book.value,
+            'previous_stage': '',
+        }
+
+        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=self._data_for_update_user)
         if is_update_user is False:
             return
 
@@ -61,34 +62,17 @@ class WaitEnLevelService:
         await bot.send_message(chat_id=self._callback_query.from_user.id, text=message_text, reply_markup=keyboard)
 
     async def _update_en_level_for_old_client(self) -> None:
-        self._stage = State.update_profile.value
 
-        is_update_user = await self._update_user()
+        self._data_for_update_user = {
+            'telegram_id': self._telegram_user.telegram_id,
+            'level_en_id': self._new_level,
+            'stage': State.update_profile.value,
+        }
+
+        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=self._data_for_update_user)
         if is_update_user is False:
             return
 
         self._start_message_text = '🤖 Уровень английского изменён.\n'
 
         await UpdateProfileService(chat_id=self._chat_id, start_message_text=self._start_message_text).do()
-
-    async def _update_user(self) -> bool:
-        async with http_client() as client:
-            url_update_telegram_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_user.telegram_id}'
-            data_for_update_user = {
-                'telegram_id': self._telegram_user.telegram_id,
-                'level_en_id': self._new_level,
-                'stage': self._stage,
-                'previous_stage': self._previous_stage,
-            }
-            _, response_status = await client.patch(
-                url=url_update_telegram_user,
-                headers=settings.api_headers,
-                json=data_for_update_user,
-            )
-
-        if response_status != HTTPStatus.OK:
-            message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
-            await bot.send_message(chat_id=self._callback_query.from_user.id, text=message_text)
-            return False
-
-        return True
