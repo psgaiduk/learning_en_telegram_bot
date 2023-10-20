@@ -122,7 +122,6 @@ class TestWaitEnLevelService:
 
         await self._service._update_en_level_for_old_client()
 
-        assert self._service._start_message_text == start_message_text
         assert self._service._chat_id == chat_id
 
         mock_update_profile.assert_called_once_with(chat_id=chat_id, start_message_text=start_message_text)
@@ -161,9 +160,6 @@ class TestWaitEnLevelService:
         )
 
         await self._service._update_en_level_for_old_client()
-
-        assert self._service._chat_id == chat_id
-        assert not hasattr(self._service, '_start_message_text')
 
         mock_update_profile.assert_not_awaited()
 

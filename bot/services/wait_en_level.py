@@ -15,7 +15,6 @@ class WaitEnLevelService:
 
     _telegram_user: Optional[TelegramUserDTOModel]
     _new_level: int
-    _start_message_text: str
     _chat_id: int
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext):
@@ -72,7 +71,7 @@ class WaitEnLevelService:
         if is_update_user is False:
             return
 
-        self._start_message_text = '🤖 Уровень английского изменён.\n'
+        start_message_text = '🤖 Уровень английского изменён.\n'
 
-        update_profile = UpdateProfileService(chat_id=self._chat_id, start_message_text=self._start_message_text)
+        update_profile = UpdateProfileService(chat_id=self._chat_id, start_message_text=start_message_text)
         await update_profile.do()
