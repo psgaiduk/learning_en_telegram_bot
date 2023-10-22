@@ -1,13 +1,10 @@
-from http import HTTPStatus
-
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytest import mark
 from unittest.mock import AsyncMock, Mock, patch
 
 from choices import State
 from dto import HeroLevelDTOModel, TelegramUserDTOModel
-from settings import settings
-from services import WaitNameService, UpdateProfileService
+from services import WaitNameService
 
 
 class TestWaitNameService:
