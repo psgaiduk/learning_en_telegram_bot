@@ -1,6 +1,5 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytest import mark
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import ANY, AsyncMock, Mock, patch
 
 from choices import State
 from dto import HeroLevelDTOModel, TelegramUserDTOModel
@@ -38,12 +37,11 @@ class TestWaitNameService:
         assert self._service._telegram_user == telegram_user_model
         self._state.get_data.assert_awaited_once()
 
-    @mark.parametrize('hero_level_order, buttons_count', [
-        (0, 2), (10, 2), (11, 3), (25, 3), (26, 4), (30, 4), (50, 4), (51, 5), (60, 5), (80, 5), (81, 6), (90, 6),
-    ])
+    @mark.parametrize('hero_level_order', [1, 2, 3, 4, 5, 6])
+    @patch('services.wait_name.create_keyboard_for_en_levels', new_callable=AsyncMock)
     @patch('services.wait_name.update_user', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_update_name_for_new_client(self, mock_update_user, hero_level_order, buttons_count):
+    async def test_update_name_for_new_client(self, mock_update_user, mock_create_keyboard_for_en_levels, hero_level_order):
         mock_update_user.side_effect = [True]
         chat_id = 12345
         self._message.text = 'NewName'
@@ -84,22 +82,11 @@ class TestWaitNameService:
             'будут открываться новые уровни знаний.'
         )
 
-        expected_buttons = [
-            [InlineKeyboardButton(text='A1 - Beginner', callback_data='level_en_1')],
-            [InlineKeyboardButton(text='A2 - Elementary', callback_data='level_en_2')],
-            [InlineKeyboardButton(text='B1 - Pre-intermediate', callback_data='level_en_3')],
-            [InlineKeyboardButton(text='B2 - Intermediate', callback_data='level_en_4')],
-            [InlineKeyboardButton(text='C1 - Upper-intermediate', callback_data='level_en_5')],
-            [InlineKeyboardButton(text='C2 - Advanced', callback_data='level_en_6')],
-        ]
-
-        inline_kd = InlineKeyboardMarkup()
-        for button in expected_buttons[:buttons_count]:
-            inline_kd.add(*button)
+        mock_create_keyboard_for_en_levels.assert_called_once_with(hero_level=hero_level_order)
 
         self._message.answer.assert_called_with(
             text=message_text,
-            reply_markup=inline_kd
+            reply_markup=ANY,
         )
 
         expected_data_for_update_user = {
@@ -113,12 +100,11 @@ class TestWaitNameService:
             params_for_update=expected_data_for_update_user,
         )
 
-    @mark.parametrize('hero_level_order, buttons_count', [
-        (0, 2), (10, 2), (11, 3), (25, 3), (26, 4), (30, 4), (50, 4), (51, 5), (60, 5), (80, 5), (81, 6), (90, 6),
-    ])
+    @mark.parametrize('hero_level_order', [1, 2, 3, 4, 5, 6])
+    @patch('services.wait_name.create_keyboard_for_en_levels', new_callable=AsyncMock)
     @patch('services.wait_name.update_user', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_update_name_for_new_client_mistake(self, mock_update_user, hero_level_order, buttons_count):
+    async def test_update_name_for_new_client_mistake(self, mock_update_user, mock_create_keyboard_for_en_levels, hero_level_order):
         mock_update_user.side_effect = [False]
 
         self._message.text = 'NewName'
@@ -165,6 +151,7 @@ class TestWaitNameService:
         )
 
         self._message.answer.assert_not_awaited()
+        mock_create_keyboard_for_en_levels.assert_not_awaited()
 
     @patch('services.wait_name.UpdateProfileService')
     @patch('services.wait_name.update_user', new_callable=AsyncMock)
