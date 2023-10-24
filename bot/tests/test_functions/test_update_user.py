@@ -16,17 +16,21 @@ class TestUpdateUserFunction:
         cls._telegram_id = 12345
         cls._patch_method_target = 'context_managers.aio_http_client.AsyncHttpClient.patch'
 
+    @mark.parametrize('params_for_update', [
+        {'stage': 'WAIT_NAME'},
+        {'stage': 'WAIT_LEVEL'},
+    ])
     @mark.asyncio
-    async def test_successful_update(self):
+    async def test_successful_update(self, params_for_update):
 
         with patch(target=self._patch_method_target, return_value=({}, HTTPStatus.OK)) as mocked_patch:
             with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
-                result = await update_user(telegram_id=self._telegram_id, params_for_update={})
+                result = await update_user(telegram_id=self._telegram_id, params_for_update=params_for_update)
 
         mocked_patch.assert_awaited_once_with(
             url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}',
             headers=settings.api_headers,
-            json={}
+            json=params_for_update
         )
 
         mock_send_message.assert_not_awaited()
