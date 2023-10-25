@@ -7,7 +7,7 @@ from commands import handle_registration
 
 
 class TestRegistrationCommand:
-    """Tests for wait en level"""
+    """Tests command registration."""
 
     @patch('commands.registration.RegistrationService')
     @mark.asyncio
