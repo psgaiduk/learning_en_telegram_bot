@@ -1,9 +1,11 @@
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import ANY, AsyncMock, Mock, patch
 
 from pytest import mark
 
+from bot import bot
 from choices import State
-from commands import handle_update_profile
+from commands import handle_update_profile, handle_update_profile_name, handle_update_profile_en_level
+from dto import HeroLevelDTOModel, TelegramUserDTOModel
 
 
 class TestUpdateProfileCommand:
@@ -61,3 +63,162 @@ class TestUpdateProfileCommand:
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
         )
+
+    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_handle_update_profile_name(self, mock_update_user):
+        chat_id = 1
+        callback = Mock()
+        callback.data = 'user_profile_change_name'
+        callback.from_user.id = chat_id
+        mock_update_user.side_effect = [True]
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+            await handle_update_profile_name(callback)
+
+            mock_send_message.assert_called_once_with(
+                chat_id=chat_id,
+                text='Введите ваше имя:'
+            )
+
+            expected_data_for_update_user = {
+                'telegram_id': chat_id,
+                'stage': State.wait_name.value,
+            }
+
+            mock_update_user.assert_awaited_once_with(
+                telegram_id=chat_id,
+                params_for_update=expected_data_for_update_user,
+            )
+
+    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_handle_update_profile_name_with_mistake(self, mock_update_user):
+        chat_id = 1
+        callback = Mock()
+        callback.data = 'user_profile_change_name'
+        callback.from_user.id = chat_id
+        mock_update_user.side_effect = [False]
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+            await handle_update_profile_name(callback)
+
+            mock_send_message.assert_not_awaited()
+
+            expected_data_for_update_user = {
+                'telegram_id': chat_id,
+                'stage': State.wait_name.value,
+            }
+
+            mock_update_user.assert_awaited_once_with(
+                telegram_id=chat_id,
+                params_for_update=expected_data_for_update_user,
+            )
+
+    @patch('commands.update_profile.create_keyboard_for_en_levels', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_handle_update_profile_change_level(self, mock_update_user, mock_create_keyboard_for_en_levels):
+        chat_id = 1
+        callback = Mock()
+        callback.data = 'user_profile_change_en_level'
+        callback.from_user.id = chat_id
+        hero_level_order = 1
+        mock_update_user.side_effect = [True]
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+
+            hero_level = HeroLevelDTOModel(
+                id=1,
+                title='Level',
+                order=hero_level_order,
+                need_experience=0,
+                count_sentences=0,
+                count_games=0,
+            )
+
+            telegram_user_model = TelegramUserDTOModel(
+                telegram_id=chat_id,
+                user_name='UserName',
+                experience=10,
+                previous_stage='PreviousStage',
+                stage='CurrentStage',
+                main_language=None,
+                level_en=None,
+                hero_level=hero_level,
+            )
+
+            state = Mock()
+            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+
+            await handle_update_profile_en_level(callback_query=callback, state=state)
+
+            mock_create_keyboard_for_en_levels.assert_called_once_with(hero_level=hero_level_order)
+
+            mock_send_message.assert_called_once_with(
+                chat_id=chat_id,
+                text='Выберите уровень сложности: ',
+                reply_markup = ANY,
+            )
+
+            expected_data_for_update_user = {
+                'telegram_id': chat_id,
+                'stage': State.wait_en_level.value,
+            }
+
+            mock_update_user.assert_awaited_once_with(
+                telegram_id=chat_id,
+                params_for_update=expected_data_for_update_user,
+            )
+
+    @patch('commands.update_profile.create_keyboard_for_en_levels', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_handle_update_profile_change_level_with_mistake(self, mock_update_user, mock_create_keyboard_for_en_levels):
+        chat_id = 1
+        callback = Mock()
+        callback.data = 'user_profile_change_en_level'
+        callback.from_user.id = chat_id
+        hero_level_order = 1
+        mock_update_user.side_effect = [False]
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+
+            hero_level = HeroLevelDTOModel(
+                id=1,
+                title='Level',
+                order=hero_level_order,
+                need_experience=0,
+                count_sentences=0,
+                count_games=0,
+            )
+
+            telegram_user_model = TelegramUserDTOModel(
+                telegram_id=chat_id,
+                user_name='UserName',
+                experience=10,
+                previous_stage='PreviousStage',
+                stage='CurrentStage',
+                main_language=None,
+                level_en=None,
+                hero_level=hero_level,
+            )
+
+            state = Mock()
+            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+
+            await handle_update_profile_en_level(callback_query=callback, state=state)
+
+            mock_create_keyboard_for_en_levels.assert_not_called()
+
+            mock_send_message.assert_not_awaited()
+
+            expected_data_for_update_user = {
+                'telegram_id': chat_id,
+                'stage': State.wait_en_level.value,
+            }
+
+            mock_update_user.assert_awaited_once_with(
+                telegram_id=chat_id,
+                params_for_update=expected_data_for_update_user,
+            )
