@@ -65,3 +65,25 @@ async def handle_update_profile_en_level(callback_query: CallbackQuery, state: F
 
     message_text = 'Выберите уровень сложности: '
     await bot.send_message(chat_id=callback_query.from_user.id, text=message_text, reply_markup=inline_kb)
+
+
+@dispatcher.callback_query_handler(Text(equals='user_profile_close'), state=State.update_profile.value)
+async def handle_update_profile_close(callback_query: CallbackQuery, state: FSMContext):
+    """Handle update profile close."""
+
+    data = await state.get_data()
+    telegram_user: TelegramUserDTOModel = data['user']
+
+    params_for_update_user = {
+        'telegram_id': callback_query.from_user.id,
+        'stage': telegram_user.previous_stage,
+        'previous_stage': '',
+    }
+
+    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
+
+    if is_update is False:
+        return
+
+    message_text = 'Закрываем настройку профиля.'
+    await bot.send_message(chat_id=callback_query.from_user.id, text=message_text)
