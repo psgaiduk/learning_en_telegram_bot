@@ -1,7 +1,7 @@
 from aiogram.dispatcher.storage import FSMContext
-from aiogram.types import CallbackQuery, Message, ContentType
+from aiogram.types import CallbackQuery, Message
 
-from bot import dispatcher
+from bot import bot, dispatcher
 from choices import State
 from services import WaitEnLevelService
 
@@ -12,13 +12,9 @@ async def handle_wait_en_level(callback_query: CallbackQuery, state: FSMContext)
     await WaitEnLevelService(callback_query=callback_query, state=state).do()
 
 
+@dispatcher.message_handler(state=State.wait_en_level.value)
 @dispatcher.callback_query_handler(state=State.wait_en_level.value)
-async def handle_wait_en_level_incorrect_work(callback_query: CallbackQuery):
-    """Handle incorrect wait en level."""
-    await callback_query.answer('Нужно нажать по одной из кнопок, чтобы изменить уровень английского.')
-
-
-@dispatcher.message_handler(state=State.wait_en_level.value, content_types=ContentType.TEXT)
-async def handle_wait_en_level_incorrect_text_message(message: Message, state: FSMContext):
+async def handle_wait_en_level_incorrect_text(message: Message):
     """Handle incorrect wait en level if was text message."""
-    await message.answer('Нужно нажать по одной из кнопок, чтобы изменить уровень английского.')
+    message_text = 'Нужно нажать по одной из кнопок, чтобы изменить уровень английского.'
+    await bot.send_message(chat_id=message.from_user.id, text=message_text)
