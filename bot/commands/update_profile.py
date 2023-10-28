@@ -85,5 +85,14 @@ async def handle_update_profile_close(callback_query: CallbackQuery, state: FSMC
     if is_update is False:
         return
 
-    message_text = 'Закрываем настройку профиля.'
+    message_text = 'Настройка профиля завершена.'
+    await bot.send_message(chat_id=callback_query.from_user.id, text=message_text)
+
+
+@dispatcher.callback_query_handler(state=State.update_profile.value)
+@dispatcher.message_handler(state=State.update_profile.value)
+async def handle_update_profile_other_data(callback_query: CallbackQuery):
+    """Handle update profile for other data."""
+
+    message_text = 'Нужно кликнуть по кнопке, чтобы продолжить настройку профиля.'
     await bot.send_message(chat_id=callback_query.from_user.id, text=message_text)
