@@ -13,7 +13,7 @@ class TelegramUserDTOModel(BaseModel):
     telegram_id: int
     user_name: str
     experience: int
-    previous_stage: str
+    previous_stage: Optional[str]
     stage: str
 
     main_language: Optional[MainLanguageDTOModel]

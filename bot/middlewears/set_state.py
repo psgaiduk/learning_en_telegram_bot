@@ -7,6 +7,7 @@ from aiogram.dispatcher.storage import FSMContext
 from choices import State
 from context_managers import http_client
 from dto import TelegramUserDTOModel
+from functions import update_user
 from settings import settings
 
 
@@ -15,6 +16,7 @@ class SetStateMiddleware(BaseMiddleware):
 
     _state: str
     _message_text: str
+    _telegram_user: TelegramUserDTOModel
 
     def __init__(self, dispatcher: aiogram_dispatcher) -> None:
         """Init."""
@@ -35,12 +37,14 @@ class SetStateMiddleware(BaseMiddleware):
             else:
                 self._state = State.error.value
 
+        self._telegram_user = TelegramUserDTOModel(**response_data)
+
         state = await self.get_real_state()
         storage = self.dispatcher.storage
         fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
 
         if response_status == HTTPStatus.OK:
-            await fsm_context.set_data(data={'user': TelegramUserDTOModel(**response_data)})
+            await fsm_context.set_data(data={'user': self._telegram_user})
 
         await fsm_context.set_state(state=state)
 
@@ -60,6 +64,19 @@ class SetStateMiddleware(BaseMiddleware):
             return self._state
 
         if self._message_text == '/profile':
+            if self._telegram_user.stage != State.update_profile.value:
+
+                params_for_update = {
+                    'telegram_id': self._telegram_user.telegram_id,
+                    'previous_stage': self._telegram_user.stage,
+                }
+
+                is_update = await update_user(
+                    telegram_id=self._telegram_user.telegram_id,
+                    params_for_update=params_for_update,
+                )
+                if is_update is False:
+                    return ''
             return State.update_profile.value
 
         if self._state != State.update_profile.value and self._message_text in {'/records', '/achievements'}:
