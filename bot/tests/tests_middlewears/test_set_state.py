@@ -3,8 +3,9 @@ import pytest
 from aiogram import types
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
 from http import HTTPStatus
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
+from choices import State
 from middlewears import SetStateMiddleware
 from settings import settings
 
@@ -89,12 +90,14 @@ class TestSetStateMiddleware:
         expected_data = {'user': response_data['detail']}
         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
 
-    @pytest.mark.asyncio
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
-    async def test_get_state_update_profile(self, mocker, stage):
+    @patch('middlewears.set_state.update_user', new_callable=AsyncMock)
+    @pytest.mark.asyncio
+    async def test_get_state_update_profile(self, mock_update_user, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
         response_data = self._response_data
         response_data['detail']['stage'] = stage
+        mock_update_user.side_effect = [True]
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
@@ -114,6 +117,19 @@ class TestSetStateMiddleware:
         fsm_context_constructor_mock.assert_called_once_with(storage=self._storage_mock, chat=self._chat, user=self._user)
         expected_state = 'UPDATE_PROFILE'
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
+
+        if stage == 'READ_BOOK':
+            expected_data_for_update_user = {
+                'telegram_id': self._chat,
+                'previous_stage': State.read_book.value,
+            }
+
+            mock_update_user.assert_awaited_once_with(
+                telegram_id=self._chat,
+                params_for_update=expected_data_for_update_user,
+            )
+        else:
+            mock_update_user.assert_not_called()
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR'])
