@@ -37,7 +37,8 @@ class SetStateMiddleware(BaseMiddleware):
             else:
                 self._state = State.error.value
 
-        self._telegram_user = TelegramUserDTOModel(**response_data)
+        if response_status == HTTPStatus.OK:
+            self._telegram_user = TelegramUserDTOModel(**response_data)
 
         state = await self.get_real_state()
         storage = self.dispatcher.storage
@@ -64,7 +65,7 @@ class SetStateMiddleware(BaseMiddleware):
             return self._state
 
         if self._message_text == '/profile':
-            if self._telegram_user.stage != State.update_profile.value:
+            if self._telegram_user.stage == State.read_book.value:
 
                 params_for_update = {
                     'telegram_id': self._telegram_user.telegram_id,
