@@ -17,10 +17,13 @@ async def handle_wait_name(message: Message, state: FSMContext):
 @dispatcher.message_handler(state=State.wait_name.value)
 async def handle_wait_name_incorrect_work(message: Message):
     """Handle wait name with wrong text."""
-    await bot.send_message(message.from_user.id, 'Имя надо вводить одним слово, без использования специальных символов. Попробуйте еще раз.')
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text='Имя надо вводить одним слово, без использования специальных символов. Попробуйте еще раз.',
+    )
 
 
 @dispatcher.callback_query_handler(state=State.wait_name.value)
 async def handle_wait_name_incorrect_work_buttons(callback_query: CallbackQuery):
     """Handle wait name with push button."""
-    await bot.send_message(callback_query.from_user.id, 'Имя надо отправить как сообщение. Попробуйте еще раз.')
+    await bot.send_message(chat_id=callback_query.from_user.id, text='Имя надо отправить как сообщение. Попробуйте еще раз.')
