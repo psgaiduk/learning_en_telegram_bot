@@ -9,4 +9,4 @@ from dto.models.words import WordsModelDTO
 from dto.models.history_words import HistoryWordModelDTO, HistoryWordModelForReadDTO
 from dto.models.history_book_sentence import HistoryBookSentenceModelDTO
 from dto.models.referrals import ReferralUserModelDTO
-from dto.models.sentence import SentenceModelDTO
+from dto.models.sentence import SentenceModelDTO, SentenceModelForReadDTO
