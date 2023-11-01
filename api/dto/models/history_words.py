@@ -25,13 +25,7 @@ class HistoryWordModelDTO(BaseModel):
 class HistoryWordModelForReadDTO(BaseModel):
     """History word DTO for read."""
 
-    id: Optional[int]
     type_word_id: int
     word_id: int
     word: str
-    is_known: Optional[bool]
-    count_view: Optional[int]
-    correct_answers: Optional[int]
-    incorrect_answers: Optional[int]
-    correct_answers_in_row: Optional[int]
     translation: Optional[dict]
