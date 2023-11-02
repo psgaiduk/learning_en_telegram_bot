@@ -34,7 +34,7 @@ version_1_read_router = APIRouter(
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'Telegram user not found.'},
     },
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
 )
 async def read_book_for_user(telegram_id: int, db: Session = Depends(get_db)):
     """Read book for user."""
