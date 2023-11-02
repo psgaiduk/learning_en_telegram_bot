@@ -38,11 +38,11 @@ class TestCreateHistorySentenceAPI:
 
         with db_session() as db:
             sentence_history = db.query(UsersBooksSentencesHistory).filter(
-                UsersBooksSentencesHistory.telegram_id == telegram_user.telegram_id,
+                UsersBooksSentencesHistory.telegram_user_id == telegram_user.telegram_id,
                 UsersBooksSentencesHistory.sentence_id == sentence.sentence_id,
             ).first()
             assert sentence_history.id == response['detail']['id']
-            assert sentence_history.telegram_id == response['detail']['telegram_id'] == telegram_user.telegram_id
+            assert sentence_history.telegram_user_id == response['detail']['telegram_id'] == telegram_user.telegram_id
             assert sentence_history.sentence_id == response['detail']['sentence_id'] == sentence.sentence_id
             assert sentence_history.is_read == response['detail']['is_read'] is False
             assert sentence_history.created_at == datetime.fromisoformat(response['detail']['created_at'])
@@ -84,11 +84,11 @@ class TestCreateHistorySentenceAPI:
 
         with db_session() as db:
             sentence_history = db.query(UsersBooksSentencesHistory).filter(
-                UsersBooksSentencesHistory.telegram_id == telegram_user.telegram_id,
+                UsersBooksSentencesHistory.telegram_user_id == telegram_user.telegram_id,
                 UsersBooksSentencesHistory.sentence_id == sentence.sentence_id,
             ).first()
             assert sentence_history.id == response['detail']['id']
-            assert sentence_history.telegram_id == response['detail']['telegram_id'] == telegram_user.telegram_id
+            assert sentence_history.telegram_user_id == response['detail']['telegram_id'] == telegram_user.telegram_id
             assert sentence_history.sentence_id == response['detail']['sentence_id'] == sentence.sentence_id
             assert sentence_history.is_read == response['detail']['is_read'] is False
             assert sentence_history.created_at == datetime.fromisoformat(response['detail']['created_at'])

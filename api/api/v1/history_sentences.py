@@ -15,7 +15,7 @@ async def get_sentence_history_dto(sentence_info: dict) -> HistoryBookSentenceMo
 
     sentence_info['id'] = sentence_info['id']
     sentence_info['book_id'] = sentence_info['sentence'].book_id
-    sentence_info['telegram_id'] = sentence_info['telegram_id']
+    sentence_info['telegram_id'] = sentence_info['telegram_user_id']
     sentence_info['sentence_id'] = sentence_info['sentence_id']
     sentence_info['is_read'] = sentence_info['is_read']
     sentence_info['created_at'] = sentence_info['created_at']
@@ -72,7 +72,7 @@ async def create_history_sentences_for_telegram_id(request: CreateBooksSentences
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Sentence not found.')
 
     old_history_sentence = db.query(UsersBooksSentencesHistory).filter(
-        UsersBooksSentencesHistory.telegram_id == telegram_id,
+        UsersBooksSentencesHistory.telegram_user_id == telegram_id,
         UsersBooksSentencesHistory.sentence_id == sentence_id,
     ).first()
 
@@ -80,7 +80,7 @@ async def create_history_sentences_for_telegram_id(request: CreateBooksSentences
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User already study this sentence.')
 
     new_history_sentence = UsersBooksSentencesHistory(
-        telegram_id=telegram_id,
+        telegram_user_id=telegram_id,
         sentence_id=sentence_id,
     )
     db.add(new_history_sentence)
@@ -140,7 +140,7 @@ async def update_history_sentences_for_telegram_id(request: CreateBooksSentences
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Sentence not found.')
 
     history_sentence = db.query(UsersBooksSentencesHistory).filter(
-        UsersBooksSentencesHistory.telegram_id == telegram_id,
+        UsersBooksSentencesHistory.telegram_user_id == telegram_id,
         UsersBooksSentencesHistory.sentence_id == sentence_id,
     ).first()
 
