@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import and_, func
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
 from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
+from dto.responses import OneResponseDTO
 from functions import api_key_required
 from models import (
     BooksModel,
@@ -27,14 +28,21 @@ version_1_read_router = APIRouter(
 )
 
 
-@version_1_read_router.get('/{telegram_id}/')
+@version_1_read_router.get(
+    path='/{telegram_id}/',
+    response_model=OneResponseDTO[SentenceModelForReadDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user not found.'},
+    },
+    status_code=status.HTTP_201_CREATED,
+)
 async def read_book_for_user(telegram_id: int, db: Session = Depends(get_db)):
     """Read book for user."""
 
     read_book_service = ReadBookService(telegram_id, db)
     sentence = await read_book_service.work()
 
-    return sentence
+    return OneResponseDTO(detail=sentence)
 
 
 class ReadBookService:
@@ -76,7 +84,7 @@ class ReadBookService:
         )
 
         if not self._user_level_id:
-            raise ValueError('User does not have a level_en_id.')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User does not have a level_en_id.')
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
@@ -97,12 +105,12 @@ class ReadBookService:
         self._title_book = f'{random_book.author} - {random_book.title}'
 
         if not random_book:
-            raise ValueError('No books available for the user.')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
         self._need_sentence = random_book.books_sentences[0] if random_book.books_sentences else None
 
         if not self._need_sentence:
-            raise ValueError('No sentences available in the book.')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No sentences available in the book.')
 
         new_history_book = UsersBooksHistory(telegram_user_id=self._telegram_id, book_id=self._need_sentence.book_id)
         self._db.add(new_history_book)
