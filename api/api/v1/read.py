@@ -67,11 +67,10 @@ class ReadBookService:
             UsersBooksHistory.end_read.is_(None),
         ).first()
 
-        self._title_book = f'{self._start_read_book.book.author} - {self._start_read_book.book.title}'
-
         if not self._start_read_book:
             await self._get_first_sentence_from_random_book()
         else:
+            self._title_book = f'{self._start_read_book.book.author} - {self._start_read_book.book.title}'
             await self._get_next_sentence()
 
         return await self._get_sentence_dto()
