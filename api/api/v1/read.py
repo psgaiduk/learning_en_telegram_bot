@@ -87,15 +87,21 @@ class ReadBookService:
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
+        read_books_subquery = (
+            self._db.query(UsersBooksHistory.book_id)
+            .filter(
+                UsersBooksHistory.telegram_user_id == self._telegram_id,
+                UsersBooksHistory.end_read.isnot(None)
+            )
+            .subquery()
+        )
+
         random_book = (
             self._db.query(BooksModel)
             .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
             .filter(
                 BooksModel.level_en_id == self._user_level_id,
-                ~BooksModel.book_id.in_(
-                    self._db.query(UsersBooksHistory.book_id)
-                    .filter(UsersBooksHistory.telegram_user_id == self._telegram_id)
-                )
+                ~BooksModel.book_id.in_(read_books_subquery)
             )
             .order_by(func.random())
             .first()
