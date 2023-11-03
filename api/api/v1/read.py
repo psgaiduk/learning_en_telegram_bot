@@ -106,7 +106,11 @@ class ReadBookService:
         if not random_book:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
-        self._need_sentence = random_book.books_sentences[0] if random_book.books_sentences else None
+        if random_book.books_sentences:
+            sorted_sentences = sorted(random_book.books_sentences, key=lambda sentence: sentence.order)
+            self._need_sentence = sorted_sentences[0]
+        else:
+            self._need_sentence = None
 
         if not self._need_sentence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No sentences available in the book.')
