@@ -29,3 +29,8 @@ class HistoryWordModelForReadDTO(BaseModel):
     word_id: int
     word: str
     translation: Optional[dict]
+    is_known: Optional[bool]
+    count_view: Optional[int]
+    correct_answers: Optional[int]
+    incorrect_answers: Optional[int]
+    correct_answers_in_row: Optional[int]
