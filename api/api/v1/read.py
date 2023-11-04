@@ -219,7 +219,7 @@ class ReadBookService:
             new_history_sentence = UsersBooksSentencesHistory(
                 telegram_user_id=self._telegram_id,
                 sentence_id=sentence.sentence_id,
-                check_words=words_for_learn,
+                check_words=[word['word_id'] for word in words_for_learn],
             )
             self._db.add(new_history_sentence)
         self._db.commit()
@@ -229,8 +229,10 @@ class ReadBookService:
     async def _get_words_for_learn(self, words: list) -> list:
         """Get words for learn."""
 
+        check_words = []
+
         if self._is_new_sentence is False:
-            return self._need_sentence.users_books_sentences_history[0].check_words
+            check_words = self._need_sentence.users_books_sentences_history[0].check_words
 
         words_for_learn = []
         for word in words:
@@ -242,10 +244,17 @@ class ReadBookService:
 
             is_known_word = words_history.get('is_known', False)
 
+            if check_words and word['word_id'] not in check_words:
+                continue
+
             word_info['word_id'] = word['word_id']
             word_info['word'] = word['word']
             word_info['type_word_id'] = word['type_word_id']
             word_info['translation'] = word['translation']
+            word_info['count_view'] = words_history.get('count_view', 0)
+            word_info['correct_answers'] = words_history.get('correct_answers', 0)
+            word_info['incorrect_answers'] = words_history.get('incorrect_answers', 0)
+            word_info['correct_answers_in_row'] = words_history.get('correct_answers_in_row', 0)
 
             if word_info and is_known_word is False and len(words_for_learn) < 5:
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
