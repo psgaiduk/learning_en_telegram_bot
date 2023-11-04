@@ -107,6 +107,8 @@ class ReadBookService:
             .first()
         )
 
+        self._db.refresh(random_book)
+
         self._title_book = f'{random_book.author} - {random_book.title}'
 
         if not random_book:
