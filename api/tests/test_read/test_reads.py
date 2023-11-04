@@ -312,3 +312,21 @@ class TestReadApi:
             assert users_history_book_sentence.sentence_id == response['sentence_id']
             assert users_history_book_sentence.telegram_user_id == telegram_id
             assert len(response['words']) <= 5
+
+    def test_not_get_read_without_headers(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            telegram_id = telegram_user.telegram_id
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_not_get_read_with_wrong_api_key_headers(self):
+        with db_session() as db:
+            telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            telegram_id = telegram_user.telegram_id
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url, headers={'X-API-Key': 'test'})
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
