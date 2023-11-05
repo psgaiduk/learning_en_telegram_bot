@@ -1,7 +1,8 @@
 from datetime import datetime
+from random import choice
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import and_, func
+from sqlalchemy import and_
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
@@ -87,32 +88,32 @@ class ReadBookService:
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
-        read_books_subquery = (
+        available_books = (
+            self._db.query(BooksModel)
+            .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+            .filter(
+                BooksModel.level_en_id == self._user_level_id
+            )
+            .all()
+        )
+
+        read_books = (
             self._db.query(UsersBooksHistory.book_id)
             .filter(
                 UsersBooksHistory.telegram_user_id == self._telegram_id,
                 UsersBooksHistory.end_read.isnot(None)
             )
-            .subquery()
+            .all()
         )
 
-        random_book = (
-            self._db.query(BooksModel)
-            .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
-            .filter(
-                BooksModel.level_en_id == self._user_level_id,
-                ~BooksModel.book_id.in_(read_books_subquery)
-            )
-            .order_by(func.random())
-            .first()
-        )
+        available_books = [book for book in available_books if book.book_id not in read_books]
 
-        self._db.refresh(random_book)
+        if available_books:
+            random_book = choice(available_books)
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
         self._title_book = f'{random_book.author} - {random_book.title}'
-
-        if not random_book:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
         if random_book.books_sentences:
             sorted_sentences = sorted(random_book.books_sentences, key=lambda sentence: sentence.order)
