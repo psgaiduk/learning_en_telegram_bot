@@ -1,9 +1,11 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
-class UpdateBooksSentencesDTO(BaseModel):
+class UpdateHistoryBooksSentencesDTO(BaseModel):
     """Update books sentences DTO."""
 
-    telegram_id: int
-    sentence_id: int
-    is_read: bool
+    id: int
+    is_read: Optional[bool]
+    check_words: Optional[list[int]]
