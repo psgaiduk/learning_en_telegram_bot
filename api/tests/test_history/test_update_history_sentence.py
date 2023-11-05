@@ -43,3 +43,30 @@ class TestUpdateHistorySentenceAPI:
             assert history_sentence.is_read is False
             assert history_sentence.id == history_sentence_id
 
+    def test_update_check_words_history_sentence(self):
+        """Test update check words history sentence."""
+
+        with db_session() as db:
+            history_sentence = db.query(UsersBooksSentencesHistory).first()
+            history_sentence_id = history_sentence.id
+            check_words = history_sentence.check_words
+            assert history_sentence.is_read is True
+
+        expect_words = [1, 2, 3]
+        assert check_words != expect_words
+
+        data_for_update = {
+            'id': history_sentence_id,
+            'check_words': expect_words,
+        }
+
+        url = f'{self._url}/{history_sentence_id}/'
+        response = self._client.post(url=url, headers=self._headers, json=data_for_update)
+        assert response.status_code == status.HTTP_200_CREATED
+
+        with db_session() as db:
+            history_sentence = db.query(UsersBooksSentencesHistory).filter(UsersBooksSentencesHistory.id == history_sentence_id).first()
+            assert history_sentence.is_read is True
+            assert history_sentence.id == history_sentence_id
+            assert history_sentence.check_words == expect_words
+
