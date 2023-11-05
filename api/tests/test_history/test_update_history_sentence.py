@@ -35,7 +35,7 @@ class TestUpdateHistorySentenceAPI:
         }
 
         url = f'{self._url}/{history_sentence_id}/'
-        response = self._client.post(url=url, headers=self._headers, json=data_for_update)
+        response = self._client.patch(url=url, headers=self._headers, json=data_for_update)
         assert response.status_code == status.HTTP_200_OK
         
         with db_session() as db:
@@ -52,7 +52,7 @@ class TestUpdateHistorySentenceAPI:
             check_words = history_sentence.check_words
             assert history_sentence.is_read is True
 
-        expect_words = [1, 2, 3]
+        expect_words = [11, 22, 34]
         assert check_words != expect_words
 
         data_for_update = {
@@ -61,7 +61,7 @@ class TestUpdateHistorySentenceAPI:
         }
 
         url = f'{self._url}/{history_sentence_id}/'
-        response = self._client.post(url=url, headers=self._headers, json=data_for_update)
+        response = self._client.patch(url=url, headers=self._headers, json=data_for_update)
         assert response.status_code == status.HTTP_200_OK
 
         with db_session() as db:
