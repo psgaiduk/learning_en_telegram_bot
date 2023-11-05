@@ -135,7 +135,7 @@ async def update_history_sentences_for_telegram_id(history_book_sentence_id, req
     if not history_book_sentence:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History sentence not found.')
     
-    if is_read is not None and check_words is not None:
+    if is_read is None and check_words is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Is read or check words required.')
 
     if check_words:
