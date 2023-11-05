@@ -47,11 +47,10 @@ def history_book_complete_mock(book_mock, telegram_users_mock):
 
 
 @fixture
-def history_book_sentence_complete_mock(book_mock, telegram_users_mock):
+def history_book_sentence_complete_mock(book_mock, telegram_users_mock, words_mock, book_sentences_mock):
     with db_session() as db:
         book = db.query(BooksModel).first()
         telegram_user = db.query(Users).first()
-        # add history book and sentence history
         history_book = UsersBooksHistory(
             telegram_user_id=telegram_user.telegram_id,
             book_id=book.book_id,
@@ -67,6 +66,8 @@ def history_book_sentence_complete_mock(book_mock, telegram_users_mock):
             created_at=datetime.utcnow() - timedelta(days=3),
             check_words=words_id,
         )
+        db.add(history_sentence)
+        db.commit()
 
 
 @fixture
