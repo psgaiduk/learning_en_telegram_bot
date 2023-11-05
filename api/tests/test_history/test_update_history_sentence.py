@@ -36,7 +36,7 @@ class TestUpdateHistorySentenceAPI:
 
         url = f'{self._url}/{history_sentence_id}/'
         response = self._client.post(url=url, headers=self._headers, json=data_for_update)
-        assert response.status_code == status.HTTP_200_CREATED
+        assert response.status_code == status.HTTP_200_OK
         
         with db_session() as db:
             history_sentence = db.query(UsersBooksSentencesHistory).filter(UsersBooksSentencesHistory.id==history_sentence_id).first()
@@ -62,7 +62,7 @@ class TestUpdateHistorySentenceAPI:
 
         url = f'{self._url}/{history_sentence_id}/'
         response = self._client.post(url=url, headers=self._headers, json=data_for_update)
-        assert response.status_code == status.HTTP_200_CREATED
+        assert response.status_code == status.HTTP_200_OK
 
         with db_session() as db:
             history_sentence = db.query(UsersBooksSentencesHistory).filter(UsersBooksSentencesHistory.id == history_sentence_id).first()
