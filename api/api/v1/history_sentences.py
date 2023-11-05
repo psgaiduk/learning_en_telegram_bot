@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session, joinedload
 from api.v1.history import version_1_history_router
 from database import get_db
 from dto.models import HistoryBookSentenceModelDTO, HistoryWordModelDTO
-from dto.requests import CreateBooksSentencesDTO
-from dto.responses import OneResponseDTO, PaginatedResponseDTO
+from dto.requests import CreateBooksSentencesDTO, UpdateHistoryBooksSentencesDTO
+from dto.responses import OneResponseDTO
 from models import BooksSentences, Users, UsersBooksSentencesHistory, UsersWordsHistory, Words, sentence_word_association
 
 
@@ -117,36 +117,32 @@ async def create_history_sentences_for_telegram_id(request: CreateBooksSentences
 
 
 @version_1_history_router.patch(
-    path='/sentences/',
-    response_model=OneResponseDTO[HistoryBookSentenceModelDTO],
+    path='/sentences/{history_book_sentence_id}/',
+    response_model=OneResponseDTO,
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or sentence or history sentence not found.'},
-        status.HTTP_400_BAD_REQUEST: {'description': 'User already know word.'},
+        status.HTTP_400_BAD_REQUEST: {'description': 'Is read or check words required.'},
     },
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
 )
-async def update_history_sentences_for_telegram_id(request: CreateBooksSentencesDTO, db: Session = Depends(get_db)):
-    """Create history sentence for telegram user."""
+async def update_history_sentences_for_telegram_id(history_book_sentence_id, request: UpdateHistoryBooksSentencesDTO, db: Session = Depends(get_db)):
+    """Update history sentence for telegram user."""
 
-    telegram_id = request.telegram_id
-    sentence_id = request.sentence_id
+    is_read = request.is_read
+    check_words = request.check_words
 
-    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
-    if not telegram_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
-
-    sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == sentence_id).first()
-    if not sentence:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Sentence not found.')
-
-    history_sentence = db.query(UsersBooksSentencesHistory).filter(
-        UsersBooksSentencesHistory.telegram_user_id == telegram_id,
-        UsersBooksSentencesHistory.sentence_id == sentence_id,
-    ).first()
-
-    if not history_sentence:
+    history_book_sentence = db.query(UsersBooksSentencesHistory).filter(UsersBooksSentencesHistory.id == history_book_sentence_id).first()
+    if not history_book_sentence:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History sentence not found.')
+    
+    if is_read is not None and check_words is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Is read or check words required.')
 
-    history_sentence.is_read = request.is_read
+    if check_words:
+        history_book_sentence.check_words = check_words
+    if is_read is not None:
+        history_book_sentence.is_read = request.is_read
     db.commit()
+
+    return OneResponseDTO(detail='Success.')
 
