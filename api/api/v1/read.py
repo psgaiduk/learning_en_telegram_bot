@@ -254,6 +254,7 @@ class ReadBookService:
             word_info['word'] = word['word']
             word_info['type_word_id'] = word['type_word_id']
             word_info['translation'] = word['translation']
+            word_info['is_known'] = is_known_word
             word_info['count_view'] = words_history.get('count_view', 0)
             word_info['correct_answers'] = words_history.get('correct_answers', 0)
             word_info['incorrect_answers'] = words_history.get('incorrect_answers', 0)
