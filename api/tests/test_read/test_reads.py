@@ -7,19 +7,7 @@ from pytest import mark
 from main import app
 from models import BooksModel, Users, UsersBooksHistory, UsersBooksSentencesHistory, BooksSentences
 from settings import settings
-from tests.fixtures import (
-    create_test_database,
-    telegram_users_mock,
-    book_mock,
-    history_book_not_complete_mock,
-    history_book_complete_mock,
-    level_en_mock,
-    main_language_mock,
-    hero_level_mock,
-    type_words_mock,
-    book_sentences_mock,
-    words_mock,
-)
+from tests.fixtures import *
 from tests.connect_db import db_session
 
 
@@ -62,6 +50,7 @@ class TestReadApi:
                 .first()
             )
             assert users_history_book_sentence is not None
+            assert users_history_book_sentence.id == response['history_sentence_id']
             assert users_history_book_sentence.is_read is False
             assert users_history_book_sentence.sentence_id == response['sentence_id']
             assert users_history_book_sentence.telegram_user_id == telegram_id
@@ -120,6 +109,7 @@ class TestReadApi:
             assert len(response['words']) <= 5
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response['sentence_id']).first()
             assert sentence.order == 1
+            assert users_history_book_sentence.id == response['history_sentence_id']
 
     def test_get_first_sentence_after_last_sentence(self):
         with db_session() as db:
@@ -176,6 +166,7 @@ class TestReadApi:
             assert users_history_book_sentence.is_read is False
             assert users_history_book_sentence.sentence_id == response['sentence_id']
             assert users_history_book_sentence.telegram_user_id == telegram_id
+            assert users_history_book_sentence.id == response['history_sentence_id']
             book = db.query(BooksModel).filter(BooksModel.book_id == book_id).first()
             assert f'{book.author} - {book.title}' in response['text']
             assert len(response['words']) <= 5
@@ -243,6 +234,7 @@ class TestReadApi:
             assert users_history_book_sentence.is_read is False
             assert users_history_book_sentence.sentence_id == response['sentence_id']
             assert users_history_book_sentence.telegram_user_id == telegram_id
+            assert users_history_book_sentence.id == response['history_sentence_id']
             assert len(response['words']) <= 5
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response['sentence_id']).first()
             assert sentence.order == 2
@@ -311,6 +303,7 @@ class TestReadApi:
             assert users_history_book_sentence.is_read is False
             assert users_history_book_sentence.sentence_id == response['sentence_id']
             assert users_history_book_sentence.telegram_user_id == telegram_id
+            assert users_history_book_sentence.id == response['history_sentence_id']
             assert len(response['words']) <= 5
 
     def test_not_get_read_without_headers(self):
