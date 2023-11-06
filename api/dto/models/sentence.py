@@ -17,6 +17,7 @@ class SentenceModelDTO(BaseModel):
 class SentenceModelForReadDTO(BaseModel):
     """Sentence DTO for read api."""
 
+    history_sentence_id: int
     sentence_id: int
     book_id: int
     text: str
