@@ -225,6 +225,7 @@ class ReadBookService:
                 check_words=[word['word_id'] for word in words_for_learn],
             )
             self._db.add(new_history_sentence)
+            self._db.flush()
             sentence_for_read['history_sentence_id'] = new_history_sentence.id
         else:
             sentence_for_read['history_sentence_id'] = sentence_info['history_sentence_id']
