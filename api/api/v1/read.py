@@ -143,6 +143,7 @@ class ReadBookService:
         if not_read_sentence_in_user_history:
             self._is_new_sentence = False
             self._need_sentence = not_read_sentence_in_user_history.BooksSentences
+            self._need_sentence.history_sentence_id = not_read_sentence_in_user_history.UsersBooksSentencesHistory.id
             return
 
         last_read_sentence = (
@@ -200,6 +201,7 @@ class ReadBookService:
         self._need_sentence.words = words_with_history
 
         sentence_info = self._need_sentence.__dict__
+        print(sentence_info)
         sentence_for_read = {}
 
         if sentence_info['order'] == 1:
@@ -216,16 +218,19 @@ class ReadBookService:
 
         sentence_for_read['words'] = words_for_learn
 
-        sentence = SentenceModelForReadDTO(**sentence_for_read)
-
         if self._is_new_sentence:
             new_history_sentence = UsersBooksSentencesHistory(
                 telegram_user_id=self._telegram_id,
-                sentence_id=sentence.sentence_id,
+                sentence_id=sentence_info['sentence_id'],
                 check_words=[word['word_id'] for word in words_for_learn],
             )
             self._db.add(new_history_sentence)
+            sentence_for_read['history_sentence_id'] = new_history_sentence.id
+        else:
+            sentence_for_read['history_sentence_id'] = sentence_info['history_sentence_id']
         self._db.commit()
+
+        sentence = SentenceModelForReadDTO(**sentence_for_read)
 
         return sentence
 
