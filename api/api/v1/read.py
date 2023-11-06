@@ -241,6 +241,7 @@ class ReadBookService:
 
         if self._is_new_sentence is False:
             check_words = self._need_sentence.users_books_sentences_history[0].check_words
+            check_words = [word['word'] for word in check_words]
 
         words_for_learn = []
         for word in words:
@@ -252,7 +253,7 @@ class ReadBookService:
 
             is_known_word = words_history.get('is_known', False)
 
-            if check_words and word['word_id'] not in check_words:
+            if check_words and word['word'] not in check_words:
                 continue
 
             word_info['word_id'] = word['word_id']
