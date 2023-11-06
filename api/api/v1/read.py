@@ -201,7 +201,6 @@ class ReadBookService:
         self._need_sentence.words = words_with_history
 
         sentence_info = self._need_sentence.__dict__
-        print(sentence_info)
         sentence_for_read = {}
 
         if sentence_info['order'] == 1:
