@@ -61,7 +61,7 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def get_real_state(self) -> str:
         """Get real state."""
-        if self._state in {State.check_words.value, State.registration.value, State.grammar.value}:
+        if self._state in {State.registration.value, State.grammar.value}:
             return self._state
 
         if self._message_text == '/profile':
@@ -85,4 +85,20 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.records.value
             return State.achievements.value
 
+        if self._state == State.read_book.value:
+            return await self.work_with_read_status()
+
         return self._state
+
+    async def work_with_read_status(self) -> str:
+        """Work with read status."""
+        url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
+        async with http_client() as client:
+            response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
+            if response_status != HTTPStatus.OK:
+                return State.error.value
+
+            new_sentence = response['detail']
+            if new_sentence['words']:
+                return State.check_words.value
+            return State.read_book.value

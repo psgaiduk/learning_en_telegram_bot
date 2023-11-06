@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from .hero_level import HeroLevelDTOModel
 from .level_en import LevelEnDTOModel
 from .main_language import MainLanguageDTOModel
+from .new_sentence import NewSentenceDTOModel
 
 
 class TelegramUserDTOModel(BaseModel):
@@ -19,3 +20,5 @@ class TelegramUserDTOModel(BaseModel):
     main_language: Optional[MainLanguageDTOModel]
     level_en: Optional[LevelEnDTOModel]
     hero_level: Optional[HeroLevelDTOModel]
+
+    new_sentence: Optional[NewSentenceDTOModel]
