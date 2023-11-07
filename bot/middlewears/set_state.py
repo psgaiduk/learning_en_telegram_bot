@@ -6,7 +6,7 @@ from aiogram.dispatcher.storage import FSMContext
 
 from choices import State
 from context_managers import http_client
-from dto import TelegramUserDTOModel
+from dto import TelegramUserDTOModel, NewSentenceDTOModel
 from functions import update_user
 from settings import settings
 
@@ -99,6 +99,7 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.error.value
 
             new_sentence = response['detail']
+            self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
             if new_sentence['words']:
                 return State.check_words.value
             return State.read_book.value
