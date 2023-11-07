@@ -18,7 +18,7 @@ class TestUpdateProfileCommand:
     """Tests command update profile."""
 
     @patch('commands.update_profile.UpdateProfileService')
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile(self, mock_update_user, mock_update_profile_service):
         chat_id = 1
@@ -42,10 +42,11 @@ class TestUpdateProfileCommand:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
     @patch('commands.update_profile.UpdateProfileService')
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_with_mistake(self, mock_update_user, mock_update_profile_service):
         chat_id = 1
@@ -68,9 +69,10 @@ class TestUpdateProfileCommand:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_name(self, mock_update_user):
         chat_id = 1
@@ -95,9 +97,10 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_name_with_mistake(self, mock_update_user):
         chat_id = 1
@@ -119,10 +122,11 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
     @patch('commands.update_profile.create_keyboard_for_en_levels', new_callable=AsyncMock)
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_change_level(self, mock_update_user, mock_create_keyboard_for_en_levels):
         chat_id = 1
@@ -175,10 +179,11 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
     @patch('commands.update_profile.create_keyboard_for_en_levels', new_callable=AsyncMock)
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_change_level_with_mistake(self, mock_update_user, mock_create_keyboard_for_en_levels):
         chat_id = 1
@@ -227,9 +232,10 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_close(self, mock_update_user):
         chat_id = 1
@@ -279,9 +285,10 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
-    @patch('commands.update_profile.update_user', new_callable=AsyncMock)
+    @patch('commands.update_profile.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_update_profile_close_with_mistake(self, mock_update_user):
         chat_id = 1
@@ -328,6 +335,7 @@ class TestUpdateProfileCommand:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
     @mark.asyncio
