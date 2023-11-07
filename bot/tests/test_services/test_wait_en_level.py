@@ -95,7 +95,7 @@ class TestWaitEnLevelService:
         (1, 'level_en_1'), (2, 'level_en_2'), (3, 'level_en_3'), (4, 'level_en_4'), (5, 'level_en_5'), (6, 'level_en_6')
     ])
     @patch('services.wait_en_level.UpdateProfileService')
-    @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
+    @patch('services.wait_en_level.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_en_level_for_old_client(self, mock_update_user, mock_update_profile, english_level_id, callback_data):
         mock_update_user.side_effect = [True]
@@ -135,10 +135,11 @@ class TestWaitEnLevelService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
     @patch('services.wait_en_level.UpdateProfileService.do', new_callable=AsyncMock)
-    @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
+    @patch('services.wait_en_level.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_en_level_for_old_client_with_mistake(self, mock_update_user, mock_update_profile):
         mock_update_user.side_effect = [False]
@@ -171,9 +172,10 @@ class TestWaitEnLevelService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
-    @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
+    @patch('services.wait_en_level.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_en_level_for_new_client(self, mock_update_user):
         mock_update_user.side_effect = [True]
@@ -220,9 +222,10 @@ class TestWaitEnLevelService:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )
 
-    @patch('services.wait_en_level.update_user', new_callable=AsyncMock)
+    @patch('services.wait_en_level.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_en_level_for_new_client_with_mistake(self, mock_update_user):
         mock_update_user.side_effect = [False]
@@ -256,4 +259,5 @@ class TestWaitEnLevelService:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=chat_id,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{chat_id}',
             )

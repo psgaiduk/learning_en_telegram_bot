@@ -32,7 +32,7 @@ class TestUpdateUserFunction:
                 )
 
         mocked_patch.assert_awaited_once_with(
-            url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}',
+            url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}/',
             headers=settings.api_headers,
             json=params_for_update
         )
@@ -53,7 +53,7 @@ class TestUpdateUserFunction:
                 )
 
         mocked_patch.assert_awaited_once_with(
-            url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}',
+            url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}/',
             headers=settings.api_headers,
             json={}
         )

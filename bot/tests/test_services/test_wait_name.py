@@ -39,7 +39,7 @@ class TestWaitNameService:
 
     @mark.parametrize('hero_level_order', [1, 2, 3, 4, 5, 6])
     @patch('services.wait_name.create_keyboard_for_en_levels', new_callable=AsyncMock)
-    @patch('services.wait_name.update_user', new_callable=AsyncMock)
+    @patch('services.wait_name.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_name_for_new_client(self, mock_update_user, mock_create_keyboard_for_en_levels, hero_level_order):
         mock_update_user.side_effect = [True]
@@ -98,11 +98,12 @@ class TestWaitNameService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
     @mark.parametrize('hero_level_order', [1, 2, 3, 4, 5, 6])
     @patch('services.wait_name.create_keyboard_for_en_levels', new_callable=AsyncMock)
-    @patch('services.wait_name.update_user', new_callable=AsyncMock)
+    @patch('services.wait_name.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_name_for_new_client_mistake(self, mock_update_user, mock_create_keyboard_for_en_levels, hero_level_order):
         mock_update_user.side_effect = [False]
@@ -148,13 +149,14 @@ class TestWaitNameService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
         self._message.answer.assert_not_awaited()
         mock_create_keyboard_for_en_levels.assert_not_awaited()
 
     @patch('services.wait_name.UpdateProfileService')
-    @patch('services.wait_name.update_user', new_callable=AsyncMock)
+    @patch('services.wait_name.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_name_for_old_client(self, mock_update_user, mock_update_profile):
         mock_update_user.side_effect = [True]
@@ -200,6 +202,7 @@ class TestWaitNameService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
         expected_start_message_text = '🤖 Имя обновлено.\n'
@@ -207,7 +210,7 @@ class TestWaitNameService:
         mock_update_profile.return_value.do.assert_awaited_once()
 
     @patch('services.wait_name.UpdateProfileService.do', new_callable=AsyncMock)
-    @patch('services.wait_name.update_user', new_callable=AsyncMock)
+    @patch('services.wait_name.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
     async def test_update_name_for_old_client_with_mistake(self, mock_update_user, mock_update_profile):
         mock_update_user.side_effect = [False]
@@ -255,6 +258,7 @@ class TestWaitNameService:
         mock_update_user.assert_awaited_once_with(
             telegram_id=chat_id,
             params_for_update=expected_data_for_update_user,
+            url_for_update=f'telegram_user/{chat_id}',
         )
 
     @mark.asyncio

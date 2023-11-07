@@ -91,7 +91,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
 
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
-    @patch('middlewears.set_state.update_user', new_callable=AsyncMock)
+    @patch('semiddlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @pytest.mark.asyncio
     async def test_get_state_update_profile(self, mock_update_user, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
@@ -127,6 +127,7 @@ class TestSetStateMiddleware:
             mock_update_user.assert_awaited_once_with(
                 telegram_id=self._chat,
                 params_for_update=expected_data_for_update_user,
+                url_for_update=f'telegram_user/{self._chat}',
             )
         else:
             mock_update_user.assert_not_called()
