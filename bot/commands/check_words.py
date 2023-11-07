@@ -1,10 +1,10 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, Message
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
 
 from bot import dispatcher
 from choices import State
-from functions import update_user
+from functions import update_data_by_api
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.check_words.value)
@@ -28,7 +28,11 @@ async def handle_check_words_after_read(message: Message, state: FSMContext):
         'stage': State.read_book.value,
     }
 
-    is_update_user = await update_user(telegram_id=telegram_user.telegram_id, params_for_update=data_for_update_user)
+    is_update_user = await update_data_by_api(
+        telegram_id=telegram_user.telegram_id,
+        params_for_update=data_for_update_user,
+        url_for_update=f'telegram_user/{telegram_user.telegram_id}',
+    )
     if is_update_user is False:
         return
 

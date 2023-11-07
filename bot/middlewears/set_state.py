@@ -7,7 +7,7 @@ from aiogram.dispatcher.storage import FSMContext
 from choices import State
 from context_managers import http_client
 from dto import TelegramUserDTOModel, NewSentenceDTOModel
-from functions import update_user
+from functions import update_data_by_api
 from settings import settings
 
 
@@ -72,9 +72,10 @@ class SetStateMiddleware(BaseMiddleware):
                     'previous_stage': self._telegram_user.stage,
                 }
 
-                is_update = await update_user(
+                is_update = await update_data_by_api(
                     telegram_id=self._telegram_user.telegram_id,
                     params_for_update=params_for_update,
+                    url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
                 )
                 if is_update is False:
                     return ''

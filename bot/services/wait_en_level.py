@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
 from bot import bot
 from choices import State
 from dto.telegram_user import TelegramUserDTOModel
-from functions import update_user
+from functions import update_data_by_api
 from services.update_profile import UpdateProfileService
 
 
@@ -49,7 +49,11 @@ class WaitEnLevelService:
             'previous_stage': '',
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
+        is_update_user = await update_data_by_api(
+            telegram_id=self._chat_id,
+            params_for_update=data_for_update_user,
+            url_for_update=f'telegram_user/{self._chat_id}',
+        )
         if is_update_user is False:
             return
 
@@ -67,7 +71,11 @@ class WaitEnLevelService:
             'stage': State.update_profile.value,
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
+        is_update_user = await update_data_by_api(
+            telegram_id=self._chat_id,
+            params_for_update=data_for_update_user,
+            url_for_update=f'telegram_user/{self._chat_id}',
+        )
         if is_update_user is False:
             return
 

@@ -1,3 +1,3 @@
 from functions.create_keyboard_for_en_levels import create_keyboard_for_en_levels
 from functions.encryption import encode_telegram_id, decode_telegram_id
-from functions.update_user import update_user
+from functions.update_data_by_api import update_data_by_api

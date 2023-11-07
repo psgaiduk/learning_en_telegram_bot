@@ -5,7 +5,7 @@ from bot import bot
 from settings import settings
 
 
-async def update_user(telegram_id: int, params_for_update: dict) -> bool:
+async def update_data_by_api(telegram_id: int, params_for_update: dict, url_for_update: str) -> bool:
     """
     Update telegram user status.
 
@@ -14,7 +14,7 @@ async def update_user(telegram_id: int, params_for_update: dict) -> bool:
     :return:
     """
     async with http_client() as client:
-        url_update_telegram_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
+        url_update_telegram_user = f'{settings.api_url}/v1/'
 
         _, response_status = await client.patch(
             url=url_update_telegram_user,

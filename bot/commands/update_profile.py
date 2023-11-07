@@ -5,7 +5,7 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot, dispatcher
 from choices import State
 from dto.telegram_user import TelegramUserDTOModel
-from functions import create_keyboard_for_en_levels, update_user
+from functions import create_keyboard_for_en_levels, update_data_by_api
 from services import UpdateProfileService
 
 
@@ -18,7 +18,11 @@ async def handle_update_profile(message: Message):
         'stage': State.update_profile.value,
     }
 
-    is_update = await update_user(telegram_id=message.from_user.id, params_for_update=params_for_update_user)
+    is_update = await update_data_by_api(
+        telegram_id=message.from_user.id,
+        params_for_update=params_for_update_user,
+        url_for_update=f'telegram_user/{message.from_user.id}',
+    )
 
     if is_update is False:
         return
@@ -35,7 +39,11 @@ async def handle_update_profile_name(callback_query: CallbackQuery):
         'stage': State.wait_name.value,
     }
 
-    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
+    is_update = await update_data_by_api(
+        telegram_id=callback_query.from_user.id,
+        params_for_update=params_for_update_user,
+        url_for_update=f'telegram_user/{callback_query.from_user.id}',
+    )
 
     if is_update is False:
         return
@@ -53,7 +61,11 @@ async def handle_update_profile_en_level(callback_query: CallbackQuery, state: F
         'stage': State.wait_en_level.value,
     }
 
-    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
+    is_update = await update_data_by_api(
+        telegram_id=callback_query.from_user.id,
+        params_for_update=params_for_update_user,
+        url_for_update=f'telegram_user/{callback_query.from_user.id}',
+    )
 
     if is_update is False:
         return
@@ -80,7 +92,11 @@ async def handle_update_profile_close(callback_query: CallbackQuery, state: FSMC
         'previous_stage': '',
     }
 
-    is_update = await update_user(telegram_id=callback_query.from_user.id, params_for_update=params_for_update_user)
+    is_update = await update_data_by_api(
+        telegram_id=callback_query.from_user.id,
+        params_for_update=params_for_update_user,
+        url_for_update=f'telegram_user/{telegram_user.telegram_id}',
+    )
 
     if is_update is False:
         return

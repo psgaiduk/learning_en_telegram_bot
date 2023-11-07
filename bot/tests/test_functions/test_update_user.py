@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 from pytest import mark
 
 from bot import bot
-from functions import update_user
+from functions import update_data_by_api
 from settings import settings
 
 
@@ -25,7 +25,11 @@ class TestUpdateUserFunction:
 
         with patch(target=self._patch_method_target, return_value=({}, HTTPStatus.OK)) as mocked_patch:
             with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
-                result = await update_user(telegram_id=self._telegram_id, params_for_update=params_for_update)
+                result = await update_data_by_api(
+                    telegram_id=self._telegram_id,
+                    params_for_update=params_for_update,
+                    url_for_update=f'telegram_user/{self._telegram_id}',
+                )
 
         mocked_patch.assert_awaited_once_with(
             url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}',
@@ -42,7 +46,11 @@ class TestUpdateUserFunction:
 
         with patch(target=self._patch_method_target, return_value=({}, HTTPStatus.NOT_FOUND)) as mocked_patch:
             with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
-                result = await update_user(telegram_id=self._telegram_id, params_for_update={})
+                result = await update_data_by_api(
+                    telegram_id=self._telegram_id,
+                    params_for_update={},
+                    url_for_update=f'telegram_user/{self._telegram_id}',
+                )
 
         mocked_patch.assert_awaited_once_with(
             url=f'{settings.api_url}/v1/telegram_user/{self._telegram_id}',

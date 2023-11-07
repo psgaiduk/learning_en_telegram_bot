@@ -5,7 +5,7 @@ from aiogram.types import Message
 
 from choices import State
 from dto.telegram_user import TelegramUserDTOModel
-from functions import create_keyboard_for_en_levels, update_user
+from functions import create_keyboard_for_en_levels, update_data_by_api
 from services.update_profile import UpdateProfileService
 
 
@@ -49,7 +49,11 @@ class WaitNameService:
             'stage': State.wait_en_level.value,
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
+        is_update_user = await update_data_by_api(
+            telegram_id=self._chat_id,
+            params_for_update=data_for_update_user,
+            url_for_update=f'telegram_user/{self._chat_id}',
+        )
         if is_update_user is False:
             return
         
@@ -71,7 +75,11 @@ class WaitNameService:
             'stage': State.update_profile.value,
         }
 
-        is_update_user = await update_user(telegram_id=self._chat_id, params_for_update=data_for_update_user)
+        is_update_user = await update_data_by_api(
+            telegram_id=self._chat_id,
+            params_for_update=data_for_update_user,
+            url_for_update=f'telegram_user/{self._chat_id}',
+        )
         if is_update_user is False:
             return
 
