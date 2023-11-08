@@ -36,5 +36,21 @@ async def handle_check_words_after_read(message: Message, state: FSMContext):
     if is_update_user is False:
         return
 
+    words_ids = [word.word_id for word in words]
+
+    data_for_update_history_sentence = {
+        'id': telegram_user.new_sentence.history_sentence_id,
+        'check_words': words_ids,
+    }
+
+    is_update_check_words = await update_data_by_api(
+        telegram_id=telegram_user.telegram_id,
+        params_for_update=data_for_update_history_sentence,
+        url_for_update=f'history/sentences/{telegram_user.new_sentence.history_sentence_id}',
+    )
+
+    if is_update_check_words is False:
+        return
+
     text_message = f'Слово: {first_word.word}\nПеревод: {first_word.translation["ru"]}'
     await message.answer(text=text_message, reply_markup=inline_keyboard)
