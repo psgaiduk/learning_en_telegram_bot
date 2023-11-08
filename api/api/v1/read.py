@@ -245,21 +245,21 @@ class ReadBookService:
 
         words_for_learn = []
         for word in words:
-            word = word.__dict__
             word_info = {}
             words_history = {}
-            if word['users_words_history']:
-                words_history = word['users_words_history'][0].__dict__
+            if word.users_words_history:
+                words_history = word.users_words_history[0].__dict__
 
             is_known_word = words_history.get('is_known', False)
 
-            if check_words and word['word'] not in check_words:
+            if check_words and word.word not in check_words:
                 continue
 
-            word_info['word_id'] = word['word_id']
-            word_info['word'] = word['word']
-            word_info['type_word_id'] = word['type_word_id']
-            word_info['translation'] = word['translation']
+            word_info['telegram_user_id'] = self._telegram_id
+            word_info['word_id'] = word.word_id
+            word_info['word'] = word.word
+            word_info['type_word_id'] = word.type_word_id
+            word_info['translation'] = word.translation
             word_info['is_known'] = is_known_word
             word_info['count_view'] = words_history.get('count_view', 0)
             word_info['correct_answers'] = words_history.get('correct_answers', 0)
@@ -268,5 +268,17 @@ class ReadBookService:
 
             if word_info and is_known_word is False and len(words_for_learn) < 5:
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
+
+                if not words_history:
+                    new_word = UsersWordsHistory(
+                        telegram_user_id=word_info['telegram_user_id'],
+                        word_id=word_info['word_id'],
+                        is_known=word_info['is_known'],
+                        count_view=word_info['count_view'],
+                        correct_answers=word_info['correct_answers'],
+                        incorrect_answers=word_info['incorrect_answers'],
+                        correct_answers_in_row=word_info['correct_answers_in_row']
+                    )
+                    self._db.add(new_word)
 
         return words_for_learn
