@@ -150,7 +150,6 @@ async def get_words_history_by_telegram_id(
 )
 async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db: Session = Depends(get_db)):
     """Update history book by history book id."""
-
     telegram_id = request.telegram_user_id
     word_id = request.word_id
 
@@ -177,7 +176,7 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
     history_word = (
         db.query(UsersWordsHistory)
         .options(joinedload(UsersWordsHistory.word))
-        .filter(UsersWordsHistory.id == word_id, UsersWordsHistory.telegram_user_id == telegram_id).first())
+        .filter(UsersWordsHistory.word_id == word_id, UsersWordsHistory.telegram_user_id == telegram_id).first())
 
     history_word_dto = await get_words_history_dto(history_word.__dict__)
 
