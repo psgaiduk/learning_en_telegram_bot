@@ -3,7 +3,7 @@ from random import choice
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import and_
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, aliased, joinedload
 
 from database import get_db
 from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
@@ -128,12 +128,14 @@ class ReadBookService:
         self._db.add(new_history_book)
 
     async def _get_next_sentence(self):
+        UsersBooksSentencesHistoryAlias = aliased(UsersBooksSentencesHistory)
+
         not_read_sentence_in_user_history = (
-            self._db.query(UsersBooksSentencesHistory, BooksSentences)
-            .join(BooksSentences, UsersBooksSentencesHistory.sentence_id == BooksSentences.sentence_id)
+            self._db.query(BooksSentences, UsersBooksSentencesHistoryAlias)
+            .join(UsersBooksSentencesHistoryAlias, BooksSentences.sentence_id == UsersBooksSentencesHistoryAlias.sentence_id)
             .filter(
-                UsersBooksSentencesHistory.telegram_user_id == self._telegram_id,
-                UsersBooksSentencesHistory.is_read.is_(False),
+                UsersBooksSentencesHistoryAlias.telegram_user_id == self._telegram_id,
+                UsersBooksSentencesHistoryAlias.is_read.is_(False),
                 BooksSentences.book_id == self._start_read_book.book_id,
             )
             .order_by(BooksSentences.order.desc())
@@ -142,8 +144,10 @@ class ReadBookService:
 
         if not_read_sentence_in_user_history:
             self._is_new_sentence = False
-            self._need_sentence = not_read_sentence_in_user_history.BooksSentences
-            self._need_sentence.history_sentence_id = not_read_sentence_in_user_history.UsersBooksSentencesHistory.id
+            self._need_sentence, user_sentence_history = not_read_sentence_in_user_history
+            self._need_sentence.history_sentence_id = user_sentence_history.id
+            check_words = user_sentence_history.check_words
+            self._need_sentence.check_words = check_words
             return
 
         last_read_sentence = (
@@ -240,8 +244,7 @@ class ReadBookService:
         check_words = []
 
         if self._is_new_sentence is False:
-            check_words = self._need_sentence.users_books_sentences_history[0].check_words
-            check_words = [word['word'] for word in check_words]
+            check_words = self._need_sentence.check_words
 
         words_for_learn = []
         for word in words:
@@ -252,7 +255,7 @@ class ReadBookService:
 
             is_known_word = words_history.get('is_known', False)
 
-            if check_words and word.word not in check_words:
+            if check_words and word.word_id not in check_words:
                 continue
 
             word_info['telegram_user_id'] = self._telegram_id
