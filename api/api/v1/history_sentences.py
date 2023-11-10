@@ -138,7 +138,7 @@ async def update_history_sentences_for_telegram_id(history_book_sentence_id, req
     if is_read is None and check_words is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Is read or check words required.')
 
-    if check_words:
+    if check_words is not None:
         history_book_sentence.check_words = check_words
     if is_read is not None:
         history_book_sentence.is_read = request.is_read
