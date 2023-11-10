@@ -41,7 +41,8 @@ class TestUpdateHistorySentenceAPI:
             assert history_sentence.is_read is False
             assert history_sentence.id == history_sentence_id
 
-    def test_update_check_words_history_sentence(self):
+    @mark.parametrize('expect_words', [[11, 22, 34], [1111], []])
+    def test_update_check_words_history_sentence(self, expect_words):
         """Test update check words history sentence."""
 
         with db_session() as db:
@@ -50,7 +51,6 @@ class TestUpdateHistorySentenceAPI:
             check_words = history_sentence.check_words
             assert history_sentence.is_read is True
 
-        expect_words = [11, 22, 34]
         assert check_words != expect_words
 
         data_for_update = {
