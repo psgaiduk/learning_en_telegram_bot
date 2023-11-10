@@ -9,3 +9,4 @@ from commands.update_profile import (
     handle_update_profile_other_data,
 )
 from commands.check_words import handle_check_words_after_read, handle_check_word_click_known, handle_check_words_other_data
+from commands.read_sentence import handle_read_sentence
