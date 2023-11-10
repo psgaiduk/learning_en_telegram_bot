@@ -244,7 +244,7 @@ class ReadBookService:
         check_words = []
 
         if self._is_new_sentence is False:
-            check_words = self._need_sentence.check_words
+            check_words = self._need_sentence.check_words or [0]
 
         words_for_learn = []
         for word in words:
