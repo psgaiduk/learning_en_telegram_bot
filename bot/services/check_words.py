@@ -1,5 +1,4 @@
-from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, Message
-from aiogram.dispatcher.filters import Text
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher.storage import FSMContext
 
 from bot import bot
@@ -22,10 +21,10 @@ class CheckWordsService:
         self._words = self._telegram_user.new_sentence.words
         first_word = self._words.pop(0)
 
-        if self._update_user() is False:
+        if await self._update_user() is False:
             return
 
-        if self._update_sentence() is False:
+        if await self._update_sentence() is False:
             return
 
         inline_keyboard = InlineKeyboardMarkup()
