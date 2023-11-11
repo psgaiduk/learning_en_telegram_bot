@@ -78,6 +78,7 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
     """Get telegram user."""
 
     telegram_user = await get_user_by_telegram_id(telegram_id, db)
+    print('here get_user', telegram_user)
     return await get_telegram_user_dto(telegram_user)
 
 
