@@ -64,6 +64,8 @@ async def create_user(request: CreateTelegramUserDTO, db: Session = Depends(get_
         stage=request.stage
     )
     db.add(new_user)
+    
+    print(new_user, 'new_user')
 
     await create_commit(db)
 
