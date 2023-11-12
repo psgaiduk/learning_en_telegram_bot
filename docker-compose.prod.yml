@@ -37,6 +37,13 @@ services:
       - 80:80
     depends_on:
       - admin
+  adminer:
+    container_name: adminer
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
   django_q:
     container_name: django_q
     build: ./admin
