@@ -19,15 +19,9 @@ from settings import settings
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = settings.django_secret_key
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%&l$fgismh(g&=o7jx=$36%zk^jg6y9!(b#qvaa0bso#$zs+b@'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = settings.debug
 
 ALLOWED_HOSTS = ['145.14.157.244']
 
