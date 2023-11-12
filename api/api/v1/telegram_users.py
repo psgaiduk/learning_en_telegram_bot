@@ -52,7 +52,6 @@ async def get_telegram_user_dto(telegram_user: Users) -> OneResponseDTO[Telegram
 )
 async def create_user(request: CreateTelegramUserDTO, db: Session = Depends(get_db)):
     """Create telegram user."""
-    print('here create_user')
     new_user = Users(
         telegram_id=request.telegram_id,
         level_en_id=request.level_en_id,
@@ -64,8 +63,6 @@ async def create_user(request: CreateTelegramUserDTO, db: Session = Depends(get_
         stage=request.stage
     )
     db.add(new_user)
-    
-    print(new_user, 'new_user')
 
     await create_commit(db)
 
@@ -80,7 +77,6 @@ async def get_user(telegram_id: int, db: Session = Depends(get_db)):
     """Get telegram user."""
 
     telegram_user = await get_user_by_telegram_id(telegram_id, db)
-    print('here get_user', telegram_user)
     return await get_telegram_user_dto(telegram_user)
 
 
