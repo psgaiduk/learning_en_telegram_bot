@@ -43,5 +43,5 @@ async def handle_read_sentence(_: Union[CallbackQuery, Message], state: FSMConte
 @dispatcher.callback_query_handler(state=State.read_book.value)
 async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message], state: FSMContext):
     """Handle check words after push button read."""
-    message_text = 'Нужно нажать по кнопке Read или Знаю/Не знаю.'
+    message_text = 'Нужно нажать по кнопке Read или I know/I don\'t know'
     await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML)
