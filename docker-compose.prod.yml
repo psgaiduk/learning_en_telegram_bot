@@ -1,0 +1,64 @@
+version: "3.9"
+services:
+  db:
+    container_name: database
+    image: postgres:13.2
+    env_file:
+      - .env
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
+  bot:
+    container_name: telegram_bot
+    build: ./bot
+    volumes:
+      - ./bot:/app
+    command: ["python", "-u", "./main.py"]
+    depends_on:
+      - db
+    env_file:
+      - .env
+  admin:
+    container_name: admin_panel
+    build: ./admin
+    volumes:
+      - ./admin:/app
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - db
+    env_file:
+      - .env
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - admin
+  django_q:
+    container_name: django_q
+    build: ./admin
+    volumes:
+      - ./admin:/app
+    command: [ "python", "manage.py", "qcluster" ]
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: always
+  api:
+    container_name: api
+    build: ./api
+    ports:
+      - 8001:80
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./api:/app
+
+volumes:
+  dbdata:
