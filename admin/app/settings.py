@@ -23,7 +23,7 @@ SECRET_KEY = settings.django_secret_key
 
 DEBUG = settings.debug
 
-ALLOWED_HOSTS = ['145.14.157.244']
+ALLOWED_HOSTS = ['145.14.157.244', 'localhost']
 
 
 # Application definition
