@@ -11,7 +11,7 @@ from functions import update_data_by_api
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.read_book.value)
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.read_book.value)
-async def handle_read_sentence(_: Union[CallbackQuery, Message], state: FSMContext):
+async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FSMContext):
     """Handle check words after push button read."""
 
     data = await state.get_data()
@@ -37,6 +37,10 @@ async def handle_read_sentence(_: Union[CallbackQuery, Message], state: FSMConte
         return
 
     await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML)
+    try:
+        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message.message_id)
+    except AttributeError:
+        pass
 
 
 @dispatcher.message_handler(state=State.read_book.value)
