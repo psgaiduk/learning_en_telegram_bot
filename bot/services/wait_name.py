@@ -60,7 +60,7 @@ class WaitNameService:
         message_text = (
             f'Имя профиля изменено на {self._new_name}.\n'
             f'Выберите уровень знаний английского языка. Сейчас вам доступны 2 первых уровня, '
-            f'но с увлечинием уровня, будут открываться новые уровни знаний.'
+            f'но потом откроются новые уровни знаний.'
         )
 
         inline_kb = await create_keyboard_for_en_levels(hero_level=self._telegram_user.hero_level.order)
