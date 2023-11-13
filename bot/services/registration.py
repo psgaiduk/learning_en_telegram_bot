@@ -19,7 +19,6 @@ class RegistrationService:
         """Registration."""
         await self._create_user()
         await self._send_greeting_message()
-        await self._send_tasks_today()
         if '/start' in self._message.text:
             await self._create_referral()
 
@@ -45,25 +44,11 @@ class RegistrationService:
         telegram_id_encode = await encode_telegram_id(self._telegram_id)
         telegram_link = f'https://t.me/{settings.bot_name}?start={telegram_id_encode}'
         text_greeting_answer = (
-            '👊 Добро пожаловать в Английский Клуб!\n\n'
-            'Перед тем как начать, ты должен знать основные правила:\n\n'
-            '1️⃣ Первое правило Английского Клуба: рассказывайте всем об Английском Клубе. '
-            f'Отправьте {telegram_link} друзьям, чтобы они тоже могли присоединиться.\n'
-            '2️⃣ Второе правило: НИКОГДА не забывайте о первом правиле. Кстати вот ссылка '
-            f'{telegram_link}, чтобы рассказать всем.\n'
-            '3️⃣ Третье правило: Если ты тут, то должен выполнить задание на день.'
+            '👋 Добро пожаловать!\n\n'
+            f'Вот ссылка, чтобы пригласить друзей: {telegram_link}\n\n'
+            '📝 Пожалуйста, введи своё имя чтобы продолжить регистрацию.'
         )
         await self._message.answer(text_greeting_answer)
-
-    async def _send_tasks_today(self) -> None:
-        text_first_day_tasks_answer = (
-            '📝 Задание на первый день:\n\n'
-            '1️⃣ Заполни свой профиль.\n'
-            '2️⃣ Прочитать 5 предложений.\n\n'
-            'А теперь напиши своё имя.'
-        )
-
-        await self._message.answer(text_first_day_tasks_answer)
 
     async def _create_referral(self) -> None:
         friend_telegram_id = None
