@@ -19,11 +19,10 @@ class MainSettings(BaseSettings):
     environment: str = Field(..., env='ENVIRONMENT')
     nlp_token: str = Field(..., env='NLP_TOKEN')
     translate_word_token: str = Field(..., env='TRANSLATE_WORD_TOKEN')
-    django_secret_key = str = Field(..., env='DJANGO_SECRET_KEY')
+    django_secret_key: str = Field(..., env='DJANGO_SECRET_KEY')
     debug: bool = Field(..., env='DEBUG')
 
     postgres: PostgresSettings = PostgresSettings()
-
 
 
 @lru_cache()
