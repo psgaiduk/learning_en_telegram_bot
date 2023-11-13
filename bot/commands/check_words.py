@@ -44,6 +44,8 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
 
+    await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
+
 
 @dispatcher.callback_query_handler(state=State.check_words.value)
 @dispatcher.message_handler(state=State.check_words.value)
