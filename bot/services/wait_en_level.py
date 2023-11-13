@@ -57,11 +57,8 @@ class WaitEnLevelService:
         if is_update_user is False:
             return
 
-        first_task_complete_text = 'Поздравляю ты выполнил первое задание на день! Теперь ты можешь прочитать первый рассказ.'
+        first_task_complete_text = 'Поздравляю с регистрацией! Теперь ты можешь прочитать первый рассказ. Для этого нажми по кнопке Read'
         await bot.send_message(chat_id=self._callback_query.from_user.id, text=first_task_complete_text)
-        message_text = 'Теперь ты готов к изучению английского языка. Для начала прочитай первый рассказ.'
-        keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text='Read'))
-        await bot.send_message(chat_id=self._callback_query.from_user.id, text=message_text, reply_markup=keyboard)
 
     async def _update_en_level_for_old_client(self) -> None:
 
