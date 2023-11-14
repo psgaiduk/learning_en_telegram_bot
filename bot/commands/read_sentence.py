@@ -1,6 +1,6 @@
 from typing import Union
 
-from aiogram.types import CallbackQuery, Message, ParseMode
+from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
 
@@ -36,7 +36,10 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
     if is_update_sentence is False:
         return
 
-    await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(KeyboardButton(text='Read'))
+
+    await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
     try:
         await bot.delete_message(chat_id=message.from_user.id, message_id=message.message.message_id)
     except AttributeError:
@@ -47,5 +50,7 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 @dispatcher.callback_query_handler(state=State.read_book.value)
 async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message], state: FSMContext):
     """Handle check words after push button read."""
-    message_text = 'Нужно нажать по кнопке Read или I know/I don\'t know'
-    await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML)
+    message_text = 'Нужно нажать по кнопке Read'
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(KeyboardButton(text='Read'))
+    await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)

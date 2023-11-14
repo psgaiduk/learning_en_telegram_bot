@@ -1,4 +1,4 @@
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
 
@@ -13,8 +13,15 @@ async def handle_check_words_after_read(message: Message, state: FSMContext):
     """Handle check words after push button read."""
     
     start_text_message = 'Прежде чем начать изучать предложение, давай посмотрим слова, которые нам встретятся в этом предложении.\n\n'
+    send_message = await bot.send_message(chat_id=message.from_user.id, text=start_text_message, reply_markup=ReplyKeyboardRemove())
+    await bot.delete_message(chat_id=message.from_user.id, message_id=send_message.message_id)
 
-    await CheckWordsService(state=state, start_text_message=start_text_message).do()
+    await CheckWordsService(state=state, start_text_message='').do()
+    
+    try:
+        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id)
+    except AttributeError:
+        pass
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.check_words.value)
@@ -41,15 +48,18 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 
     if is_update_history is False:
         return
+    
+    try:
+        await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
+    except AttributeError:
+        pass
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
-
-    await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
 
 
 @dispatcher.callback_query_handler(state=State.check_words.value)
 @dispatcher.message_handler(state=State.check_words.value)
 async def handle_check_words_other_data(callback_query: CallbackQuery):
     """Handle check words for other data."""
-    message_text = 'Нужно нажать по кнопке Read или I know/I don\'t know'
+    message_text = 'Нужно нажать по кнопке I know или I don\'t know'
     await bot.send_message(chat_id=callback_query.from_user.id, text=message_text)
