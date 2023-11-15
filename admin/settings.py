@@ -21,6 +21,7 @@ class MainSettings(BaseSettings):
     translate_word_token: str = Field(..., env='TRANSLATE_WORD_TOKEN')
     django_secret_key: str = Field(..., env='DJANGO_SECRET_KEY')
     debug: bool = Field(..., env='DEBUG')
+    sentry_dsn: str = Field(..., env='SENTRY_DSN_DJANGO')
 
     postgres: PostgresSettings = PostgresSettings()
 
