@@ -11,6 +11,7 @@ class MainSettings(BaseSettings):
     api_url: str = Field(..., env='URL_API')
     api_token: str = Field(..., env='API_KEY')
     bot_name: str = Field(..., env='BOT_NAME')
+    sentry_dsn: str = Field(..., env='SENTRY_DSN_BOT')
 
     @property
     def api_headers(self) -> dict:
