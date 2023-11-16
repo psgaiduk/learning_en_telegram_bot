@@ -6,7 +6,7 @@ from books.dto import SentenceDTO
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
 from books.services import CreateWordsAndSentencesService
 from telegram_users.choices import Language
-from nlp_translate import translate_word, translate_text
+from nlp_translate import translate_text
 
 
 def create_book_task(book_id: int) -> None:
@@ -32,7 +32,7 @@ def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
             continue
         translates_word = {}
         for language_code, _ in Language.choices():
-            translates_word[language_code] = translate_word(word=word, language=language_code)
+            translates_word[language_code] = translate_text(text_on_en=word, language=language_code)
         WordsModel.objects.create(word=word, translation=translates_word, type_word=type_word)
 
     translates_sentence = {}

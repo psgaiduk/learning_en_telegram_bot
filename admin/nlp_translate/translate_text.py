@@ -1,23 +1,28 @@
-from requests import post
+from http import HTTPStatus
+from typing import Optional
+
+from requests import get
 
 from settings import settings
 
 
-def translate_text(text_on_en: str, language: str) -> str:
-    url = 'https://deepl-translator.p.rapidapi.com/translate'
-
-    headers = {
-        'content-type': 'application/json',
-        'X-RapidAPI-Key': settings.nlp_token,
-        'X-RapidAPI-Host': 'deepl-translator.p.rapidapi.com',
-    }
+def translate_text(text_on_en: str, language: str) -> Optional[str]:
+    url = 'https://nlp-translation.p.rapidapi.com/v1/translate'
 
     payload = {
         'text': text_on_en,
-        'source': 'EN',
-        'target': language,
+        'from': 'en',
+        'to': language,
     }
 
-    response = post(url, json=payload, headers=headers).json()
+    headers = {
+        'X-RapidAPI-Key': settings.nlp_token,
+        'X-RapidAPI-Host': 'nlp-translation.p.rapidapi.com'
+    }
 
-    return response['text']
+    response = get(url, params=payload, headers=headers)
+
+    if response.status_code != HTTPStatus.OK:
+        return ''
+
+    return response.json()['translated_text'][language]
