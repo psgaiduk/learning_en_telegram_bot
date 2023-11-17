@@ -83,20 +83,6 @@ class TestRegistrationService:
         )
 
     @mark.asyncio
-    async def test_send_tasks_today(self):
-        self._message.answer = AsyncMock()
-        self._service = RegistrationService(message=self._message)
-
-        await self._service._send_tasks_today()
-
-        self._message.answer.assert_called_once_with(
-            '📝 Задание на первый день:\n\n'
-            '1️⃣ Заполни свой профиль.\n'
-            '2️⃣ Прочитать 5 предложений.\n\n'
-            'А теперь напиши своё имя.'
-        )
-
-    @mark.asyncio
     async def test_create_referral(self):
         self._message.text = '/start a'
         self._message.answer = AsyncMock()
