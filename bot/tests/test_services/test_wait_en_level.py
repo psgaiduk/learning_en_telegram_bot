@@ -199,13 +199,13 @@ class TestWaitEnLevelService:
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await self._service._update_en_level_for_new_client()
 
-            expected_calls = [
-                call(chat_id=chat_id, text='Поздравляю ты выполнил первое задание на день! Теперь ты можешь прочитать первый рассказ.'),
-                call(chat_id=chat_id, text='Теперь ты готов к изучению английского языка. Для начала прочитай первый рассказ.', reply_markup=ANY)
-            ]
-            mock_send_message.assert_has_calls(expected_calls, any_order=True)
+            mock_send_message.assert_called_once_with(
+                chat_id=chat_id,
+                text='Поздравляю с регистрацией! Теперь ты можешь прочитать первый рассказ. Для этого нажми по кнопке Read',
+                reply_markup=ANY,
+            )
 
-            reply_markup_call = mock_send_message.call_args_list[1]
+            reply_markup_call = mock_send_message.call_args_list[0]
             reply_markup = reply_markup_call.kwargs['reply_markup']
 
             assert isinstance(reply_markup, ReplyKeyboardMarkup)
