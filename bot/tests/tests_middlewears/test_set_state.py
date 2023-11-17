@@ -61,7 +61,7 @@ class TestSetStateMiddleware:
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         'stage',
-        ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK', 'CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'],
+        ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK', 'GRAMMAR', 'UPDATE_PROFILE'],
     )
     async def test_get_state_from_user(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
@@ -91,7 +91,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
 
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
-    @patch('semiddlewears.set_state.update_data_by_api', new_callable=AsyncMock)
+    @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @pytest.mark.asyncio
     async def test_get_state_update_profile(self, mock_update_user, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
@@ -133,7 +133,7 @@ class TestSetStateMiddleware:
             mock_update_user.assert_not_called()
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR'])
+    @pytest.mark.parametrize('stage', ['GRAMMAR'])
     async def test_not_get_state_update_profile(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/profile', spec=types.Message)
         response_data = self._response_data
@@ -185,7 +185,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
+    @pytest.mark.parametrize('stage', ['GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_records(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/records', spec=types.Message)
         response_data = self._response_data
@@ -237,7 +237,7 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize('stage', ['CHECK_WORDS', 'GRAMMAR', 'UPDATE_PROFILE'])
+    @pytest.mark.parametrize('stage', ['GRAMMAR', 'UPDATE_PROFILE'])
     async def test_not_get_state_achievements(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), text='/achievements', spec=types.Message)
         response_data = self._response_data
