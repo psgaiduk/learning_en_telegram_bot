@@ -6,6 +6,7 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock, patch
 
 from choices import State
+from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from middlewears import SetStateMiddleware
 from settings import settings
 
@@ -33,6 +34,26 @@ class TestSetStateMiddleware:
                 'main_language': None,
             }
         }
+        cls._new_sentence = NewSentenceDTOModel(
+            history_sentence_id=1,
+            book_id=1,
+            sentence_id=1,
+            text='test_text',
+            translation={'ru': 'test_text'},
+            word=[
+                WordDTOModel(
+                    word_id=1,
+                    word='test_word',
+                    type_word_id=1,
+                    translation={'ru': 'test_word'},
+                    is_known=False,
+                    count_view=0,
+                    correct_answers=0,
+                    incorrect_answers=0,
+                    correct_answers_in_row=0,
+                )
+            ],
+        )
 
     @pytest.mark.asyncio
     async def test_get_state_registration(self, mocker):
@@ -61,7 +82,7 @@ class TestSetStateMiddleware:
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         'stage',
-        ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK', 'GRAMMAR', 'UPDATE_PROFILE'],
+        ['WAIT_NAME', 'WAIT_EN_LEVEL', 'GRAMMAR', 'UPDATE_PROFILE'],
     )
     async def test_get_state_from_user(self, mocker, stage):
         message = Mock(from_user=Mock(id=self._user), chat=Mock(id=self._chat), spec=types.Message)
@@ -87,7 +108,9 @@ class TestSetStateMiddleware:
         expected_state = stage
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
-        expected_data = {'user': response_data['detail']}
+        telegram_user = TelegramUserDTOModel(**response_data['detail'])
+
+        expected_data = {'user': telegram_user}
         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
 
     @pytest.mark.parametrize('stage', ['WAIT_NAME', 'WAIT_EN_LEVEL', 'READ_BOOK'])
