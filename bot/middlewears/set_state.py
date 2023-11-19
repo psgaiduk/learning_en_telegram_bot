@@ -61,7 +61,7 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def get_real_state(self) -> str:
         """Get real state."""
-        if self._state in {State.registration.value, State.grammar.value}:
+        if self._state in {State.registration.value, State.grammar.value, State.error.value}:
             return self._state
 
         if self._message_text == '/profile':
