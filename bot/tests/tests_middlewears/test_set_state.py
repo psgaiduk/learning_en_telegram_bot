@@ -321,6 +321,10 @@ class TestSetStateMiddleware:
             fsm_context_mock.set_data.assert_not_called()
             assert self._service._telegram_user is None
 
+    @pytest.mark.parametrize('state', [State.update_profile.value, State.error.value, State.grammar.value, State.registration.value])
+    @pytest.mark.asyncio
+    async def test_get_real_test_regular_work(self, state):
+        self._service._state = state
+        self._service._message_text = 'text'
 
-
-
+        assert await self._service.get_real_state() == state
