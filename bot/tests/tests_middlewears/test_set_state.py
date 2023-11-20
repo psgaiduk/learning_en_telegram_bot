@@ -14,15 +14,14 @@ from settings import settings
 class TestSetStateMiddleware:
     """Tests for SetStateMiddleware."""
 
-    @classmethod
-    def setup_class(cls):
-        cls._chat = 12345
-        cls._user = 12345
-        cls._message = Mock()
-        cls._get_method_target = 'context_managers.aio_http_client.AsyncHttpClient.get'
-        cls._storage_mock = Mock(spec=BaseStorage)
-        cls._service = SetStateMiddleware(dispatcher=Mock(storage=cls._storage_mock))
-        cls._response_data = {
+    def setup_method(self):
+        self._chat = 12345
+        self._user = 12345
+        self._message = Mock()
+        self._get_method_target = 'context_managers.aio_http_client.AsyncHttpClient.get'
+        self._storage_mock = Mock(spec=BaseStorage)
+        self._service = SetStateMiddleware(dispatcher=Mock(storage=self._storage_mock))
+        self._response_data = {
             'detail': {
                 'stage': '',
                 'user_name': 'test_name',
@@ -34,7 +33,7 @@ class TestSetStateMiddleware:
                 'main_language': None,
             }
         }
-        cls._new_sentence = NewSentenceDTOModel(
+        self._new_sentence = NewSentenceDTOModel(
             history_sentence_id=1,
             book_id=1,
             sentence_id=1,
@@ -288,17 +287,18 @@ class TestSetStateMiddleware:
     @pytest.mark.parametrize('response_status, expected_state', [
         (HTTPStatus.NOT_FOUND, State.registration.value),
         (HTTPStatus.OK, 'expected_stage_from_api'),
-        (HTTPStatus.BAD_REQUEST, State.error.value)
+        (HTTPStatus.BAD_REQUEST, State.error.value),
     ])
     @pytest.mark.asyncio
     async def test_set_state_data(self, mocker, response_status, expected_state):
         response_data = self._response_data
-        response_data['detail']['stage'] = 'expected_stage_from_api'
+        response_data['detail']['stage'] = expected_state
 
         self._storage_mock.check_address.return_value = (self._chat, self._user)
 
         fsm_context_mock = mocker.Mock(spec=FSMContext)
         fsm_context_mock.set_state = mocker.AsyncMock()
+        mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
         mock_get_real_state = AsyncMock(return_value=expected_state)
         self._service.get_real_state = mock_get_real_state
@@ -314,9 +314,13 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
 
         if response_status == HTTPStatus.OK:
+            assert self._service._telegram_user == TelegramUserDTOModel(**response_data['detail'])
             expected_data = {'user': TelegramUserDTOModel(**response_data['detail'])}
             fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
         else:
             fsm_context_mock.set_data.assert_not_called()
+            assert self._service._telegram_user is None
+
+
 
 
