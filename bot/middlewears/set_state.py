@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Optional
 
 from aiogram import types, dispatcher as aiogram_dispatcher
 from aiogram.dispatcher.middlewares import BaseMiddleware
@@ -16,13 +17,14 @@ class SetStateMiddleware(BaseMiddleware):
 
     _state: str
     _message_text: str
-    _telegram_user: TelegramUserDTOModel
+    _telegram_user: Optional[TelegramUserDTOModel]
 
     def __init__(self, dispatcher: aiogram_dispatcher) -> None:
         """Init."""
         self.dispatcher = dispatcher
         super(SetStateMiddleware, self).__init__()
         self._state = ''
+        self._telegram_user = None
 
     async def set_state_data(self, user, telegram_id) -> None:
         url_get_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
