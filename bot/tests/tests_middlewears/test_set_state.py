@@ -322,9 +322,16 @@ class TestSetStateMiddleware:
             assert self._service._telegram_user is None
 
     @pytest.mark.parametrize('state', [State.update_profile.value, State.error.value, State.grammar.value, State.registration.value])
+    @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @pytest.mark.asyncio
-    async def test_get_real_test_regular_work(self, state):
+    async def test_get_real_state_regular_work(self, mock_update_user, state):
         self._service._state = state
         self._service._message_text = 'text'
+        mock_update_user.side_effect = [True]
+        mock_work_with_read_status = AsyncMock(return_value=state)
+        self._service.work_with_read_status = mock_work_with_read_status
 
         assert await self._service.get_real_state() == state
+
+        mock_update_user.assert_not_called()
+        mock_work_with_read_status.assert_not_called()
