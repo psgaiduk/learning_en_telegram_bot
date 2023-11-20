@@ -80,7 +80,7 @@ class SetStateMiddleware(BaseMiddleware):
                     url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
                 )
                 if is_update is False:
-                    return ''
+                    return State.error.value
             return State.update_profile.value
 
         if self._state != State.update_profile.value and self._message_text in {'/records', '/achievements'}:
