@@ -335,3 +335,15 @@ class TestSetStateMiddleware:
 
         mock_update_user.assert_not_called()
         mock_work_with_read_status.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_get_real_test_read_book(self):
+        state = State.read_book.value
+        self._service._state = state
+        self._service._message_text = 'text'
+
+        mock_work_with_read_status = AsyncMock(return_value=state)
+        self._service.work_with_read_status = mock_work_with_read_status
+
+        assert await self._service.get_real_state() == state
+        mock_work_with_read_status.assert_called_once()
