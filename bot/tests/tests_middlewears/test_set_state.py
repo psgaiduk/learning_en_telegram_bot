@@ -378,8 +378,11 @@ class TestSetStateMiddleware:
         self._service._telegram_user.stage = state
         mock_update_user.side_effect = [is_update]
 
+        mock_work_with_read_status = AsyncMock(return_value=state)
+
         if state == State.read_book.value and message_text not in {'/profile', '/records', '/achievements'}:
-            mock_work_with_read_status = AsyncMock(return_value=state)
+            self._service.work_with_read_status = mock_work_with_read_status
+        else:
             self._service.work_with_read_status = mock_work_with_read_status
 
         assert await self._service.get_real_state() == expected_state
@@ -395,4 +398,6 @@ class TestSetStateMiddleware:
                 params_for_update=expected_data_for_update_user,
                 url_for_update=f'telegram_user/{self._service._telegram_user.telegram_id}',
             )
+        else:
+            mock_update_user.assert_not_called()
 
