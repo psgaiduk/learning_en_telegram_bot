@@ -39,7 +39,7 @@ class TestSetStateMiddleware:
             sentence_id=1,
             text='test_text',
             translation={'ru': 'test_text'},
-            word=[
+            words=[
                 WordDTOModel(
                     word_id=1,
                     word='test_word',
@@ -401,3 +401,29 @@ class TestSetStateMiddleware:
         else:
             mock_update_user.assert_not_called()
 
+    @pytest.mark.parametrize('response_status, words, expected_state', [
+        (HTTPStatus.OK, [], State.read_book.value),
+        (HTTPStatus.OK, ['word'], State.check_words.value),
+        (HTTPStatus.BAD_REQUEST, ['word'], State.error.value),
+    ])
+    @pytest.mark.asyncio
+    async def test_work_with_read_status(self, response_status, words, expected_state):
+        response_data = {'detail': self._new_sentence.dict()}
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+        self._service._telegram_user.stage = 'READ_BOOK'
+        if not words:
+            response_data['detail']['words'] = []
+
+        with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
+            updated_state = await self._service.work_with_read_status()
+
+        mocked_get.assert_called_once_with(
+            url=f'{settings.api_url}/v1/read/{self._chat}/',
+            headers=settings.api_headers,
+        )
+
+        assert updated_state == expected_state
+        if updated_state != State.error.value:
+            assert self._service._telegram_user.new_sentence == NewSentenceDTOModel(**response_data['detail'])
+        else:
+            assert self._service._telegram_user.new_sentence is None
