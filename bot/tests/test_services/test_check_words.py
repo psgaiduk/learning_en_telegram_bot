@@ -93,3 +93,27 @@ class TestCheckWordsService:
         mock_update_user.assert_called_once()
         mock_update_sentence.assert_not_called()
         mock_send_message.assert_not_called()
+
+    @mark.asyncio
+    async def test_do_update_sentence_false(self):
+        service = CheckWordsService(state=self._state, start_text_message='')
+
+        mock_get_user = AsyncMock(return_value=None)
+        service._get_user = mock_get_user
+        service._telegram_user = self._telegram_user
+
+        mock_update_user = AsyncMock(return_value=True)
+        service._update_user = mock_update_user
+
+        mock_update_sentence = AsyncMock(return_value=False)
+        service._update_sentence = mock_update_sentence
+
+        mock_send_message = AsyncMock(return_value=None)
+        service._send_message = mock_send_message
+
+        await service.do()
+
+        mock_get_user.assert_called_once()
+        mock_update_user.assert_called_once()
+        mock_update_sentence.assert_called_once()
+        mock_send_message.assert_not_called()
