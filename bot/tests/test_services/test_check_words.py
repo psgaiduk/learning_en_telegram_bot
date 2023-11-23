@@ -1,14 +1,10 @@
-from http import HTTPStatus
-
-from aiohttp import ClientResponse
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytest import mark
-from unittest.mock import ANY, AsyncMock, Mock, patch, MagicMock
+from unittest.mock import ANY, AsyncMock, patch
 
 from bot import bot
 from choices import State
 from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
-from settings import settings
 from services import CheckWordsService
 
 
