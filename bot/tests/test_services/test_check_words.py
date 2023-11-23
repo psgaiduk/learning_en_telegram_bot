@@ -72,6 +72,9 @@ class TestCheckWordsService:
         mock_update_sentence.assert_called_once()
         mock_send_message.assert_called_once()
 
+        assert service._words == []
+        assert service._first_word == self._word
+
     @mark.asyncio
     async def test_do_update_user_false(self):
         service = CheckWordsService(state=self._state, start_text_message='')
