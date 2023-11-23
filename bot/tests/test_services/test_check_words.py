@@ -5,6 +5,7 @@ from aiogram.dispatcher.storage import FSMContext
 from pytest import mark
 from unittest.mock import AsyncMock, Mock, patch, MagicMock
 
+from choices import State
 from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from settings import settings
 from services import CheckWordsService
@@ -128,3 +129,25 @@ class TestCheckWordsService:
         await service._get_user()
 
         assert service._telegram_user == self._telegram_user
+
+    @mark.parametrize('update_status', [True, False])
+    @mark.asyncio
+    @patch('services.check_words.update_data_by_api', new_callable=AsyncMock)
+    async def test_update_user(self, mock_update_user, update_status):
+        service = CheckWordsService(state=self._state, start_text_message='')
+        service._telegram_user = self._telegram_user
+
+        mock_update_user.side_effect = [update_status]
+
+        return_value = await service._update_user()
+
+        mock_update_user.assert_called_once_with(
+            telegram_id=self._telegram_user.telegram_id,
+            params_for_update={
+                'telegram_id': self._telegram_user.telegram_id,
+                'stage': State.read_book.value,
+            },
+            url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
+        )
+
+        assert return_value is update_status
