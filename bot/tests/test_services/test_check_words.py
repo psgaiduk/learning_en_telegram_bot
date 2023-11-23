@@ -1,10 +1,11 @@
 from http import HTTPStatus
 
 from aiohttp import ClientResponse
-from aiogram.dispatcher.storage import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytest import mark
-from unittest.mock import AsyncMock, Mock, patch, MagicMock
+from unittest.mock import ANY, AsyncMock, Mock, patch, MagicMock
 
+from bot import bot
 from choices import State
 from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from settings import settings
@@ -179,3 +180,31 @@ class TestCheckWordsService:
         )
 
         assert return_value is update_status
+
+    @mark.parametrize('start_message_text', ['', 'Text', 'Another text'])
+    @mark.asyncio
+    async def test_send_message(self, start_message_text):
+        service = CheckWordsService(state=self._state, start_text_message='')
+        service._telegram_user = self._telegram_user
+        service._first_word = self._word
+        service._start_text_message = start_message_text
+
+        with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
+            await service._send_message()
+
+            excepted_text = f'{start_message_text}Слово: {self._word.word}\nПеревод: {self._word.translation["ru"]}'
+
+            mock_send_message.assert_called_once_with(
+                chat_id=self._chat_id,
+                text=excepted_text,
+                reply_markup=ANY,
+            )
+
+            reply_markup_call = mock_send_message.call_args_list[0]
+            reply_markup = reply_markup_call.kwargs['reply_markup']
+
+            assert isinstance(reply_markup, InlineKeyboardMarkup)
+            assert reply_markup.inline_keyboard == [
+                [InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{self._word.word_id}')],
+                [InlineKeyboardButton(text='I don\'t know', callback_data=f'know_word_false_{self._word.word_id}')],
+            ]
