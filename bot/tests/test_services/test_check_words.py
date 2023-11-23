@@ -151,3 +151,28 @@ class TestCheckWordsService:
         )
 
         assert return_value is update_status
+
+    @mark.parametrize('update_status', [True, False])
+    @mark.asyncio
+    @patch('services.check_words.update_data_by_api', new_callable=AsyncMock)
+    async def test_update_sentence(self, mock_update_user, update_status):
+        service = CheckWordsService(state=self._state, start_text_message='')
+        service._telegram_user = self._telegram_user
+        service._words = self._new_sentence.words
+
+        mock_update_user.side_effect = [update_status]
+
+        return_value = await service._update_sentence()
+
+        words_ids = [word.word_id for word in self._new_sentence.words]
+
+        mock_update_user.assert_called_once_with(
+            telegram_id=self._telegram_user.telegram_id,
+            params_for_update={
+                'id': self._telegram_user.new_sentence.history_sentence_id,
+                'check_words': words_ids,
+            },
+            url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
+        )
+
+        assert return_value is update_status
