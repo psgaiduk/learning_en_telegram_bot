@@ -1,8 +1,9 @@
 from http import HTTPStatus
 
 from aiohttp import ClientResponse
+from aiogram.dispatcher.storage import FSMContext
 from pytest import mark
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch, MagicMock
 
 from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from settings import settings
@@ -13,7 +14,7 @@ class TestCheckWordsService:
     """Tests for CheckWordsService."""
 
     def setup_method(self):
-        self._state = Mock()
+        self._state = AsyncMock()
         self._chat_id = 12345
         self._word = WordDTOModel(
                     word_id=1,
@@ -117,3 +118,13 @@ class TestCheckWordsService:
         mock_update_user.assert_called_once()
         mock_update_sentence.assert_called_once()
         mock_send_message.assert_not_called()
+    
+    @mark.asyncio
+    async def test_get_user(self):
+        service = CheckWordsService(state=self._state, start_text_message='')
+
+        self._state.get_data = AsyncMock(return_value={'user': self._telegram_user})
+
+        await service._get_user()
+
+        assert service._telegram_user == self._telegram_user
