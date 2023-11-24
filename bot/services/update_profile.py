@@ -7,6 +7,7 @@ class UpdateProfileService:
     """Update profile user."""
 
     _start_message_text: str
+    _chat_id: int
 
     def __init__(self, chat_id: int, start_message_text: str = ''):
         """Init."""
