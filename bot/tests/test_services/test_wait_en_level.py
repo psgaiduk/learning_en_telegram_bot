@@ -1,14 +1,11 @@
-from http import HTTPStatus
-
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from pytest import mark
-from unittest.mock import ANY, AsyncMock, Mock, patch, call
+from unittest.mock import ANY, AsyncMock, Mock, patch
 
 from bot import bot
 from choices import State
 from dto import TelegramUserDTOModel
-from settings import settings
-from services import WaitEnLevelService, UpdateProfileService
+from services import WaitEnLevelService
 
 
 class TestWaitEnLevelService:
