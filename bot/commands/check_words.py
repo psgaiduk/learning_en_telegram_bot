@@ -11,7 +11,7 @@ from services import CheckWordsService
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.check_words.value)
-async def handle_check_words_after_read(message: Message, state: FSMContext):
+async def handle_check_words_after_read(message: Message, state: FSMContext) -> None:
     """Handle check words after push button read."""
     
     start_text_message = 'Прежде чем начать изучать предложение, давай посмотрим слова, которые нам встретятся в этом предложении.\n\n'
@@ -27,7 +27,7 @@ async def handle_check_words_after_read(message: Message, state: FSMContext):
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.check_words.value)
-async def handle_check_word_click_known(callback_query: CallbackQuery, state: FSMContext):
+async def handle_check_word_click_known(callback_query: CallbackQuery, state: FSMContext) -> None:
     """Handle check word if user push button know."""
     is_known = False
     start_text_message = ''
@@ -61,7 +61,7 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 
 @dispatcher.callback_query_handler(state=State.check_words.value)
 @dispatcher.message_handler(state=State.check_words.value)
-async def handle_check_words_other_data(message_data: Union[CallbackQuery, Message]):
+async def handle_check_words_other_data(message_data: Union[CallbackQuery, Message]) -> None:
     """Handle check words for other data."""
     message_text = 'Нужно нажать по кнопке I know или I don\'t know'
     await bot.send_message(chat_id=message_data.from_user.id, text=message_text)
