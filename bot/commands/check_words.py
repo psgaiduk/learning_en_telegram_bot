@@ -1,3 +1,5 @@
+from typing import Union
+
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
@@ -59,7 +61,7 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 
 @dispatcher.callback_query_handler(state=State.check_words.value)
 @dispatcher.message_handler(state=State.check_words.value)
-async def handle_check_words_other_data(callback_query: CallbackQuery):
+async def handle_check_words_other_data(message_data: Union[CallbackQuery, Message]):
     """Handle check words for other data."""
     message_text = 'Нужно нажать по кнопке I know или I don\'t know'
-    await bot.send_message(chat_id=callback_query.from_user.id, text=message_text)
+    await bot.send_message(chat_id=message_data.from_user.id, text=message_text)
