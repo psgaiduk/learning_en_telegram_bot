@@ -14,7 +14,7 @@ class TestCheckWordsCommand:
     @mark.asyncio
     async def test_handle_check_words_other_data_callback(self, monkeypatch):
         chat_id = 1
-        monkeypatch.setattr('commands.registration.State', MagicMock(value=State.check_words.value))
+        monkeypatch.setattr('commands.check_words.State', MagicMock(value=State.check_words.value))
         user = User(id=chat_id, is_bot=False, first_name="Test User")
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user)
         mock_callback.from_user = user
@@ -29,7 +29,7 @@ class TestCheckWordsCommand:
     @mark.asyncio
     async def test_handle_check_words_other_data_message(self, monkeypatch):
         chat_id = 1
-        monkeypatch.setattr('commands.registration.State', MagicMock(value=State.check_words.value))
+        monkeypatch.setattr('commands.check_words.State', MagicMock(value=State.check_words.value))
         user = User(id=chat_id, is_bot=False, first_name="Test User")
         mock_message = Message(id=1, chat=chat_id, data='other_data', from_user=user)
         mock_message.from_user = user
