@@ -3,6 +3,7 @@ from typing import Union
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
+from aiogram.utils.exceptions import MessageCantBeDeleted
 
 from bot import bot, dispatcher
 from choices import State
@@ -53,7 +54,7 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
     
     try:
         await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
-    except AttributeError:
+    except (AttributeError, MessageCantBeDeleted):
         pass
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
