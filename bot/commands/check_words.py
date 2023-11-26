@@ -7,17 +7,16 @@ from aiogram.utils.exceptions import MessageCantBeDeleted
 
 from bot import bot, dispatcher
 from choices import State
-from functions import update_data_by_api
+from functions import send_message_and_delete, update_data_by_api
 from services import CheckWordsService
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.check_words.value)
 async def handle_check_words_after_read(message: Message, state: FSMContext) -> None:
     """Handle check words after push button read."""
-    
+
     start_text_message = 'Прежде чем начать изучать предложение, давай посмотрим слова, которые нам встретятся в этом предложении.\n\n'
-    send_message = await bot.send_message(chat_id=message.from_user.id, text=start_text_message, reply_markup=ReplyKeyboardRemove())
-    await bot.delete_message(chat_id=message.from_user.id, message_id=send_message.message_id)
+    await send_message_and_delete(chat_id=message.from_user.id, message_text=start_text_message, reply_markup=ReplyKeyboardRemove())
 
     await CheckWordsService(state=state, start_text_message='').do()
     
