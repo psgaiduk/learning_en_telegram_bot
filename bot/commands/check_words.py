@@ -7,7 +7,7 @@ from aiogram.utils.exceptions import MessageCantBeDeleted
 
 from bot import bot, dispatcher
 from choices import State
-from functions import send_message_and_delete, update_data_by_api
+from functions import delete_message, send_message_and_delete, update_data_by_api
 from services import CheckWordsService
 
 
@@ -19,11 +19,8 @@ async def handle_check_words_after_read(message: Message, state: FSMContext) -> 
     await send_message_and_delete(chat_id=message.from_user.id, message_text=start_text_message, reply_markup=ReplyKeyboardRemove())
 
     await CheckWordsService(state=state, start_text_message='').do()
-    
-    try:
-        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id)
-    except AttributeError:
-        pass
+
+    await delete_message(chat_id=message.from_user.id, message_id=message.message_id)
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.check_words.value)
@@ -50,11 +47,8 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 
     if is_update_history is False:
         return
-    
-    try:
-        await bot.delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
-    except (AttributeError, MessageCantBeDeleted):
-        pass
+
+    await delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
 

@@ -6,7 +6,7 @@ from aiogram.dispatcher.storage import FSMContext
 
 from bot import bot, dispatcher
 from choices import State
-from functions import update_data_by_api
+from functions import delete_message, update_data_by_api
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.read_book.value)
@@ -40,10 +40,8 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
     keyboard.add(KeyboardButton(text='Read'))
 
     await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
-    try:
-        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message.message_id)
-    except AttributeError:
-        pass
+
+    await delete_message(chat_id=message.from_user.id, message_id=message.message.message_id)
 
 
 @dispatcher.message_handler(state=State.read_book.value)
