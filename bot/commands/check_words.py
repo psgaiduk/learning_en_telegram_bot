@@ -3,7 +3,6 @@ from typing import Union
 from aiogram.types import CallbackQuery, Message, ReplyKeyboardRemove
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
-from aiogram.utils.exceptions import MessageCantBeDeleted
 
 from bot import bot, dispatcher
 from choices import State
