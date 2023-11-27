@@ -5,7 +5,7 @@ from pytest import mark
 
 from bot import bot
 from choices import State
-from commands import handle_check_words_other_data, handle_check_words_after_read
+from commands import handle_check_words_other_data, handle_check_words_after_read, handle_check_word_click_known
 
 
 class TestCheckWordsCommand:
@@ -60,3 +60,56 @@ class TestCheckWordsCommand:
         mock_check_word_service.assert_called_once_with(state=state, start_text_message='')
         mock_check_word_service.return_value.do.assert_awaited_once_with()
         mock_delete_message.assert_called_once_with(chat_id=chat_id, message_id=mock_message.message_id)
+
+    @mark.parametrize('callback_data, is_update_history', [
+        ('know_word_true_1', True),
+        ('know_word_false_1', True),
+        ('know_word_true_1', False),
+        ('know_word_false_1', False),
+    ])
+    @patch('commands.check_words.delete_message')
+    @patch('commands.check_words.update_data_by_api')
+    @patch('commands.check_words.CheckWordsService')
+    @mark.asyncio
+    async def test_handle_check_word_click_known(
+            self,
+            mock_check_word_service,
+            mock_update_data_by_api,
+            mock_delete_message,
+            callback_data,
+            is_update_history,
+    ):
+        chat_id = 1
+        user = User(id=chat_id, is_bot=False, first_name='Test User')
+        message = Message(id=1, chat=chat_id, text='Read', from_user=user)
+        mock_callback = CallbackQuery(id=1, chat=chat_id, data=callback_data, from_user=user, message=message)
+        mock_callback.from_user = user
+        state = AsyncMock()
+        mock_check_word_service.return_value.do = AsyncMock()
+        mock_update_data_by_api.return_value = is_update_history
+
+        await handle_check_word_click_known(callback_query=mock_callback, state=state)
+
+        data_for_update_word = {
+            'telegram_user_id': chat_id,
+            'word_id': 1,
+            'is_known': 'know_word_true' in callback_data,
+        }
+
+        mock_update_data_by_api.assert_called_once_with(
+            telegram_id=chat_id,
+            params_for_update=data_for_update_word,
+            url_for_update=f'history/words',
+        )
+
+        if is_update_history is True:
+            expected_start_text_message = ''
+            if 'know_word_true' in callback_data:
+                expected_start_text_message = 'Отлично! Больше мы его тебе не будем показывать. Давай продолжим.\n\n'
+
+            mock_check_word_service.assert_called_once_with(state=state, start_text_message=expected_start_text_message)
+            mock_check_word_service.return_value.do.assert_awaited_once_with()
+            mock_delete_message.assert_called_once_with(chat_id=chat_id, message_id=mock_callback.message.message_id)
+        else:
+            mock_check_word_service.assert_not_called()
+            mock_delete_message.assert_not_called()
