@@ -64,9 +64,7 @@ class ReadBookService:
     async def work(self) -> SentenceModelForReadDTO:
         """Start work."""
         await self._get_user()
-        count_read_sentences = await self._get_count_read_sentences_today()
-        if count_read_sentences >= self._user.hero_level.count_sentences:
-            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail='You have already read the maximum number of sentences today.')
+        await self._check_count_read_sentences_today()
 
         self._start_read_book = self._db.query(UsersBooksHistory).filter(
             UsersBooksHistory.telegram_user_id == self._telegram_id,
@@ -92,8 +90,8 @@ class ReadBookService:
         if not self._user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
 
-    async def _get_count_read_sentences_today(self):
-        count = (
+    async def _check_count_read_sentences_today(self):
+        count_read_sentences = (
             self._db.query(func.count(UsersBooksSentencesHistory.sentence_id))
             .filter(
                 UsersBooksSentencesHistory.telegram_user_id == self._telegram_id,
@@ -103,7 +101,8 @@ class ReadBookService:
             .scalar()
         )
 
-        return count
+        if count_read_sentences >= self._user.hero_level.count_sentences:
+            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail='You have already read the maximum number of sentences today.')
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
