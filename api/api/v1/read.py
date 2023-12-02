@@ -2,7 +2,7 @@ from datetime import datetime
 from random import choice
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.orm import Session, aliased, joinedload
 
 from database import get_db
@@ -52,6 +52,7 @@ class ReadBookService:
     _telegram_id: int
     _db: Session
     _is_new_sentence: bool
+    _user: Users
 
     def __init__(self, telegram_id: int, db: Session) -> None:
         """Init."""
@@ -62,7 +63,11 @@ class ReadBookService:
 
     async def work(self) -> SentenceModelForReadDTO:
         """Start work."""
-        await self._get_level_id()
+        await self._get_user()
+        count_read_sentences = await self._get_count_read_sentences_today()
+        if count_read_sentences >= self._user.hero_level.count_sentences:
+            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail='You have already read the maximum number of sentences today.')
+
         self._start_read_book = self._db.query(UsersBooksHistory).filter(
             UsersBooksHistory.telegram_user_id == self._telegram_id,
             UsersBooksHistory.end_read.is_(None),
@@ -76,15 +81,29 @@ class ReadBookService:
 
         return await self._get_sentence_dto()
 
-    async def _get_level_id(self):
-        self._user_level_id = (
-            self._db.query(Users.level_en_id)
+    async def _get_user(self):
+        self._user = (
+            self._db.query(Users)
             .filter(Users.telegram_id == self._telegram_id)
+            .options(joinedload(Users.hero_level))
+            .first()
+        )
+
+        if not self._user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    async def _get_count_read_sentences_today(self):
+        count = (
+            self._db.query(func.count(UsersBooksSentencesHistory.sentence_id))
+            .filter(
+                UsersBooksSentencesHistory.telegram_user_id == self._telegram_id,
+                func.date(UsersBooksSentencesHistory.created_at) == func.date(func.now()),
+                UsersBooksSentencesHistory.is_read.is_(True),
+            )
             .scalar()
         )
 
-        if not self._user_level_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User does not have a level_en_id.')
+        return count
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
@@ -92,7 +111,7 @@ class ReadBookService:
             self._db.query(BooksModel)
             .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
             .filter(
-                BooksModel.level_en_id == self._user_level_id
+                BooksModel.level_en_id == self._user.level_en_id
             )
             .all()
         )
