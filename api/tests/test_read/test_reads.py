@@ -14,11 +14,10 @@ from tests.connect_db import db_session
 @mark.usefixtures('create_test_database', 'telegram_users_mock', 'book_mock', 'book_sentences_mock', 'words_mock')
 class TestReadApi:
 
-    @classmethod
-    def setup_class(cls):
-        cls._headers = {'X-API-Key': settings.api_key}
-        cls._client = TestClient(app)
-        cls._url = '/api/v1/read'
+    def setup_method(self):
+        self._headers = {'X-API-Key': settings.api_key}
+        self._client = TestClient(app)
+        self._url = '/api/v1/read'
 
     def test_get_first_sentence_for_not_read_early(self):
         with db_session() as db:
@@ -245,6 +244,41 @@ class TestReadApi:
             ).first()
             assert old_book_history is not None
             assert old_book_history.end_read is None
+
+    @mark.parametrize('count_sentences, expected_status', [
+        (1, status.HTTP_200_OK), (4, status.HTTP_200_OK), (5, status.HTTP_204_NO_CONTENT), (10, status.HTTP_204_NO_CONTENT)])
+    def test_more_history_sentences(self, count_sentences, expected_status):
+        with db_session() as db:
+            telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
+            telegram_id = telegram_user.telegram_id
+            users_history_book = db.query(UsersBooksHistory).filter(UsersBooksHistory.telegram_user_id == telegram_id).first()
+            assert users_history_book is None
+            old_book = db.query(BooksModel).filter(BooksModel.level_en_id == telegram_user.level_en_id).first()
+            old_book_id = old_book.book_id
+            history_book = UsersBooksHistory(
+                telegram_user_id=telegram_id,
+                book_id=old_book.book_id,
+                start_read=datetime.utcnow(),
+            )
+            db.add(history_book)
+            for _ in range(count_sentences):
+                sentence = (
+                    db.query(BooksSentences)
+                    .filter(BooksSentences.book_id == old_book_id)
+                    .order_by(BooksSentences.order.asc())
+                    .first()
+                )
+                history_book_sentence = UsersBooksSentencesHistory(
+                    telegram_user_id=telegram_id,
+                    sentence_id=sentence.sentence_id,
+                    is_read=True,
+                )
+                db.add(history_book_sentence)
+                db.commit()
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url, headers=self._headers)
+        assert response.status_code == expected_status
 
     def test_get_same_sentence_if_not_read_sentence(self):
         with db_session() as db:
