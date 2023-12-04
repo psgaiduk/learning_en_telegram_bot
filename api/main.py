@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from sentry_sdk import init as sentry_init
 
 from api import (
@@ -20,6 +21,16 @@ if settings.environment == 'prod':
     )
 
 app = FastAPI()
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(_, exc) -> JSONResponse:
+    """Handle HTTPException."""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={'detail': exc.detail},
+    )
+
 
 app.include_router(version_1_telegram_user_router)
 app.include_router(version_1_service_router)
