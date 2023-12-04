@@ -174,6 +174,7 @@ class TestSetStateMiddleware:
         (HTTPStatus.OK, [], State.read_book.value),
         (HTTPStatus.OK, ['word'], State.check_words.value),
         (HTTPStatus.BAD_REQUEST, ['word'], State.error.value),
+        (HTTPStatus.PARTIAL_CONTENT, ['word'], State.read_book_end.value),
     ])
     @pytest.mark.asyncio
     async def test_work_with_read_status(self, response_status, words, expected_state):
@@ -192,7 +193,7 @@ class TestSetStateMiddleware:
         )
 
         assert updated_state == expected_state
-        if updated_state != State.error.value:
+        if response_status == HTTPStatus.OK:
             assert self._service._telegram_user.new_sentence == NewSentenceDTOModel(**response_data['detail'])
         else:
             assert self._service._telegram_user.new_sentence is None
