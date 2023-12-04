@@ -34,6 +34,7 @@ version_1_read_router = APIRouter(
     response_model=OneResponseDTO[SentenceModelForReadDTO],
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'Telegram user not found.'},
+        status.HTTP_206_PARTIAL_CONTENT: {'description': 'You have  read the maximum number of sentences today.'},
     },
     status_code=status.HTTP_200_OK,
 )
@@ -102,7 +103,7 @@ class ReadBookService:
         )
 
         if count_read_sentences >= self._user.hero_level.count_sentences:
-            raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail='You have already read the maximum number of sentences today.')
+            raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
