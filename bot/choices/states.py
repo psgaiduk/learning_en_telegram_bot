@@ -8,6 +8,7 @@ class State(Enum):
     wait_name = 'WAIT_NAME'
     wait_en_level = 'WAIT_EN_LEVEL'
     read_book = 'READ_BOOK'
+    read_book_end = 'READ_BOOK_END'
     check_words = 'CHECK_WORDS'
     grammar = 'GRAMMAR'
     update_profile = 'UPDATE_PROFILE'
