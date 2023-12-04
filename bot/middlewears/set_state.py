@@ -98,7 +98,9 @@ class SetStateMiddleware(BaseMiddleware):
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
-            if response_status != HTTPStatus.OK:
+            if response_status == HTTPStatus.PARTIAL_CONTENT:
+                return State.read_book_end.value
+            elif response_status != HTTPStatus.OK:
                 return State.error.value
 
             new_sentence = response['detail']
