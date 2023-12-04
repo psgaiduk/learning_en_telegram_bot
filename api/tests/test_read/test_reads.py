@@ -246,7 +246,7 @@ class TestReadApi:
             assert old_book_history.end_read is None
 
     @mark.parametrize('count_sentences, expected_status', [
-        (1, status.HTTP_200_OK), (4, status.HTTP_200_OK), (5, status.HTTP_204_NO_CONTENT), (10, status.HTTP_204_NO_CONTENT)])
+        (1, status.HTTP_200_OK), (4, status.HTTP_200_OK), (5, status.HTTP_206_PARTIAL_CONTENT), (10, status.HTTP_206_PARTIAL_CONTENT)])
     def test_more_history_sentences(self, count_sentences, expected_status):
         with db_session() as db:
             telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
