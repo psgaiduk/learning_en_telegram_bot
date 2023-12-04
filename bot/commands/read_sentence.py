@@ -41,7 +41,7 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
     await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
-    await delete_message(chat_id=message.from_user.id, message_id=message.message.message_id)
+    await delete_message(message=message)
 
 
 @dispatcher.message_handler(state=State.read_book.value)
@@ -64,10 +64,5 @@ async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message])
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text='Read'))
 
-    if isinstance(message, CallbackQuery):
-        message_id = message.message.message_id
-    else:
-        message_id = message.message_id
-
     await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
-    await delete_message(chat_id=message.from_user.id, message_id=message_id)
+    await delete_message(message=message)

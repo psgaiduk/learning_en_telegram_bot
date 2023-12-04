@@ -59,7 +59,7 @@ class TestCheckWordsCommand:
         mock_send_delete_message.assert_called_once_with(chat_id=chat_id, message_text=expected_message_text, reply_markup=ReplyKeyboardRemove())
         mock_check_word_service.assert_called_once_with(state=state, start_text_message='')
         mock_check_word_service.return_value.do.assert_awaited_once_with()
-        mock_delete_message.assert_called_once_with(chat_id=chat_id, message_id=mock_message.message_id)
+        mock_delete_message.assert_called_once_with(message=mock_message)
 
     @mark.parametrize('callback_data, is_update_history', [
         ('know_word_true_1', True),
@@ -109,7 +109,7 @@ class TestCheckWordsCommand:
 
             mock_check_word_service.assert_called_once_with(state=state, start_text_message=expected_start_text_message)
             mock_check_word_service.return_value.do.assert_awaited_once_with()
-            mock_delete_message.assert_called_once_with(chat_id=chat_id, message_id=mock_callback.message.message_id)
+            mock_delete_message.assert_called_once_with(message=mock_callback)
         else:
             mock_check_word_service.assert_not_called()
             mock_delete_message.assert_not_called()

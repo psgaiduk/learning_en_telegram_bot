@@ -19,7 +19,7 @@ async def handle_check_words_after_read(message: Message, state: FSMContext) -> 
 
     await CheckWordsService(state=state, start_text_message='').do()
 
-    await delete_message(chat_id=message.from_user.id, message_id=message.message_id)
+    await delete_message(message=message)
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.check_words.value)
@@ -47,7 +47,7 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
     if is_update_history is False:
         return
 
-    await delete_message(chat_id=callback_query.from_user.id, message_id=callback_query.message.message_id)
+    await delete_message(message=callback_query)
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
 

@@ -44,7 +44,8 @@ class TestReadSentenceCommand:
     @patch('commands.read_sentence.update_data_by_api')
     @patch('commands.read_sentence.bot', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_handle_read_sentence(self, mock_bot, mock_update_data, mock_delete_message, is_update_sentence, telegram_user_with_sentence_and_word):
+    async def test_handle_read_sentence(
+            self, mock_bot, mock_update_data, mock_delete_message, is_update_sentence, telegram_user_with_sentence_and_word):
         chat_id = 1
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user, message=Message(id=1))
@@ -76,4 +77,4 @@ class TestReadSentenceCommand:
                 parse_mode=ParseMode.HTML,
                 reply_markup=expected_keyboard,
             )
-            mock_delete_message.assert_called_once_with(chat_id=chat_id, message_id=mock_callback.message.message_id)
+            mock_delete_message.assert_called_once_with(message=mock_callback)
