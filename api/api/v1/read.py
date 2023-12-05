@@ -288,7 +288,7 @@ class ReadBookService:
             word_info['incorrect_answers'] = words_history.get('incorrect_answers', 0)
             word_info['correct_answers_in_row'] = words_history.get('correct_answers_in_row', 0)
 
-            if word_info and is_known_word is False and len(words_for_learn) < 5:
+            if word_info and is_known_word is False and len(words_for_learn) < 10:
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
 
                 if not words_history:
