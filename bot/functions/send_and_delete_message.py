@@ -10,7 +10,6 @@ from bot import bot
 async def send_message_and_delete(chat_id: int, message_text: str, reply_markup=None) -> None:
     """Function for send message and delete it."""
     send_message = await bot.send_message(chat_id=chat_id, text=message_text, reply_markup=reply_markup)
-    print('send_message_and_delete', send_message, send_message.message_id, send_message.from_user)
     await delete_message(message=send_message)
 
 
@@ -19,10 +18,12 @@ async def delete_message(message: Union[CallbackQuery, Message]) -> None:
 
     if isinstance(message, CallbackQuery):
         message_id = message.message.message_id
+        chat_id = message.message.chat.id
     else:
         message_id = message.message_id
+        chat_id = message.chat.id
 
     try:
-        await bot.delete_message(chat_id=message.from_user.id, message_id=message_id)
+        await bot.delete_message(chat_id=chat_id, message_id=message_id)
     except (AttributeError, MessageCantBeDeleted, MessageToDeleteNotFound):
         pass
