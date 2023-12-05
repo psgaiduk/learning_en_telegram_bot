@@ -10,7 +10,7 @@ from bot import bot
 async def send_message_and_delete(chat_id: int, message_text: str, reply_markup=None) -> None:
     """Function for send message and delete it."""
     send_message = await bot.send_message(chat_id=chat_id, text=message_text, reply_markup=reply_markup)
-    await asyncio_sleep(2)
+    print('send_message_and_delete', send_message, send_message.message_id, send_message.from_user)
     await delete_message(message=send_message)
 
 
