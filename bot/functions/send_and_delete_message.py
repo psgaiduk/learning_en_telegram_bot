@@ -2,7 +2,7 @@ from typing import Union
 
 from asyncio import sleep as asyncio_sleep
 from aiogram.types import CallbackQuery, Message
-from aiogram.utils.exceptions import MessageCantBeDeleted
+from aiogram.utils.exceptions import MessageCantBeDeleted, MessageToDeleteNotFound
 
 from bot import bot
 
@@ -10,7 +10,7 @@ from bot import bot
 async def send_message_and_delete(chat_id: int, message_text: str, reply_markup=None) -> None:
     """Function for send message and delete it."""
     send_message = await bot.send_message(chat_id=chat_id, text=message_text, reply_markup=reply_markup)
-    await asyncio_sleep(0.5)
+    await asyncio_sleep(2)
     await delete_message(message=send_message)
 
 
@@ -24,5 +24,5 @@ async def delete_message(message: Union[CallbackQuery, Message]) -> None:
 
     try:
         await bot.delete_message(chat_id=message.from_user.id, message_id=message_id)
-    except (AttributeError, MessageCantBeDeleted):
+    except (AttributeError, MessageCantBeDeleted, MessageToDeleteNotFound):
         pass
