@@ -13,6 +13,7 @@ class CreateWordsAndSentencesService:
     """ Create words and sentences service. """
 
     _book_text: str
+    _len_sentence_by_level: dict[int, int] = {1: 30, 2: 50, 3: 70, 4: 90, 5: 120, 6: 150}
 
     def __init__(self):
         """Init."""
@@ -26,7 +27,14 @@ class CreateWordsAndSentencesService:
 
         self._nlp = spacy.load('en_core_web_sm')
 
-    def work(self, text: str) -> list[SentenceDTO]:
+    def work(self, text: str, level: int) -> list[SentenceDTO]:
+        """Create words and sentences.
+
+        Args:
+            text (str): text of book
+            level (int): level of book
+        :return: list of sentences
+        """
 
         sentences = sent_tokenize(text)
         sentences_by_level = []
@@ -36,7 +44,7 @@ class CreateWordsAndSentencesService:
         for index_sentence, sentence in enumerate(sentences):
             if not temp_sentence:
                 temp_sentence = sentence
-            elif len(temp_sentence) < 100:
+            elif len(temp_sentence) < self._len_sentence_by_level[level]:
                 temp_sentence += f' {sentence}'
             else:
                 index += 1
