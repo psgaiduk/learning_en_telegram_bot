@@ -42,6 +42,7 @@ class CreateWordsAndSentencesService:
         temp_sentence = ''
         index = 0
         for index_sentence, sentence in enumerate(sentences):
+            sentence = sentence.strip()
             if not temp_sentence:
                 temp_sentence = sentence
             elif len(temp_sentence) < self._len_sentence_by_level[level]:
