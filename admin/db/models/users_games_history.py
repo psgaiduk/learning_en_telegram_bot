@@ -11,7 +11,7 @@ class UsersGamesHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     telegram_id = db.Column(db.ForeignKey('users.telegram_id'))
     game_id = db.Column(db.ForeignKey('games.game_id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     count_questions = db.Column(db.Integer)
     correct_answers = db.Column(db.Integer)
     mistakes = db.Column(db.Integer)

@@ -11,7 +11,7 @@ class UsersChargesHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     telegram_id = db.Column(db.ForeignKey('users.telegram_id'))
     charge_id = db.Column(db.ForeignKey('charges.charge_id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     experience = db.Column(db.Integer)
 
     user = db.relationship('Users', back_populates='charges_history', uselist=False)

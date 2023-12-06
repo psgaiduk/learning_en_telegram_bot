@@ -14,7 +14,7 @@ class UsersGrammarExercisesHistory(db.Model):
     is_answered = db.Column(db.Boolean, default=False)
     is_correct = db.Column(db.Boolean)
     scores = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship('Users', back_populates='grammar_exercises_history', uselist=False)
     grammar_exercise = db.relationship(

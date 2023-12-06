@@ -14,7 +14,7 @@ class UsersBooksHistory(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     telegram_user_id = Column(ForeignKey('telegram_users.telegram_id'))
     book_id = Column(ForeignKey('books.book_id'))
-    start_read = Column(DateTime, default=datetime.utcnow())
+    start_read = Column(DateTime, default=datetime.utcnow)
     end_read = Column(DateTime, nullable=True, default=None)
 
     user = relationship('Users', back_populates='books_history', uselist=False)
