@@ -54,8 +54,8 @@ async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message]
     await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 
-@dispatcher.message_handler(Text(equals='Read'), state=State.read_book_end.value)
-@dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.read_book_end.value)
+@dispatcher.message_handler(state=State.read_book_end.value)
+@dispatcher.callback_query_handler(state=State.read_book_end.value)
 async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message]):
     """Handle if user read all sentences today."""
 
