@@ -21,6 +21,7 @@ class MainSettings(BaseSettings):
     django_secret_key: str = Field(..., env='DJANGO_SECRET_KEY')
     debug: bool = Field(..., env='DEBUG')
     sentry_dsn: str = Field(..., env='SENTRY_DSN_DJANGO')
+    ai_token: str = Field(..., env='OPEN_AI_TOKEN')
 
     postgres: PostgresSettings = PostgresSettings()
 
