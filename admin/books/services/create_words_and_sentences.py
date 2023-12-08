@@ -56,13 +56,12 @@ class CreateWordsAndSentencesService:
         words = []
 
         for word in all_words:
-            count_words_in_word = len(word.split(' '))
-            if count_words_in_word > 3:
-                idioms.append(word)
-            elif count_words_in_word > 1:
-                phrasal_verbs.append(word)
-            else:
-                words.append(word)
+            if '- 1' in word:
+                idioms.append(word.replace(' - 1', '').strip())
+            elif '- 2' in word:
+                phrasal_verbs.append(word.replace(' - 2', '').strip())
+            elif '- 3' in word:
+                words.append(word.replace(' - 3', '').strip())
 
         sentence_info = SentenceDTO(
             text=self._sentence,
