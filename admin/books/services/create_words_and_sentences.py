@@ -13,7 +13,14 @@ class CreateWordsAndSentencesService:
     """ Create words and sentences service. """
 
     _book_text: str
-    _len_sentence_by_level: dict[int, int] = {1: 30, 2: 50, 3: 70, 4: 90, 5: 120, 6: 150}
+    _len_sentence_by_level: dict[int, int] = {
+        'beginner': 30,
+        'elementary': 50,
+        'pre-intermediate': 70,
+        'intermediate': 90,
+        'upper-intermediate': 120,
+        'advanced': 150,
+    }
 
     def __init__(self):
         """Init."""

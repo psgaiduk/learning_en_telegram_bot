@@ -13,7 +13,7 @@ def create_book_task(book_id: int) -> None:
     """Create books."""
     instance = BooksModel.objects.get(book_id=book_id)
     book_text = instance.text
-    sentences = CreateWordsAndSentencesService().work(text=book_text, level=instance.level_en.order)
+    sentences = CreateWordsAndSentencesService().work(text=book_text, level=instance.level_en.title)
     chain = Chain(cached=True)
 
     for sentence in sentences:
