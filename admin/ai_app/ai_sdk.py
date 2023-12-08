@@ -9,7 +9,7 @@ class AISDK:
     def __init__(self):
         self._client = OpenAI(api_key=settings.ai_token)
 
-    async def get_words(self, sentence: str, english_level: str) -> list[str]:
+    def get_words(self, sentence: str, english_level: str) -> list[str]:
         """
         Получить слова из предложения.
 
