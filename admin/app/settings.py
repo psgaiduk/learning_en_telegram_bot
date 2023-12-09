@@ -17,11 +17,13 @@ from sentry_sdk import init as sentry_init
 
 from settings import settings
 
-sentry_init(
-    dsn=settings.sentry_dsn,
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-)
+
+if settings.environment == 'prod':
+    sentry_init(
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
