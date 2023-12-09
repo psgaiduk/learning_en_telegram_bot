@@ -6,6 +6,4 @@ class SentenceDTO(BaseModel):
 
     text: str
     index: int
-    idiomatic_expression: list = []
-    phrase_verb: list = []
-    words: list = []
+    words: dict = {}
