@@ -24,11 +24,11 @@ def create_book_task(book_id: int) -> None:
 
 def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
     """Translate and add sentence."""
-    words = WordsModel.objects.filter(word__in=sentence.words)
-    new_words = set(sentence.words) - set(words.values_list('word', flat=True))
-    type_word = TypeWordsModel.objects.get(title=TypeWord.word.value)
-    for word in new_words:
-        if len(word) < 3:
+    all_words = sum(sentence.words, [])
+    words = WordsModel.objects.filter(word__in=all_words)
+    new_words = set(all_words) - set(words.values_list('word', flat=True))
+    for type_word, word in sentence.words.items():
+        if len(word) < 3 or word not in new_words:
             continue
         translates_word = {}
         for language_code, _ in Language.choices():
@@ -40,11 +40,7 @@ def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
         translate_sentence = translate_text(text_on_en=sentence.text, language=language_code)
         translates_sentence[language_code] = translate_sentence
 
-    words = WordsModel.objects.filter(
-        Q(word__in=sentence.words) |
-        Q(word__in=sentence.idiomatic_expression) |
-        Q(word__in=sentence.phrase_verb)
-    )
+    words = WordsModel.objects.filter(Q(word__in=all_words))
 
     book_sentence, created = BooksSentencesModel.objects.update_or_create(
         book=instance,
