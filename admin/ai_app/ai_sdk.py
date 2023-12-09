@@ -36,7 +36,7 @@ class AISDK:
             ],
         )
 
-        words = response.choices[0].message.content
+        words = response.choices[0].message.content.lower()
 
         if '.' in words:
             words.replace('.', '')
