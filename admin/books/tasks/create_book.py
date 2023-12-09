@@ -24,7 +24,7 @@ def create_book_task(book_id: int) -> None:
 
 def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
     """Translate and add sentence."""
-    all_words = sum(sentence.words, [])
+    all_words = sum(sentence.words.values(), [])
     words = WordsModel.objects.filter(word__in=all_words)
     new_words = set(all_words) - set(words.values_list('word', flat=True))
     for type_word, word in sentence.words.items():
