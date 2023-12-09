@@ -51,23 +51,19 @@ class CreateWordsAndSentencesService:
 
     def _create_sentence_info(self, level: str) -> None:
         all_words = AISDK().get_words(sentence=self._sentence, english_level=level)
-        idioms = []
-        phrasal_verbs = []
-        words = []
+        words = {1: [], 2: [], 3: []}
 
         for word in all_words:
             if '- 1' in word:
-                idioms.append(word.replace(' - 1', '').strip())
+                words[3].append(word.replace(' - 1', '').strip())
             elif '- 2' in word:
-                phrasal_verbs.append(word.replace(' - 2', '').strip())
+                words[2].append(word.replace(' - 2', '').strip())
             elif '- 3' in word:
-                words.append(word.replace(' - 3', '').strip())
+                words[1].append(word.replace(' - 3', '').strip())
 
         sentence_info = SentenceDTO(
             text=self._sentence,
             index=self._index,
-            idiomatic_expression=idioms,
-            phrase_verb=phrasal_verbs,
             words=words,
         )
 
