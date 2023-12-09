@@ -27,14 +27,14 @@ def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
     all_words = sum(sentence.words.values(), [])
     words = WordsModel.objects.filter(word__in=all_words)
     new_words = set(all_words) - set(words.values_list('word', flat=True))
-    for type_word, words in sentence.words.items():
+    for type_word_id, words in sentence.words.items():
         for word in words:
             if len(word) < 3 or word not in new_words:
                 continue
             translates_word = {}
             for language_code, _ in Language.choices():
                 translates_word[language_code] = translate_text(text_on_en=word, language=language_code)
-            WordsModel.objects.create(word=word, translation=translates_word, type_word=type_word)
+            WordsModel.objects.create(word=word, translation=translates_word, type_word__id=type_word_id)
 
     translates_sentence = {}
     for language_code, _ in Language.choices():
