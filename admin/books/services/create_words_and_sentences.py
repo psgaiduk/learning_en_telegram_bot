@@ -8,14 +8,7 @@ class CreateWordsAndSentencesService:
     """ Create words and sentences service. """
 
     _book_text: str
-    _len_sentence_by_level: dict[str, int] = {
-        'beginner': 30,
-        'elementary': 50,
-        'pre-intermediate': 70,
-        'intermediate': 90,
-        'upper-intermediate': 120,
-        'advanced': 150,
-    }
+    _len_sentence_by_level: dict[str, int] = {'A1': 30, 'A2': 50, 'B1': 70, 'B2': 90, 'C1': 120, 'C2': 150}
 
     def __init__(self):
         """Init."""
