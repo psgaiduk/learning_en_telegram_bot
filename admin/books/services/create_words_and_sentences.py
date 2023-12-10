@@ -47,6 +47,7 @@ class CreateWordsAndSentencesService:
     def _create_sentence_info(self) -> None:
         self._index += 1
         all_words = AISDK().get_words(sentence=self._sentence, english_level=self._book.level_en)
+        AISDK().create_audio_file(sentence=self._sentence, file_name=f'{self._book.book_id} - {self._index}')
         words = {1: [], 2: [], 3: []}
 
         for word in all_words:
