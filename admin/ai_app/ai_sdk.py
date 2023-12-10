@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from openai import OpenAI
 
 from settings import settings
@@ -43,3 +45,13 @@ class AISDK:
             words.replace('.', '')
 
         return words.split(', ')
+
+    def create_audio_file(self, sentence: str, file_name: str) -> None:
+        speech_file_path = Path(__file__).parent / f"{file_name}.mp3"
+        response = self._client.audio.speech.create(
+            model="tts-1",
+            voice="shimmer",
+            input=sentence,
+        )
+
+        response.stream_to_file(speech_file_path)
