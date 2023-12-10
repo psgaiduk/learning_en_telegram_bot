@@ -25,7 +25,8 @@ def create_book_task(book_id: int) -> None:
     for sentence in sentences:
         logger.debug(f'Sentence {sentence}')
         chain.append(create_sentence, sentence, instance)
-    
+
+    logger.debug(f'Chain {chain}')
     chain.run()
 
 
