@@ -47,10 +47,17 @@ class AISDK:
         return words.split(', ')
 
     def create_audio_file(self, sentence: str, file_name: str) -> None:
-        speech_file_path = Path(__file__).parent / f"{file_name}.mp3"
+        """
+        Создать аудио файл.
+
+        :param sentence: Текст для озвучки.
+        :param file_name: имя файла.
+        :return: None
+        """
+        speech_file_path = Path(__file__).parent / f'{file_name}.mp3'
         response = self._client.audio.speech.create(
-            model="tts-1",
-            voice="shimmer",
+            model='tts-1',
+            voice='shimmer',
             input=sentence,
         )
 
