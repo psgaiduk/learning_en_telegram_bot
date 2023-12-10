@@ -54,7 +54,10 @@ class AISDK:
         :param file_name: имя файла.
         :return: None
         """
-        speech_file_path = Path(__file__).parent / f'{file_name}.mp3'
+        audio_dir = Path.cwd() / 'static' / 'audio'
+        audio_dir.mkdir(parents=True, exist_ok=True)
+
+        speech_file_path = audio_dir / f'{file_name}.mp3'
         response = self._client.audio.speech.create(
             model='tts-1',
             voice='shimmer',
