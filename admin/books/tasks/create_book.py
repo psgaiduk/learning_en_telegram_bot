@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django_q.tasks import Chain
+from loguru import logger
 
 from books.choices import TypeWord
 from books.dto import SentenceDTO
@@ -11,12 +12,18 @@ from nlp_translate import translate_text
 
 def create_book_task(book_id: int) -> None:
     """Create books."""
+    logger.info(f'Create book {book_id}')
     instance = BooksModel.objects.get(book_id=book_id)
+    logger.debug(f'Book {instance.book_id} - {instance.title}')
     book_text = instance.text
+    logger.debug(f'Book text {book_text}')
     sentences = CreateWordsAndSentencesService().work(text=book_text, level=instance.level_en.title)
+    logger.debug(f'Sentences {sentences}')
     chain = Chain(cached=True)
+    logger.debug(f'Chain {chain}')
 
     for sentence in sentences:
+        logger.debug(f'Sentence {sentence}')
         chain.append(create_sentence, sentence, instance)
     
     chain.run()
@@ -28,13 +35,14 @@ def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
     words = WordsModel.objects.filter(word__in=all_words)
     new_words = set(all_words) - set(words.values_list('word', flat=True))
     for type_word_id, words in sentence.words.items():
+        type_word = TypeWordsModel.objects.get(type_word_id=type_word_id)
         for word in words:
             if len(word) < 3 or word not in new_words:
                 continue
             translates_word = {}
             for language_code, _ in Language.choices():
                 translates_word[language_code] = translate_text(text_on_en=word, language=language_code)
-            WordsModel.objects.create(word=word, translation=translates_word, type_word__id=type_word_id)
+            WordsModel.objects.create(word=word, translation=translates_word, type_word=type_word)
 
     translates_sentence = {}
     for language_code, _ in Language.choices():
