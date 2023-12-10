@@ -34,8 +34,8 @@ class CreateWordsAndSentencesService:
             elif len(self._sentence) < self._len_sentence_by_level[level]:
                 self._sentence += f' {sentence}'
             else:
-                self._index += 1
                 self._create_sentence_info(level=level)
+                self._sentence = sentence
 
         if self._sentence:
             self._create_sentence_info(level=level)
@@ -43,6 +43,7 @@ class CreateWordsAndSentencesService:
         return self._sentences_by_level
 
     def _create_sentence_info(self, level: str) -> None:
+        self._index += 1
         all_words = AISDK().get_words(sentence=self._sentence, english_level=level)
         words = {1: [], 2: [], 3: []}
 
