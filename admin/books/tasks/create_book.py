@@ -14,9 +14,8 @@ def create_book_task(book_id: int) -> None:
     logger.info(f'Create book {book_id}')
     instance = BooksModel.objects.get(book_id=book_id)
     logger.debug(f'Book {instance.book_id} - {instance.title}')
-    book_text = instance.text
-    logger.debug(f'Book text {book_text}')
-    sentences = CreateWordsAndSentencesService().work(text=book_text, level=instance.level_en.title)
+    logger.debug(f'Book text {instance.text}')
+    sentences = CreateWordsAndSentencesService(book=instance).work()
     logger.debug(f'Sentences {sentences}')
     chain = Chain(cached=True)
     logger.debug(f'Chain {chain}')

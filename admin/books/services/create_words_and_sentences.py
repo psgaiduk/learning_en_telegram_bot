@@ -2,6 +2,7 @@ from nltk.tokenize import sent_tokenize
 
 from ai_app import AISDK
 from books.dto import SentenceDTO
+from books.models import BooksModel
 
 
 class CreateWordsAndSentencesService:
@@ -9,14 +10,16 @@ class CreateWordsAndSentencesService:
 
     _book_text: str
     _len_sentence_by_level: dict[str, int] = {'A1': 30, 'A2': 50, 'B1': 70, 'B2': 90, 'C1': 120, 'C2': 150}
+    _book: BooksModel
 
-    def __init__(self):
+    def __init__(self, book: BooksModel):
         """Init."""
+        self._book = book
         self._sentences_by_level = []
         self._index = 0
         self._sentence = ''
 
-    def work(self, text: str, level: str) -> list[SentenceDTO]:
+    def work(self) -> list[SentenceDTO]:
         """
         Create words and sentences.
 
@@ -25,26 +28,25 @@ class CreateWordsAndSentencesService:
             level (int): level of book
         :return: list of sentences
         """
-
-        sentences = sent_tokenize(text=text, language='english')
+        sentences = sent_tokenize(text=self._book.text, language='english')
         for sentence in sentences:
             sentence = sentence.strip()
             if not self._sentence:
                 self._sentence = sentence
-            elif len(self._sentence) < self._len_sentence_by_level[level]:
+            elif len(self._sentence) < self._len_sentence_by_level[self._book.level_en]:
                 self._sentence += f' {sentence}'
             else:
-                self._create_sentence_info(level=level)
+                self._create_sentence_info()
                 self._sentence = sentence
 
         if self._sentence:
-            self._create_sentence_info(level=level)
+            self._create_sentence_info()
 
         return self._sentences_by_level
 
-    def _create_sentence_info(self, level: str) -> None:
+    def _create_sentence_info(self) -> None:
         self._index += 1
-        all_words = AISDK().get_words(sentence=self._sentence, english_level=level)
+        all_words = AISDK().get_words(sentence=self._sentence, english_level=self._book.level_en)
         words = {1: [], 2: [], 3: []}
 
         for word in all_words:
