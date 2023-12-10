@@ -2,7 +2,6 @@ from django.db.models import Q
 from django_q.tasks import Chain
 from loguru import logger
 
-from books.choices import TypeWord
 from books.dto import SentenceDTO
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
 from books.services import CreateWordsAndSentencesService
