@@ -2,6 +2,7 @@ from django.db.models import Q
 from django_q.tasks import Chain
 from loguru import logger
 
+from ai_app import AISDK
 from books.dto import SentenceDTO
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
 from books.services import CreateWordsAndSentencesService
@@ -30,10 +31,22 @@ def create_book_task(book_id: int) -> None:
 
 def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
     """Translate and add sentence."""
-    all_words = sum(sentence.words.values(), [])
+    words_from_ai = AISDK().get_words(sentence=sentence.text, english_level=instance.level_en.title)
+    AISDK().create_audio_file(sentence=sentence.text, file_name=f'{instance.book_id} - {sentence.index}')
+    words_by_type = {1: [], 2: [], 3: []}
+
+    for word in words_from_ai:
+        if '- 1' in word:
+            words_by_type[3].append(word.replace(' - 1', '').strip())
+        elif '- 2' in word:
+            words_by_type[2].append(word.replace(' - 2', '').strip())
+        elif '- 3' in word:
+            words_by_type[1].append(word.replace(' - 3', '').strip())
+
+    all_words = sum(words_by_type.values(), [])
     words = WordsModel.objects.filter(word__in=all_words)
     new_words = set(all_words) - set(words.values_list('word', flat=True))
-    for type_word_id, words in sentence.words.items():
+    for type_word_id, words in words_by_type.items():
         type_word = TypeWordsModel.objects.get(type_word_id=type_word_id)
         for word in words:
             if len(word) < 3 or word not in new_words:

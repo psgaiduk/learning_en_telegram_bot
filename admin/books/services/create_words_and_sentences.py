@@ -1,6 +1,5 @@
 from nltk.tokenize import sent_tokenize
 
-from ai_app import AISDK
 from books.dto import SentenceDTO
 from books.models import BooksModel
 
@@ -46,22 +45,10 @@ class CreateWordsAndSentencesService:
 
     def _create_sentence_info(self) -> None:
         self._index += 1
-        all_words = AISDK().get_words(sentence=self._sentence, english_level=self._book.level_en.title)
-        AISDK().create_audio_file(sentence=self._sentence, file_name=f'{self._book.book_id} - {self._index}')
-        words = {1: [], 2: [], 3: []}
-
-        for word in all_words:
-            if '- 1' in word:
-                words[3].append(word.replace(' - 1', '').strip())
-            elif '- 2' in word:
-                words[2].append(word.replace(' - 2', '').strip())
-            elif '- 3' in word:
-                words[1].append(word.replace(' - 3', '').strip())
 
         sentence_info = SentenceDTO(
             text=self._sentence,
             index=self._index,
-            words=words,
         )
 
         self._sentences_by_level.append(sentence_info)

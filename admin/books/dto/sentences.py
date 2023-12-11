@@ -6,4 +6,3 @@ class SentenceDTO(BaseModel):
 
     text: str
     index: int
-    words: dict = {}
