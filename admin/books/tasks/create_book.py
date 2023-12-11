@@ -37,11 +37,19 @@ def create_sentence(sentence: SentenceDTO, instance: BooksModel) -> None:
 
     for word in words_from_ai:
         if '- 1' in word:
-            words_by_type[3].append(word.replace(' - 1', '').strip())
+            word = word.replace(' - 1', '').strip()
+            if ' ' in word:
+                words_by_type[3].append(word)
+                continue
         elif '- 2' in word:
-            words_by_type[2].append(word.replace(' - 2', '').strip())
+            word = word.replace(' - 2', '').strip()
+            if ' ' in word:
+                words_by_type[2].append(word)
+                continue
         elif '- 3' in word:
-            words_by_type[1].append(word.replace(' - 3', '').strip())
+            word = word.replace(' - 3', '').strip()
+
+        words_by_type[1].append(word)
 
     all_words = sum(words_by_type.values(), [])
     words = WordsModel.objects.filter(word__in=all_words)
