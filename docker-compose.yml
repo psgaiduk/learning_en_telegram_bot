@@ -13,6 +13,7 @@ services:
     build: ./bot
     volumes:
       - ./bot:/app
+      - shared-data:/app/static/audio
     command: ["python", "-u", "./main.py"]
     depends_on:
       - db
@@ -69,3 +70,4 @@ services:
 
 volumes:
   dbdata:
+  shared-data:
