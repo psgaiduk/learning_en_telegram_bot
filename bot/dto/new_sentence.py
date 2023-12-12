@@ -12,5 +12,6 @@ class NewSentenceDTOModel(BaseModel):
     sentence_id: int
     book_id: int
     text: str
+    text_with_words: str
     translation: Optional[dict[str, str]]
     words: Optional[list[WordDTOModel]]
