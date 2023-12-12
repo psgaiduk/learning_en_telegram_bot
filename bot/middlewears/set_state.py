@@ -105,6 +105,6 @@ class SetStateMiddleware(BaseMiddleware):
 
             new_sentence = response['detail']
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
-            if new_sentence['words']:
+            if new_sentence['words'] and self._telegram_user.level_en.order > 2:
                 return State.check_words.value
             return State.read_book.value
