@@ -1,2 +1,3 @@
 from functions.api_key_required import api_key_required
+from functions.replace_with_translate import replace_with_translation
 from functions.update_fields_for_patch import patch_data
