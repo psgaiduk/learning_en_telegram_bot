@@ -21,6 +21,7 @@ class SentenceModelForReadDTO(BaseModel):
     sentence_id: int
     book_id: int
     text: str
+    text_with_words: str
     translation: dict[str, str]
 
     words: list[HistoryWordModelForReadDTO]
