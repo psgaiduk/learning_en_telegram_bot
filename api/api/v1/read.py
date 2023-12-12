@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session, aliased, joinedload
 from database import get_db
 from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
 from dto.responses import OneResponseDTO
-from functions import api_key_required
+from functions import api_key_required, replace_with_translation
 from models import (
     BooksModel,
     BooksSentences,
@@ -238,6 +238,9 @@ class ReadBookService:
 
         words_for_learn = await self._get_words_for_learn(words=sentence_info['words'])
 
+        text_with_words = replace_with_translation(text=sentence_text, words=sentence_info['words'])
+
+        sentence_for_read['text_with_words'] = text_with_words
         sentence_for_read['words'] = words_for_learn
 
         if self._is_new_sentence:
