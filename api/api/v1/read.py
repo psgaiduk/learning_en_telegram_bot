@@ -235,6 +235,7 @@ class ReadBookService:
         sentence_for_read['book_id'] = sentence_info['book_id']
         sentence_for_read['text'] = sentence_text
         sentence_for_read['translation'] = sentence_info['translation']
+        sentence_for_read['order'] = sentence_info['order']
 
         words_for_learn = await self._get_words_for_learn(words=sentence_info['words'])
 
