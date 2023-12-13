@@ -19,6 +19,7 @@ class SentenceModelForReadDTO(BaseModel):
 
     history_sentence_id: int
     sentence_id: int
+    order: int
     book_id: int
     text: str
     text_with_words: str
