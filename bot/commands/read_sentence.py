@@ -1,3 +1,5 @@
+from os import path
+from random import randint
 from typing import Union
 
 from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton
@@ -24,8 +26,6 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
     sentence_translation = telegram_user.new_sentence.translation.get('ru')
 
-    message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
-
     data_for_update_history_sentence = {
         'id': telegram_user.new_sentence.history_sentence_id,
         'is_read': True,
@@ -42,8 +42,26 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text='Read'))
+    file_path = f'static/audio/{telegram_user.new_sentence.book_id} - {telegram_user.new_sentence.order}.mp3'
 
-    await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+    if randint(1, 3) == 1 and path.isfile(file_path):
+        with open(file_path, 'rb') as audio:
+
+            message_text = f'Translate:\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
+            sentence_text = f'Text:\n\n<tg-spoiler>{sentence_text}</tg-spoiler>'
+
+            await bot.send_audio(
+                chat_id=telegram_user.telegram_id,
+                audio=audio,
+                caption=sentence_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=keyboard,
+            )
+
+            await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+    else:
+        message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
+        await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
     await delete_message(message=message)
 
