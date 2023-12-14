@@ -13,6 +13,8 @@ class BooksSentencesModel(Model):
     text = TextField()
     translation = JSONField(null=True, blank=True)
     words = ManyToManyField(WordsModel, related_name='books_sentences')
+    sentence_times = TextField(null=True, blank=True)
+    description_time = TextField(null=True, blank=True)
 
     def __str__(self):
         return f'Book {self.book.title}, Sentence {self.order}'
