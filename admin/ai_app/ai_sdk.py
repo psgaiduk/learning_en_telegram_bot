@@ -63,3 +63,53 @@ class AISDK:
         )
 
         response.stream_to_file(speech_file_path)
+
+    def translate_and_analyse(self, text: str) -> str:
+        """
+        Translate text and analysis.
+
+        :param text: text.
+        :return: text with translate and analysis.
+        """
+
+        prompt = ('You are an English teacher with 30 years of experience.\n'
+                  'The student will send you a text.\n'
+                  'Break it down into sentences\n'
+                  'You must translate each part into Russian. And for each part you must provide difficult words, phrasal verbs and '
+                  'idioms that the student may not know for the Beginner level.\n'
+                  'You also need to write what time the sentence refers to, consider each sentence as a separate text, if there are two different '
+                  'times in the sentence, then indicate them separated by a comma.\n'
+                  'Additionally, perform an analysis of time in a sentence in Russian. Determine why this tense is used and focus on '
+                  'word markers if they exist.\n'
+                  'Don\'t add anything extra\n'
+                  'This is how it should look,'
+                  'The student gives you the text:\n'
+                  'At first, it was small and weak, but she watered it and told it stories, and over the years, '
+                  'it got bigger and bigger. Finally, the turnip was giant!\n'
+                  'And this is your answer:\n'
+                  'At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.  '
+                  '--- Сначала он был маленьким и слабым, но она поливала его и рассказывала ему истории, и с годами он становился все больше '
+                  'и больше. --- at first: сначала, watered: поливал, told: сказал,  stories: истории, and over the years: и с годами, '
+                  'it got bigger: стал больше -- Past Simple --- Past Simple используется здесь, потому что предложение описывает завершенное '
+                  'действие или состояние в прошлом. Признаки: использование формы "was" для глагола "to be" для описания прошлого.\n\n'
+                  'Finally, the turnip was  giant! --- Наконец-то репа оказалась гигантской! '
+                  '--- finally: окончательно, turnip: репа, was: был, giant: гигант. --- Past Simple --- Past Simple используется здесь, '
+                  'потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для '
+                  'глагола "to be" для описания прошлого.'
+                  )
+
+        response = self._client.chat.completions.create(
+            model='gpt-4-1106-preview',
+            messages=[
+                {
+                    "role": 'assistant',
+                    'content': prompt,
+                },
+                {
+                    'role': 'user',
+                    'content': text,
+                },
+            ],
+        )
+
+        return response.choices[0].message.content
