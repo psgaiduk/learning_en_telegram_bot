@@ -68,7 +68,7 @@ def create_sentences(instance: BooksModel) -> None:
             order=index,
             defaults={
                 'text': english_sentence,
-                'translation': russian_sentence,
+                'translation': {'ru': russian_sentence},
                 'sentence_times': sentence_times,
                 'description_time': description_time,
             }
