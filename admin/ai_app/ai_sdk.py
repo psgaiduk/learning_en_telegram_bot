@@ -97,7 +97,8 @@ class AISDK:
                   '--- finally: окончательно, turnip: репа, was: был, giant: гигант. --- Past Simple --- Past Simple используется здесь, '
                   'потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для '
                   'глагола "to be" для описания прошлого.\n'
-                  'Strictly follow this answer format, no need to add anything extra.'
+                  'Strictly follow this answer format for each sentence, there must be 5 blocks separated in the sentence ---,'
+                  ' no need to add anything extra.'
                   )
 
         response = self._client.chat.completions.create(
