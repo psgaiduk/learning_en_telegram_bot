@@ -59,7 +59,7 @@ def create_sentences(instance: BooksModel) -> None:
             if ' ' in word:
                 type_of_word = type_phrase
 
-            WordsModel.objects.create(word=word, translation=translates_word, type_word=type_of_word)
+            WordsModel.objects.create(word=word, translation={'ru': translates_word}, type_word=type_of_word)
 
         words = WordsModel.objects.filter(Q(word__in=all_words))
 
