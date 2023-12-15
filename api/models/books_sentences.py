@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, JSON, Integer, ForeignKey
+from sqlalchemy import BigInteger, Column, JSON, Integer, ForeignKey, Text
 from sqlalchemy.orm import relationship
 
 from models.association_sentenses_words import sentence_word_association
@@ -15,6 +15,8 @@ class BooksSentences(Base):
     order = Column(Integer)
     text = Column(JSON)
     translation = Column(JSON)
+    sentence_times = Column(Text)
+    description_time = Column(Text)
 
     book = relationship('BooksModel', back_populates='books_sentences', uselist=False)
     words = relationship('Words', secondary=sentence_word_association, back_populates='sentences')
