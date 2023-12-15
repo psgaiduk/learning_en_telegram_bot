@@ -24,7 +24,7 @@ def create_sentences(instance: BooksModel) -> None:
     text_data = AISDK().translate_and_analyse(text=instance.text)
     logger.debug(f'Text data {text_data}')
     sentences = text_data.split('\n')
-    sentences = [sentence for sentence in sentences if sentence]
+    sentences = [sentence for sentence in sentences if sentence and '---' in sentence]
     logger.debug(f'Sentences {sentences}')
     index = 1
     type_word = TypeWordsModel.objects.get(type_word_id=1)
