@@ -9,6 +9,7 @@ class BooksModel(Model):
     level_en = ForeignKey('telegram_users.LevelsEnModel', on_delete=CASCADE)
     author = CharField(max_length=128)
     text = TextField()
+    previous_book = ForeignKey('self', on_delete=CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'{self.title}'
