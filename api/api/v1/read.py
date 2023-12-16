@@ -237,9 +237,9 @@ class ReadBookService:
         sentence_for_read['translation'] = sentence_info['translation']
         sentence_for_read['order'] = sentence_info['order']
 
-        words_for_learn = await self._get_words_for_learn(words=sentence_info['words'])
+        words_for_learn, words_for_sentence = await self._get_words_for_learn(words=sentence_info['words'])
 
-        text_with_words = replace_with_translation(text=sentence_text, words=sentence_info['words'])
+        text_with_words = replace_with_translation(text=sentence_text, words=words_for_sentence)
 
         sentence_for_read['text_with_words'] = text_with_words
         sentence_for_read['words'] = words_for_learn
@@ -261,7 +261,7 @@ class ReadBookService:
 
         return sentence
 
-    async def _get_words_for_learn(self, words: list) -> list:
+    async def _get_words_for_learn(self, words: list) -> tuple[list, list]:
         """Get words for learn."""
 
         check_words = []
@@ -270,6 +270,7 @@ class ReadBookService:
             check_words = self._need_sentence.check_words or [0]
 
         words_for_learn = []
+        words_for_sentence = []
         for word in words:
             word_info = {}
             words_history = {}
@@ -292,7 +293,7 @@ class ReadBookService:
             word_info['incorrect_answers'] = words_history.get('incorrect_answers', 0)
             word_info['correct_answers_in_row'] = words_history.get('correct_answers_in_row', 0)
 
-            if word_info and is_known_word is False and len(words_for_learn) < 10:
+            if word_info and is_known_word is False and len(words_for_learn) < self._user.level_en_id:
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
 
                 if not words_history:
@@ -307,4 +308,9 @@ class ReadBookService:
                     )
                     self._db.add(new_word)
 
-        return words_for_learn
+            if self._user.level_en_id > 2 and is_known_word is True:
+                continue
+
+            words_for_sentence.append(word)
+
+        return words_for_learn, words_for_sentence
