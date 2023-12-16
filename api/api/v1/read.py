@@ -279,6 +279,8 @@ class ReadBookService:
 
             is_known_word = words_history.get('is_known', False)
 
+            words_for_sentence.append(word)
+
             if check_words and word.word_id not in check_words:
                 continue
 
@@ -310,7 +312,5 @@ class ReadBookService:
 
             if self._user.level_en_id > 2 and is_known_word is True:
                 continue
-
-            words_for_sentence.append(word)
 
         return words_for_learn, words_for_sentence
