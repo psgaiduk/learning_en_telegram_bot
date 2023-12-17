@@ -15,4 +15,6 @@ class NewSentenceDTOModel(BaseModel):
     text: str
     text_with_words: str
     translation: Optional[dict[str, str]]
+    sentence_times: Optional[str]
+    description_time: Optional[str]
     words: Optional[list[WordDTOModel]]

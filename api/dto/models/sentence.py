@@ -24,5 +24,7 @@ class SentenceModelForReadDTO(BaseModel):
     text: str
     text_with_words: str
     translation: dict[str, str]
+    sentence_times: str
+    description_time: str
 
     words: list[HistoryWordModelForReadDTO]
