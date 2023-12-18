@@ -12,6 +12,7 @@ class State(Enum):
     check_words = 'CHECK_WORDS'
     grammar = 'GRAMMAR'
     update_profile = 'UPDATE_PROFILE'
+    check_answer_time = 'CHECK_ANSWER_TIME'
     registration = 'REGISTRATION'
     error = 'ERROR'
     records = 'RECORDS'
