@@ -1,15 +1,15 @@
 from os import path
-from random import randint
+from random import choices, randint
 from typing import Union
 
-from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
 
 from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
-from functions import delete_message, update_data_by_api
+from functions import get_combinations, delete_message, update_data_by_api
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.read_book.value)
@@ -63,7 +63,39 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
         message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
+    message_text = 'К какому времени относится предложение?'
+
     await delete_message(message=message)
+
+    if randint(1, 6) == 1:
+        right_answer = telegram_user.new_sentence.sentence_times
+        count_times_in_sentence = right_answer.count(',') + 1
+        all_english_times = get_combinations(count_times_in_sentence)
+        all_answers = [right_answer]
+        other_answers = choices(all_english_times, k=3)
+        all_answers.extend(other_answers)
+
+        sorted(all_answers, key=lambda x: randint(1, 100))
+        keyboard = InlineKeyboardMarkup()
+        for answer in all_answers:
+            callback_data = 'wrong_answer_time' if answer != right_answer else 'right_answer_time'
+            keyboard.add(InlineKeyboardButton(text=answer, callback_data=callback_data))
+
+        await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+
+        params_for_update_user = {
+            'telegram_id': message.from_user.id,
+            'stage': State.check_answer_time.value,
+        }
+
+        is_update = await update_data_by_api(
+            telegram_id=message.from_user.id,
+            params_for_update=params_for_update_user,
+            url_for_update=f'telegram_user/{message.from_user.id}',
+        )
+
+        if is_update is False:
+            return
 
 
 @dispatcher.message_handler(state=State.read_book.value)
