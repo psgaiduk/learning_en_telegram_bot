@@ -127,15 +127,17 @@ class ReadBookService:
 
         available_books = [book for book in available_books if book.book_id not in read_books]
 
-        if available_books:
-            random_book = choice(available_books)
+        if self._start_read_book and self._start_read_book.book.previous_book:
+            selected_book = self._start_read_book.book.previous_book
+        elif available_books:
+            selected_book = choice(available_books)
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
-        self._title_book = f'{random_book.author} - {random_book.title}'
+        self._title_book = f'{selected_book.author} - {selected_book.title}'
 
-        if random_book.books_sentences:
-            sorted_sentences = sorted(random_book.books_sentences, key=lambda sentence: sentence.order)
+        if selected_book.books_sentences:
+            sorted_sentences = sorted(selected_book.books_sentences, key=lambda sentence: sentence.order)
             self._need_sentence = sorted_sentences[0]
         else:
             self._need_sentence = None
