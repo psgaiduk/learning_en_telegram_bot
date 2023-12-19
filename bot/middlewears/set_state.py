@@ -88,7 +88,7 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.records.value
             return State.achievements.value
 
-        if self._state == State.read_book.value:
+        if self._state in {State.read_book.value, State.check_answer_time.value}:
             return await self.work_with_read_status()
 
         return self._state
@@ -98,13 +98,15 @@ class SetStateMiddleware(BaseMiddleware):
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
-            if response_status == HTTPStatus.PARTIAL_CONTENT:
+            if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
                 return State.read_book_end.value
             elif response_status != HTTPStatus.OK:
                 return State.error.value
 
             new_sentence = response['detail']
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
+            if self._state == State.check_answer_time.value:
+                return State.check_answer_time.value
             if new_sentence['words']:
                 return State.check_words.value
             return State.read_book.value
