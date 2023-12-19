@@ -2,7 +2,16 @@ from os import path
 from random import choices, randint
 from typing import Union
 
-from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import (
+    CallbackQuery,
+    Message,
+    ParseMode,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardRemove,
+)
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
 
@@ -57,17 +66,14 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
                 parse_mode=ParseMode.HTML,
                 reply_markup=keyboard,
             )
-
-            await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
     else:
         message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
-        await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
-
-    message_text = 'К какому времени относится предложение?'
 
     await delete_message(message=message)
 
     if randint(1, 6) == 1:
+        await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=ReplyKeyboardRemove())
+        message_text = 'К какому времени относится предложение?'
         right_answer = telegram_user.new_sentence.sentence_times
         count_times_in_sentence = right_answer.count(',') + 1
         all_english_times = get_combinations(count_times_in_sentence)
@@ -96,6 +102,9 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
         if is_update is False:
             return
+
+    else:
+        await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 
 @dispatcher.message_handler(state=State.read_book.value)
