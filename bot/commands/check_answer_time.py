@@ -1,15 +1,12 @@
-from os import path
-from random import choices, randint
 from typing import Union
 
-from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.dispatcher.filters import Text
+from aiogram.types import CallbackQuery, Message, ParseMode, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher.storage import FSMContext
 
 from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
-from functions import get_combinations, delete_message, update_data_by_api
+from functions import delete_message, update_data_by_api
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and '_answer_time' in c.data, state=State.check_answer_time.value)
@@ -50,3 +47,11 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext):
         parse_mode=ParseMode.HTML,
         reply_markup=keyboard,
     )
+
+
+@dispatcher.message_handler(state=State.check_answer_time.value)
+@dispatcher.callback_query_handler(state=State.check_answer_time.value)
+async def handle_check_answer_time_other_data(message: Union[CallbackQuery, Message]):
+    """Handle check words after push button read."""
+    message_text = 'Нужно нажать по кнопке со временем предложения.'
+    await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML)
