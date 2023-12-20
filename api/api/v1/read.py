@@ -109,32 +109,46 @@ class ReadBookService:
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
-        available_books = (
-            self._db.query(BooksModel)
-            .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
-            .filter(
-                BooksModel.level_en_id == self._user.level_en_id
+
+        next_book = None
+
+        if self._start_read_book:
+            next_book = (
+                self._db.query(BooksModel)
+                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+                .filter(BooksModel.previous_book_id == self._start_read_book.book.book_id)
+                .first()
             )
-            .all()
-        )
 
-        read_books = (
-            self._db.query(UsersBooksHistory.book_id)
-            .filter(
-                UsersBooksHistory.telegram_user_id == self._telegram_id,
-                UsersBooksHistory.end_read.isnot(None)
-            )
-            .all()
-        )
+        if next_book:
+            selected_book = next_book
 
-        available_books = [book for book in available_books if book.book_id not in read_books]
-
-        if self._start_read_book and self._start_read_book.book.previous_book:
-            selected_book = self._start_read_book.book.previous_book
-        elif available_books:
-            selected_book = choice(available_books)
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
+
+            available_books = (
+                self._db.query(BooksModel)
+                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+                .filter(
+                    BooksModel.level_en_id == self._user.level_en_id
+                )
+                .all()
+            )
+
+            read_books = (
+                self._db.query(UsersBooksHistory.book_id)
+                .filter(
+                    UsersBooksHistory.telegram_user_id == self._telegram_id,
+                    UsersBooksHistory.end_read.isnot(None)
+                )
+                .all()
+            )
+
+            available_books = [book for book in available_books if book.book_id not in read_books]
+
+            if available_books:
+                selected_book = choice(available_books)
+            else:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
         self._title_book = f'{selected_book.author} - {selected_book.title}'
 
