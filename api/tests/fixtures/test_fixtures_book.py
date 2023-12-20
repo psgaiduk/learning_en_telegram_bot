@@ -53,11 +53,11 @@ def book_sentences_mock():
 
                 sentences_data = [
                     {'sentence_id': sentence_id + 1, 'book_id': book.book_id, 'order': 1, 'text': 'First sentence',
-                     'translation': {'ru': 'Первое предложение'}},
+                     'translation': {'ru': 'Первое предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
                     {'sentence_id': sentence_id + 2, 'book_id': book.book_id, 'order': 2, 'text': 'Second sentence',
-                     'translation': {'ru': 'Второе предложение'}},
+                     'translation': {'ru': 'Второе предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
                     {'sentence_id': sentence_id + 3, 'book_id': book.book_id, 'order': 3, 'text': 'Third sentence',
-                     'translation': {'ru': 'Третье предложение'}},
+                     'translation': {'ru': 'Третье предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
                 ]
 
                 sentence_id += 3
