@@ -1,8 +1,7 @@
 from datetime import datetime
-from random import choice
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, not_
 from sqlalchemy.orm import Session, aliased, joinedload
 
 from database import get_db
@@ -125,29 +124,27 @@ class ReadBookService:
 
         else:
 
-            available_books = (
-                self._db.query(BooksModel)
-                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
-                .filter(
-                    BooksModel.level_en_id == self._user.level_en_id
-                )
-                .all()
-            )
-
-            read_books = (
+            read_books_subquery = (
                 self._db.query(UsersBooksHistory.book_id)
                 .filter(
                     UsersBooksHistory.telegram_user_id == self._telegram_id,
                     UsersBooksHistory.end_read.isnot(None)
                 )
-                .all()
+                .subquery()
             )
 
-            available_books = [book for book in available_books if book.book_id not in read_books]
+            selected_book = (
+                self._db.query(BooksModel)
+                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+                .filter(
+                    BooksModel.level_en_id == self._user.level_en_id,
+                    not_(BooksModel.book_id.in_(read_books_subquery))
+                )
+                .order_by(func.random())
+                .first()
+            )
 
-            if available_books:
-                selected_book = choice(available_books)
-            else:
+            if not selected_book:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
 
         self._title_book = f'{selected_book.author} - {selected_book.title}'
