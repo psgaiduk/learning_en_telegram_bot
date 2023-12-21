@@ -26,7 +26,7 @@ def book_mock(level_en_mock):
             text_1 = ''.join(book_texts[0])
 
             books_data = [
-                {'title': 'First Book', 'level_en_id': level_en.id, 'author': 'First Author', 'text': text_1},
+                {'title': 'First Book - Part 1', 'level_en_id': level_en.id, 'author': 'First Author', 'text': text_1},
                 {'title': 'Second Book', 'level_en_id': level_en.id, 'author': 'Second Author', 'text': text_1},
                 {'title': 'Third Book', 'level_en_id': level_en.id, 'author': 'Third Author', 'text': text_1},
             ]
@@ -34,6 +34,22 @@ def book_mock(level_en_mock):
             for book_data in books_data:
                 book = BooksModel(**book_data)
                 db.add(book)
+
+            db.commit()
+
+            previous_book_id = db.query(BooksModel).filter(
+                BooksModel.title == 'First Book - Part 1',
+                BooksModel.level_en_id == level_en.id
+            ).first().book_id
+            part_2_book_data = {
+                'title': 'First Book - Part 2',
+                'level_en_id': level_en.id,
+                'author': 'First Author',
+                'text': text_1,
+                'previous_book_id': previous_book_id,
+            }
+            book = BooksModel(**part_2_book_data)
+            db.add(book)
             db.commit()
 
 
