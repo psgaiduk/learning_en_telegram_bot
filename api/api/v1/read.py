@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from loguru import logger
 from sqlalchemy import and_, func, not_
 from sqlalchemy.orm import Session, aliased, joinedload
 
@@ -108,6 +109,7 @@ class ReadBookService:
 
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
+        logger.debug(f'Get first sentence from random book for user {self._telegram_id}')
 
         UsersBooksHistoryAlias = aliased(UsersBooksHistory)
 
@@ -129,10 +131,14 @@ class ReadBookService:
             .first()
         )
 
+        logger.debug(f'Get first sentence from random book for user {self._telegram_id} - {next_book}')
+
         if next_book:
             selected_book = next_book
 
         else:
+
+            logger.debug(f'Get first sentence from random book for user {self._telegram_id} - next book not found')
 
             read_books_subquery = (
                 self._db.query(UsersBooksHistory.book_id)
@@ -153,6 +159,8 @@ class ReadBookService:
                 .order_by(func.random())
                 .first()
             )
+
+            logger.debug(f'Get first sentence from random book for user {self._telegram_id} - {selected_book}')
 
             if not selected_book:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
