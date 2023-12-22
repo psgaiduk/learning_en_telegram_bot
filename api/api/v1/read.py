@@ -154,7 +154,8 @@ class ReadBookService:
                 .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
                 .filter(
                     BooksModel.level_en_id == self._user.level_en_id,
-                    not_(BooksModel.book_id.in_(read_books_subquery))
+                    not_(BooksModel.book_id.in_(read_books_subquery)),
+                    BooksModel.previous_book_id.is_(None),
                 )
                 .order_by(func.random())
                 .first()
