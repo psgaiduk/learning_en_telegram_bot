@@ -73,7 +73,7 @@ class ReadBookService:
         ).first()
 
         if not self._start_read_book:
-            await self._get_first_sentence_from_random_book()
+            await self._get_first_sentence_from_book()
         else:
             self._title_book = f'{self._start_read_book.book.author} - {self._start_read_book.book.title}'
             await self._get_next_sentence()
@@ -107,9 +107,9 @@ class ReadBookService:
         elif count_read_sentences >= self._user.hero_level.count_sentences + 1 and self._user.stage == 'CHECK_ANSWER_TIME':
             raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
 
-    async def _get_first_sentence_from_random_book(self):
-        """Get first sentence from random book."""
-        logger.debug(f'Get first sentence from random book for user {self._telegram_id}')
+    async def _get_first_sentence_from_book(self):
+        """Get first sentence from book."""
+        logger.debug(f'Get first sentence from book for user {self._telegram_id}')
 
         UsersBooksHistoryAlias = aliased(UsersBooksHistory)
 
@@ -131,14 +131,14 @@ class ReadBookService:
             .first()
         )
 
-        logger.debug(f'Get first sentence from random book for user {self._telegram_id} - {next_book}')
+        logger.debug(f'Get first sentence from next book for user {self._telegram_id} - {next_book.__dict__ if next_book else "not found"}')
 
         if next_book:
             selected_book = next_book
 
         else:
 
-            logger.debug(f'Get first sentence from random book for user {self._telegram_id} - next book not found')
+            logger.debug(f'Get first sentence from random book for user {self._telegram_id}')
 
             read_books_subquery = (
                 self._db.query(UsersBooksHistory.book_id)
@@ -161,7 +161,7 @@ class ReadBookService:
                 .first()
             )
 
-            logger.debug(f'Get first sentence from random book for user {self._telegram_id} - {selected_book}')
+            logger.debug(f'Get first sentence from random book {selected_book.__dict__ if selected_book else "not found"}')
 
             if not selected_book:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No books available for the user.')
@@ -236,7 +236,7 @@ class ReadBookService:
 
         self._start_read_book.end_read = datetime.utcnow()
 
-        await self._get_first_sentence_from_random_book()
+        await self._get_first_sentence_from_book()
 
     async def _get_sentence_dto(self):
 
