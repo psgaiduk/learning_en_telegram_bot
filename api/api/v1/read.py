@@ -109,15 +109,25 @@ class ReadBookService:
     async def _get_first_sentence_from_random_book(self):
         """Get first sentence from random book."""
 
-        next_book = None
+        UsersBooksHistoryAlias = aliased(UsersBooksHistory)
 
-        if self._start_read_book:
-            next_book = (
-                self._db.query(BooksModel)
-                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
-                .filter(BooksModel.previous_book_id == self._start_read_book.book.book_id)
-                .first()
+        last_read_book_subquery = (
+            self._db.query(UsersBooksHistoryAlias.book_id)
+            .filter(
+                UsersBooksHistoryAlias.telegram_user_id == self._telegram_id,
+                UsersBooksHistoryAlias.end_read.isnot(None)
             )
+            .order_by(UsersBooksHistoryAlias.end_read.desc())
+            .limit(1)
+            .subquery()
+        )
+
+        next_book = (
+            self._db.query(BooksModel)
+            .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+            .filter(BooksModel.previous_book_id == last_read_book_subquery)
+            .first()
+        )
 
         if next_book:
             selected_book = next_book
