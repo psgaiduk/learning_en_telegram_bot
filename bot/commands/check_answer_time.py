@@ -16,6 +16,20 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     telegram_user: TelegramUserDTOModel = data['user']
 
+    data_for_update_history_sentence = {
+        'id': telegram_user.new_sentence.history_sentence_id,
+        'is_read': True,
+    }
+
+    is_update_sentence = await update_data_by_api(
+        telegram_id=telegram_user.telegram_id,
+        params_for_update=data_for_update_history_sentence,
+        url_for_update=f'history/sentences/{telegram_user.new_sentence.history_sentence_id}',
+    )
+
+    if is_update_sentence is False:
+        return
+
     if 'right_answer_time' == message.data:
         message_text.append('Правильно.!\n\n')
     else:

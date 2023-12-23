@@ -35,20 +35,6 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
     sentence_translation = telegram_user.new_sentence.translation.get('ru')
 
-    data_for_update_history_sentence = {
-        'id': telegram_user.new_sentence.history_sentence_id,
-        'is_read': True,
-    }
-
-    is_update_sentence = await update_data_by_api(
-        telegram_id=telegram_user.telegram_id,
-        params_for_update=data_for_update_history_sentence,
-        url_for_update=f'history/sentences/{telegram_user.new_sentence.history_sentence_id}',
-    )
-
-    if is_update_sentence is False:
-        return
-
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text='Read'))
     file_path = f'static/audio/{telegram_user.new_sentence.book_id} - {telegram_user.new_sentence.order}.mp3'
@@ -104,6 +90,20 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
             return
 
     else:
+        data_for_update_history_sentence = {
+            'id': telegram_user.new_sentence.history_sentence_id,
+            'is_read': True,
+        }
+
+        is_update_sentence = await update_data_by_api(
+            telegram_id=telegram_user.telegram_id,
+            params_for_update=data_for_update_history_sentence,
+            url_for_update=f'history/sentences/{telegram_user.new_sentence.history_sentence_id}',
+        )
+
+        if is_update_sentence is False:
+            return
+
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 

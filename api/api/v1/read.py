@@ -102,9 +102,7 @@ class ReadBookService:
             .scalar()
         )
 
-        if count_read_sentences >= self._user.hero_level.count_sentences and self._user.stage != 'CHECK_ANSWER_TIME':
-            raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
-        elif count_read_sentences >= self._user.hero_level.count_sentences + 1 and self._user.stage == 'CHECK_ANSWER_TIME':
+        if count_read_sentences >= self._user.hero_level.count_sentences:
             raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
 
     async def _get_first_sentence_from_book(self):
