@@ -1,15 +1,17 @@
-import pytest
+from pytest import mark
 
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
 from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock, patch
 
 from choices import State
-from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
+from dto import TelegramUserDTOModel, NewSentenceDTOModel
 from middlewears import SetStateMiddleware
 from settings import settings
+from tests.fixtures import *
 
 
+@mark.usefixtures('sentence_with_word', 'telegram_user_with_sentence_and_word')
 class TestSetStateMiddleware:
     """Tests for SetStateMiddleware."""
 
@@ -32,33 +34,14 @@ class TestSetStateMiddleware:
                 'main_language': None,
             }
         }
-        self._new_sentence = NewSentenceDTOModel(
-            history_sentence_id=1,
-            book_id=1,
-            sentence_id=1,
-            text='test_text',
-            translation={'ru': 'test_text'},
-            words=[
-                WordDTOModel(
-                    word_id=1,
-                    word='test_word',
-                    type_word_id=1,
-                    translation={'ru': 'test_word'},
-                    is_known=False,
-                    count_view=0,
-                    correct_answers=0,
-                    incorrect_answers=0,
-                    correct_answers_in_row=0,
-                )
-            ],
-        )
+        self._new_sentence = sentence_with_word
 
-    @pytest.mark.parametrize('response_status, expected_state', [
+    @mark.parametrize('response_status, expected_state', [
         (HTTPStatus.NOT_FOUND, State.registration.value),
         (HTTPStatus.OK, 'expected_stage_from_api'),
         (HTTPStatus.BAD_REQUEST, State.error.value),
     ])
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_set_state_data(self, mocker, response_status, expected_state):
         response_data = self._response_data
         response_data['detail']['stage'] = expected_state
@@ -90,9 +73,9 @@ class TestSetStateMiddleware:
             fsm_context_mock.set_data.assert_not_called()
             assert self._service._telegram_user is None
 
-    @pytest.mark.parametrize('state', [State.update_profile.value, State.error.value, State.grammar.value, State.registration.value])
+    @mark.parametrize('state', [State.update_profile.value, State.error.value, State.grammar.value, State.registration.value])
     @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_get_real_state_regular_work(self, mock_update_user, state):
         self._service._state = state
         self._service._message_text = 'text'
@@ -105,7 +88,7 @@ class TestSetStateMiddleware:
         mock_update_user.assert_not_called()
         mock_work_with_read_status.assert_not_called()
 
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_get_real_test_read_book(self):
         state = State.read_book.value
         self._service._state = state
@@ -117,7 +100,7 @@ class TestSetStateMiddleware:
         assert await self._service.get_real_state() == state
         mock_work_with_read_status.assert_called_once()
 
-    @pytest.mark.parametrize('message_text, state, expected_state, is_update', [
+    @mark.parametrize('message_text, state, expected_state, is_update', [
         ('/profile', State.registration.value, State.registration.value, None),
         ('/profile', State.error.value, State.error.value, None),
         ('/profile', State.grammar.value, State.grammar.value, None),
@@ -139,7 +122,7 @@ class TestSetStateMiddleware:
         ('just text', State.read_book.value, State.read_book.value, None),
     ])
     @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_get_real_state_regular_work(self, mock_update_user, message_text, state, expected_state, is_update):
         self._service._state = state
         self._service._message_text = message_text
@@ -170,13 +153,13 @@ class TestSetStateMiddleware:
         else:
             mock_update_user.assert_not_called()
 
-    @pytest.mark.parametrize('response_status, words, expected_state', [
+    @mark.parametrize('response_status, words, expected_state', [
         (HTTPStatus.OK, [], State.read_book.value),
         (HTTPStatus.OK, ['word'], State.check_words.value),
         (HTTPStatus.BAD_REQUEST, ['word'], State.error.value),
         (HTTPStatus.PARTIAL_CONTENT, ['word'], State.read_book_end.value),
     ])
-    @pytest.mark.asyncio
+    @mark.asyncio
     async def test_work_with_read_status(self, response_status, words, expected_state):
         response_data = {'detail': self._new_sentence.dict()}
         self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
