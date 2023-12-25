@@ -1,49 +1,23 @@
+from copy import deepcopy
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pytest import mark
+from pytest import mark, fixture
 from unittest.mock import ANY, AsyncMock, patch
 
 from bot import bot
 from choices import State
-from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from services import CheckWordsService
+from tests.fixtures import *
 
 
 class TestCheckWordsService:
     """Tests for CheckWordsService."""
 
-    def setup_method(self):
+    @fixture(autouse=True)
+    def setup_method(self, telegram_user_with_sentence_and_word):
         self._state = AsyncMock()
-        self._chat_id = 12345
-        self._word = WordDTOModel(
-                    word_id=1,
-                    word='test_word',
-                    type_word_id=1,
-                    translation={'ru': 'test_word'},
-                    is_known=False,
-                    count_view=0,
-                    correct_answers=0,
-                    incorrect_answers=0,
-                    correct_answers_in_row=0,
-                )
-        self._new_sentence = NewSentenceDTOModel(
-            history_sentence_id=1,
-            book_id=1,
-            sentence_id=1,
-            text='test_text',
-            translation={'ru': 'test_text'},
-            words=[self._word],
-        )
-        self._telegram_user = TelegramUserDTOModel(
-            stage='test_stage',
-            user_name='test_name',
-            experience=0,
-            previous_stage='test_previous_stage',
-            telegram_id=self._chat_id,
-            hero_level=None,
-            level_en=None,
-            main_language=None,
-            new_sentence=self._new_sentence,
-        )
+        self._telegram_user = telegram_user_with_sentence_and_word
+        self._chat_id = self._telegram_user.telegram_id
 
     @mark.asyncio
     async def test_do_all_true(self):
@@ -51,7 +25,7 @@ class TestCheckWordsService:
         
         mock_get_user = AsyncMock(return_value=None)
         service._get_user = mock_get_user
-        service._telegram_user = self._telegram_user
+        service._telegram_user = deepcopy(self._telegram_user)
 
         mock_update_user = AsyncMock(return_value=True)
         service._update_user = mock_update_user
@@ -70,7 +44,7 @@ class TestCheckWordsService:
         mock_send_message.assert_called_once()
 
         assert service._words == []
-        assert service._first_word == self._word
+        assert service._first_word == self._telegram_user.new_sentence.words[0]
 
     @mark.asyncio
     async def test_do_update_user_false(self):
@@ -78,7 +52,7 @@ class TestCheckWordsService:
 
         mock_get_user = AsyncMock(return_value=None)
         service._get_user = mock_get_user
-        service._telegram_user = self._telegram_user
+        service._telegram_user = deepcopy(self._telegram_user)
 
         mock_update_user = AsyncMock(return_value=False)
         service._update_user = mock_update_user
@@ -102,7 +76,7 @@ class TestCheckWordsService:
 
         mock_get_user = AsyncMock(return_value=None)
         service._get_user = mock_get_user
-        service._telegram_user = self._telegram_user
+        service._telegram_user = deepcopy(self._telegram_user)
 
         mock_update_user = AsyncMock(return_value=True)
         service._update_user = mock_update_user
@@ -135,7 +109,7 @@ class TestCheckWordsService:
     @patch('services.check_words.update_data_by_api', new_callable=AsyncMock)
     async def test_update_user(self, mock_update_user, update_status):
         service = CheckWordsService(state=self._state, start_text_message='')
-        service._telegram_user = self._telegram_user
+        service._telegram_user = deepcopy(self._telegram_user)
 
         mock_update_user.side_effect = [update_status]
 
@@ -157,14 +131,14 @@ class TestCheckWordsService:
     @patch('services.check_words.update_data_by_api', new_callable=AsyncMock)
     async def test_update_sentence(self, mock_update_user, update_status):
         service = CheckWordsService(state=self._state, start_text_message='')
-        service._telegram_user = self._telegram_user
-        service._words = self._new_sentence.words
+        service._telegram_user = deepcopy(self._telegram_user)
+        service._words = deepcopy(self._telegram_user.new_sentence.words)
 
         mock_update_user.side_effect = [update_status]
 
         return_value = await service._update_sentence()
 
-        words_ids = [word.word_id for word in self._new_sentence.words]
+        words_ids = [word.word_id for word in self._telegram_user.new_sentence.words]
 
         mock_update_user.assert_called_once_with(
             telegram_id=self._telegram_user.telegram_id,
@@ -181,14 +155,15 @@ class TestCheckWordsService:
     @mark.asyncio
     async def test_send_message(self, start_message_text):
         service = CheckWordsService(state=self._state, start_text_message='')
-        service._telegram_user = self._telegram_user
-        service._first_word = self._word
+        service._telegram_user = deepcopy(self._telegram_user)
+        word = deepcopy(self._telegram_user.new_sentence.words)[0]
+        service._first_word = word
         service._start_text_message = start_message_text
 
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await service._send_message()
 
-            excepted_text = f'{start_message_text}Слово: {self._word.word}\nПеревод: {self._word.translation["ru"]}'
+            excepted_text = f'{start_message_text}Слово: {word.word}\nПеревод: {word.translation["ru"]}'
 
             mock_send_message.assert_called_once_with(
                 chat_id=self._chat_id,
@@ -201,6 +176,6 @@ class TestCheckWordsService:
 
             assert isinstance(reply_markup, InlineKeyboardMarkup)
             assert reply_markup.inline_keyboard == [
-                [InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{self._word.word_id}')],
-                [InlineKeyboardButton(text='I don\'t know', callback_data=f'know_word_false_{self._word.word_id}')],
+                [InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{word.word_id}')],
+                [InlineKeyboardButton(text='I don\'t know', callback_data=f'know_word_false_{word.word_id}')],
             ]
