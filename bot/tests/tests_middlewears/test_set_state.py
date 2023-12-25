@@ -1,4 +1,4 @@
-from pytest import mark
+from pytest import mark, fixture
 
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
 from http import HTTPStatus
@@ -11,11 +11,10 @@ from settings import settings
 from tests.fixtures import *
 
 
-@mark.usefixtures('sentence_with_word', 'telegram_user_with_sentence_and_word')
 class TestSetStateMiddleware:
     """Tests for SetStateMiddleware."""
 
-    def setup_method(self):
+    def setup_method(self, sentence_with_word):
         self._chat = 12345
         self._user = 12345
         self._message = Mock()
@@ -160,7 +159,8 @@ class TestSetStateMiddleware:
         (HTTPStatus.PARTIAL_CONTENT, ['word'], State.read_book_end.value),
     ])
     @mark.asyncio
-    async def test_work_with_read_status(self, response_status, words, expected_state):
+    async def test_work_with_read_status(self, sentence_with_word, response_status, words, expected_state):
+        self._new_sentence = sentence_with_word
         response_data = {'detail': self._new_sentence.dict()}
         self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
         self._service._telegram_user.stage = 'READ_BOOK'
