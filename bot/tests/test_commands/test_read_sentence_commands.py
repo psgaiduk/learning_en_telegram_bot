@@ -5,7 +5,7 @@ from pytest import mark
 
 from bot import bot
 from commands import handle_read_sentence, handle_read_sentence_other_data, handle_end_read_sentence_today
-from tests.fixtures import telegram_user_with_sentence_and_word, sentence_with_word, word_new
+from tests.fixtures import *
 
 
 class TestReadSentenceCommand:
@@ -39,20 +39,23 @@ class TestReadSentenceCommand:
             expected_text = 'Нужно нажать по кнопке Read'
             mock_send_message.assert_called_once_with(chat_id=chat_id, text=expected_text, reply_markup=expected_keyboard, parse_mode=ParseMode.HTML)
 
-    @mark.parametrize('is_update_sentence', [True, False])
+    @mark.parametrize('is_update_sentence, user_level_en', [(True, 1), (True, 2), (True, 3), (True, 4), (True, 5), (True, 6), (False, 1), (False, 6)])
     @patch('commands.read_sentence.delete_message')
     @patch('commands.read_sentence.update_data_by_api')
     @patch('commands.read_sentence.bot', new_callable=AsyncMock)
+    @patch('commands.read_sentence.randint')
     @mark.asyncio
-    async def test_handle_read_sentence(
-            self, mock_bot, mock_update_data, mock_delete_message, is_update_sentence, telegram_user_with_sentence_and_word):
+    async def test_handle_just_read_sentence(
+            self, mock_randint, mock_bot, mock_update_data, mock_delete_message, is_update_sentence, user_level_en, telegram_user_with_sentence_and_word):
         chat_id = 1
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user, message=Message(id=1))
         mock_callback.from_user = user
         state = AsyncMock()
         telegram_user = telegram_user_with_sentence_and_word
+        telegram_user.level_en.order = user_level_en
         state.get_data = AsyncMock(return_value={'user': telegram_user})
+        mock_randint.side_effect = [3, 6]
 
         mock_update_data.return_value = is_update_sentence
 
@@ -67,7 +70,10 @@ class TestReadSentenceCommand:
             mock_bot.send_message.assert_not_called()
             mock_delete_message.assert_not_called()
         else:
-            expected_message_text = (f'{telegram_user.new_sentence.text}\n\n'
+            sentence_text = telegram_user.new_sentence.text
+            if telegram_user.level_en.order < 3:
+                sentence_text = telegram_user.new_sentence.text_with_words
+            expected_message_text = (f'{sentence_text}\n\n'
                                      f'<tg-spoiler>{telegram_user.new_sentence.translation.get("ru")}</tg-spoiler>')
             expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
             expected_keyboard.add(KeyboardButton(text='Read'))
