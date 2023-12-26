@@ -55,8 +55,6 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
     else:
         message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
 
-    await delete_message(message=message)
-
     if randint(1, 6) == 1:
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=ReplyKeyboardRemove())
         message_text = 'К какому времени относится предложение?'
@@ -103,6 +101,8 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
         if is_update_sentence is False:
             return
+
+        await delete_message(message=message)
 
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
