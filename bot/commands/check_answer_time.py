@@ -57,7 +57,7 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext):
     keyboard.add(KeyboardButton(text='Read'))
     await bot.send_message(
         chat_id=message.from_user.id,
-        text=' '.join(message_text),
+        text=''.join(message_text),
         parse_mode=ParseMode.HTML,
         reply_markup=keyboard,
     )
