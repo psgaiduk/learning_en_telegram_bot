@@ -166,6 +166,7 @@ class TestReadSentenceCommand:
         sentence_text = telegram_user.new_sentence.text
         if telegram_user.level_en.order < 3:
             sentence_text = telegram_user.new_sentence.text_with_words
+
         expected_message_text = (f'{sentence_text}\n\n'
                                  f'<tg-spoiler>{telegram_user.new_sentence.translation.get("ru")}</tg-spoiler>')
         expected_keyboard = ReplyKeyboardRemove()
@@ -184,7 +185,68 @@ class TestReadSentenceCommand:
             reply_markup=ANY,
         )
 
+    @patch('os.path.isfile')
+    @patch('commands.read_sentence.delete_message')
+    @patch('commands.read_sentence.update_data_by_api')
+    @patch('commands.read_sentence.bot', new_callable=AsyncMock)
+    @patch('commands.read_sentence.randint')
+    @mark.asyncio
+    async def test_handle_read_sentence_with_audio_and_time(
+            self, mock_randint, mock_bot, mock_update_data, mock_delete_message, mock_is_file, telegram_user_with_sentence_and_word):
+        chat_id = 1
+        user = User(id=chat_id, is_bot=False, first_name='Test User')
+        mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user, message=Message(id=1))
+        mock_callback.from_user = user
+        state = AsyncMock()
+        telegram_user = telegram_user_with_sentence_and_word
+        telegram_user.level_en.order = 1
+        state.get_data = AsyncMock(return_value={'user': telegram_user})
+        mock_randint.side_effect = [1, 1, 20, 20, 20, 20]
+        mock_update_data.return_value = True
+        mock_is_file.return_value = True
+        mock_audio_file = mock_open(read_data=b"audio file content")
+        with patch('builtins.open', mock_audio_file):
+            await handle_read_sentence(message=mock_callback, state=state)
 
+            mock_update_data.assert_called_once_with(
+                telegram_id=chat_id,
+                params_for_update={'stage': State.check_answer_time.value, 'telegram_id': telegram_user.telegram_id},
+                url_for_update=f'telegram_user/{telegram_user.telegram_id}',
+            )
+
+            sentence_text = telegram_user.new_sentence.text
+            if telegram_user.level_en.order < 3:
+                sentence_text = telegram_user.new_sentence.text_with_words
+
+            expected_message_text = f'Text:\n\n<tg-spoiler>{sentence_text}</tg-spoiler>'
+            expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+            expected_keyboard.add(KeyboardButton(text='Read'))
+            mock_bot.send_audio.assert_called_once_with(
+                chat_id=chat_id,
+                audio=ANY,
+                caption=expected_message_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=expected_keyboard,
+            )
+
+            expected_message_text = f'Translate:\n\n<tg-spoiler>{telegram_user.new_sentence.translation.get("ru")}</tg-spoiler>'
+            expected_keyboard = ReplyKeyboardRemove()
+            assert mock_bot.send_message.call_args_list[0] == call(
+                chat_id=chat_id,
+                text=expected_message_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=expected_keyboard,
+            )
+
+            expected_message_text = 'К какому времени относится предложение?'
+            assert mock_bot.send_message.call_args_list[1] == call(
+                chat_id=chat_id,
+                text=expected_message_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=ANY,
+            )
+
+            mock_delete_message.assert_not_called()
 
     @patch('commands.read_sentence.delete_message')
     @mark.asyncio
