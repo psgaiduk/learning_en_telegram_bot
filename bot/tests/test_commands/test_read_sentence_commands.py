@@ -87,6 +87,7 @@ class TestReadSentenceCommand:
             )
             mock_delete_message.assert_called_once_with(message=mock_callback)
 
+    @mark.parametrize('user_level_en', [1, 6])
     @patch('os.path.isfile')
     @patch('commands.read_sentence.delete_message')
     @patch('commands.read_sentence.update_data_by_api')
@@ -94,14 +95,22 @@ class TestReadSentenceCommand:
     @patch('commands.read_sentence.randint')
     @mark.asyncio
     async def test_handle_read_sentence_with_audio(
-            self, mock_randint, mock_bot, mock_update_data, mock_delete_message, mock_is_file, telegram_user_with_sentence_and_word):
+            self,
+            mock_randint,
+            mock_bot,
+            mock_update_data,
+            mock_delete_message,
+            mock_is_file,
+            user_level_en,
+            telegram_user_with_sentence_and_word
+    ):
         chat_id = 1
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user, message=Message(id=1))
         mock_callback.from_user = user
         state = AsyncMock()
         telegram_user = telegram_user_with_sentence_and_word
-        telegram_user.level_en.order = 1
+        telegram_user.level_en.order = user_level_en
         state.get_data = AsyncMock(return_value={'user': telegram_user})
         mock_randint.side_effect = [1, 6]
         mock_update_data.return_value = True
@@ -139,12 +148,13 @@ class TestReadSentenceCommand:
 
             mock_delete_message.assert_called_once_with(message=mock_callback)
 
+    @mark.parametrize('user_level_en', [1, 6])
     @patch('commands.read_sentence.update_data_by_api')
     @patch('commands.read_sentence.bot', new_callable=AsyncMock)
     @patch('commands.read_sentence.randint')
     @mark.asyncio
     async def test_handle_read_sentence_question_about_time(
-            self, mock_randint, mock_bot, mock_update_data, telegram_user_with_sentence_and_word):
+            self, mock_randint, mock_bot, mock_update_data, user_level_en, telegram_user_with_sentence_and_word):
         chat_id = 1
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user, message=Message(id=1))
