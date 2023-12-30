@@ -1,9 +1,9 @@
 from unittest.mock import AsyncMock, patch
-from aiogram.types import CallbackQuery, User, ParseMode, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import CallbackQuery, User, ParseMode, ReplyKeyboardMarkup, KeyboardButton, Message
 from pytest import mark
 
 from choices import State
-from commands import handle_check_answer_time
+from commands import handle_check_answer_time, handle_check_answer_time_other_data
 from tests.fixtures import *
 
 
@@ -115,3 +115,21 @@ class TestCheckAnswerTime:
 
         mock_bot.send_message.assert_not_called()
         mock_delete_message.assert_not_called()
+
+    @mark.parametrize('message_type', [CallbackQuery, Message])
+    @patch('commands.check_answer_time.bot', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_handle_check_answer_time_other_data(self, mock_bot, message_type):
+        chat_id = 1
+        user = User(id=chat_id, is_bot=False, first_name='Test User')
+        mock_callback = CallbackQuery(id=1, chat=chat_id, from_user=user)
+        mock_callback.from_user = user
+
+        await handle_check_answer_time_other_data(message=mock_callback)
+
+        expected_message_text = 'Нужно нажать по кнопке со временем предложения.'
+        mock_bot.send_message.assert_called_once_with(
+            chat_id=chat_id,
+            text=expected_message_text,
+            parse_mode=ParseMode.HTML,
+        )
