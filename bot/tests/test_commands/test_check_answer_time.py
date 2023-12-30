@@ -16,7 +16,7 @@ class TestCheckAnswerTime:
     @patch('commands.check_answer_time.bot', new_callable=AsyncMock)
     @mark.asyncio
     async def test_handle_check_answer_time(
-            mock_bot, mock_update_data, mock_delete_message, data, telegram_user_with_sentence_and_word):
+            self, mock_bot, mock_update_data, mock_delete_message, data, telegram_user_with_sentence_and_word):
         chat_id = 1
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data=data, from_user=user)
