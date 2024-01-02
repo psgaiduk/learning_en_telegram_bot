@@ -1,6 +1,6 @@
 from unittest.mock import AsyncMock, patch
-from aiogram.types import CallbackQuery, User, ParseMode, ReplyKeyboardMarkup, KeyboardButton
-from pytest import mark, fixture
+from aiogram.types import CallbackQuery, KeyboardButton, ParseMode, ReplyKeyboardMarkup, User
+from pytest import fixture, mark
 
 from choices import State
 from commands import handle_check_answer_time, handle_check_answer_time_other_data
