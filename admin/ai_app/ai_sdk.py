@@ -78,6 +78,7 @@ class AISDK:
                   'You must translate each part into Russian.\n'
                   'And for each part, you must provide compound words (it must be one word), phrasal verbs (such as bring up, put up with and others)'
                   ' and idioms that the student may not know at the Beginner level.\n'
+                  'There is no need to combine a noun and an adjective to translate, it is better to do them separately\n'
                   'You don\'t need to translate words, add punctuation marks except commas and articles.\n'
                   'no need to make words like big garden, small house and other, it should always be either one word or a phrasal verb\n'
                   'You also need to write what time the sentence refers to, consider each sentence as a separate text, if there are two different '
