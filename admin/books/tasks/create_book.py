@@ -35,7 +35,7 @@ def create_sentences(instance: BooksModel) -> None:
         logger.debug(f'English sentence {english_sentence}')
         russian_sentence = sentence_data[1].strip()
         logger.debug(f'Russian sentence {russian_sentence}')
-        words_with_translate = sentence_data[2].replace('.', '').strip().split(', ')
+        words_with_translate = sentence_data[2].replace('.', '').strip().split('; ')
         logger.debug(f'Words with translate {words_with_translate}')
         sentence_times = sentence_data[3].strip()
         logger.debug(f'Sentence times {sentence_times}')
