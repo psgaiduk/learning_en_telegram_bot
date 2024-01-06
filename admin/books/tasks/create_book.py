@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django_q.tasks import Chain
 from loguru import logger
+from nltk import sent_tokenize
 
 from ai_app import AISDK
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
@@ -14,8 +15,22 @@ def create_book_task(book_id: int) -> None:
     logger.debug(f'Book text {instance.text}')
     chain = Chain(cached=True)
     logger.debug(f'Chain {chain}')
-    chain.append(create_sentences, instance)
-    logger.debug(f'Chain {chain}')
+    sentences = sent_tokenize(instance.text)
+    logger.debug(f'Sentences {sentences}')
+    chunk = ""
+    for sentence in sentences:
+        if len(chunk) + len(sentence) <= 700:
+            chunk += " " + sentence
+        else:
+            chain.append(create_sentences, chunk.strip())
+            logger.debug(f'Add sentence to chain {chunk.strip()}')
+            chunk = sentence
+
+    if chunk:
+        logger.debug('Last chunk')
+        chain.append(create_sentences, chunk.strip())
+        logger.debug(f'Add sentence to chain {chunk.strip()}')
+
     chain.run()
 
 
