@@ -7,6 +7,9 @@ from ai_app import AISDK
 from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
 
 
+global_index = 1
+
+
 def create_book_task(book_id: int) -> None:
     """Create books."""
     logger.info(f'Create book {book_id}')
@@ -22,26 +25,26 @@ def create_book_task(book_id: int) -> None:
         if len(chunk) + len(sentence) <= 700:
             chunk += " " + sentence
         else:
-            chain.append(create_sentences, chunk.strip())
+            chain.append(create_sentences, instance, chunk.strip())
             logger.debug(f'Add sentence to chain {chunk.strip()}')
             chunk = sentence
 
     if chunk:
         logger.debug('Last chunk')
-        chain.append(create_sentences, chunk.strip())
+        chain.append(create_sentences, instance, chunk.strip())
         logger.debug(f'Add sentence to chain {chunk.strip()}')
 
     chain.run()
 
 
-def create_sentences(instance: BooksModel) -> None:
+def create_sentences(instance: BooksModel, text: str) -> None:
     """Translate and add sentence."""
-    text_data = AISDK().translate_and_analyse(text=instance.text)
+    global global_index
+    text_data = AISDK().translate_and_analyse(text=text)
     logger.debug(f'Text data {text_data}')
     sentences = text_data.split('\n')
     sentences = [sentence for sentence in sentences if sentence and '---' in sentence]
     logger.debug(f'Sentences {sentences}')
-    index = 1
     type_word = TypeWordsModel.objects.get(type_word_id=1)
     type_phrase = TypeWordsModel.objects.get(type_word_id=2)
     for sentence in sentences:
@@ -57,7 +60,7 @@ def create_sentences(instance: BooksModel) -> None:
         description_time = sentence_data[4].strip()
         logger.debug(f'Description time {description_time}')
 
-        AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
+        AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {global_index}')
 
         all_words = [word.split(': ')[0] for word in words_with_translate]
         logger.debug(f'All words {all_words}')
@@ -80,7 +83,7 @@ def create_sentences(instance: BooksModel) -> None:
 
         book_sentence, created = BooksSentencesModel.objects.update_or_create(
             book=instance,
-            order=index,
+            order=global_index,
             defaults={
                 'text': english_sentence,
                 'translation': {'ru': russian_sentence},
@@ -91,4 +94,4 @@ def create_sentences(instance: BooksModel) -> None:
 
         book_sentence.words.set(words)
 
-        index += 1
+        global_index += 1
