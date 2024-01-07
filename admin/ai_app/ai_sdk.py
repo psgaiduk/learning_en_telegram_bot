@@ -93,7 +93,7 @@ class AISDK:
                   'And this is your answer:\n'
                   'At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.  '
                   '--- Сначала он был маленьким и слабым, но она поливала его и рассказывала ему истории, и с годами он становился все больше '
-                  'и больше. --- at first: сначала, watered: поливал, told: сказал,  stories: истории, and over the years: и с годами, '
+                  'и больше. --- at first: сначала, watered: поливал; told: сказал; stories: истории; and over the years: и с годами; '
                   'it got bigger: стал больше -- Past Simple --- Past Simple используется здесь, потому что предложение описывает завершенное '
                   'действие или состояние в прошлом. Признаки: использование формы "was" для глагола "to be" для описания прошлого.\n\n'
                   'Finally, the turnip was  giant! --- Наконец-то репа оказалась гигантской! '
