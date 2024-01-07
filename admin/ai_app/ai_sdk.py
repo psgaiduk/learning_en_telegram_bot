@@ -101,7 +101,12 @@ class AISDK:
                   'потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для '
                   'глагола "to be" для описания прошлого.\n'
                   'Strictly follow this answer format for each sentence, there must be 5 blocks separated in the sentence ---,'
-                  ' no need to add anything extra.'
+                  ' no need to add anything extra.\n'
+                  'Example of bad words for translate "the wolf went away" - this bad, better just "went away",'
+                  '"to a shopkeeper" - it is bad, better just "shopkeeper",  "and bought" - it is bad, better just "bought", '
+                  '"himself a great lump of chalk" - it is bad, better 3 words: "lump", "great", "chalk", '
+                  '"ate this" - it is bad, better just "ate", "made his voice soft" - it is bad, better just "soft", "voice"'
+                  'so you need to translate each word separately, only if it is a phrasal verb, then it is not necessary, or if it is a stable idiom'
                   )
 
         response = self._client.chat.completions.create(
