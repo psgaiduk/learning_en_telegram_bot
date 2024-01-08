@@ -72,50 +72,10 @@ class AISDK:
         :return: text with translate and analysis.
         """
 
-        prompt = ('You are an English teacher with 30 years of experience.\n'
-                  'The student will send you a text.\n'
-                  'Break it down into sentences\n'
-                  'You must translate each part into Russian.\n'
-                  'And for each part, you must provide compound words (it must be one word), phrasal verbs (such as bring up, put up with and others)'
-                  ' and idioms that the student may not know at the Beginner level. Must be written using ;\n'
-                  'There is no need to combine a noun and an adjective to translate, it is better to do them separately\n'
-                  'You don\'t need to translate words, add punctuation marks except commas and articles.\n'
-                  'no need to make words like big garden, small house and other, it should always be either one word or a phrasal verb\n'
-                  'You also need to write what time the sentence refers to, consider each sentence as a separate text, if there are two different '
-                  'times in the sentence, then indicate them separated by a comma.\n'
-                  'Additionally, perform an analysis of time in a sentence in Russian. Determine why this tense is used and focus on '
-                  'word markers if they exist.\n'
-                  'Don\'t add anything extra\n'
-                  'This is how it should look,'
-                  'The student gives you the text:\n'
-                  'At first, it was small and weak, but she watered it and told it stories, and over the years, '
-                  'it got bigger and bigger. Finally, the turnip was giant!\n'
-                  'And this is your answer:\n'
-                  'At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.  '
-                  '--- Сначала он был маленьким и слабым, но она поливала его и рассказывала ему истории, и с годами он становился все больше '
-                  'и больше. --- at first: сначала, watered: поливал; told: сказал; stories: истории; and over the years: и с годами; '
-                  'it got bigger: стал больше -- Past Simple --- Past Simple используется здесь, потому что предложение описывает завершенное '
-                  'действие или состояние в прошлом. Признаки: использование формы "was" для глагола "to be" для описания прошлого.\n\n'
-                  'Finally, the turnip was  giant! --- Наконец-то репа оказалась гигантской! '
-                  '--- finally: окончательно; turnip: репа; was: был; giant: гигант. --- Past Simple --- Past Simple используется здесь, '
-                  'потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для '
-                  'глагола "to be" для описания прошлого.\n'
-                  'Strictly follow this answer format for each sentence, there must be 5 blocks separated in the sentence ---,'
-                  ' no need to add anything extra.\n'
-                  'Example of bad words for translate "the wolf went away" - this bad, better just "went away",'
-                  '"to a shopkeeper" - it is bad, better just "shopkeeper",  "and bought" - it is bad, better just "bought", '
-                  '"himself a great lump of chalk" - it is bad, better 3 words: "lump", "great", "chalk", '
-                  '"ate this" - it is bad, better just "ate", "made his voice soft" - it is bad, better just "soft", "voice"'
-                  'so you need to translate each word separately, only if it is a phrasal verb, then it is not necessary, or if it is a stable idiom'
-                  )
-
         response = self._client.chat.completions.create(
             model='gpt-4-1106-preview',
+            assistant='asst_6w53QWhoPLwjLzIoPdOZKIak',
             messages=[
-                {
-                    "role": 'assistant',
-                    'content': prompt,
-                },
                 {
                     'role': 'user',
                     'content': text,
