@@ -72,10 +72,49 @@ class AISDK:
         :return: text with translate and analysis.
         """
 
+        prompt = """Вы преподаватель английского языка с 30-летним опытом.
+Ученик сейчас на уровне знаний A1 - Elementary 
+и он отправит тебе текст.
+Разбейте это на предложения
+Вы должны перевести каждую часть на русский язык.
+
+Проанализируй предложения и в каждом выдели слова которые ученик может не знать на этом уровне, не надо выделять все слова:
+3. идиомы и стандартные литературные обороты, такие как (once upon a time, In times of old и другие)
+2. фразовые глаголы (Пример: such as, bring up, put up и другие).
+1. сложные слова (Пример: word, time, tulip и др.), отбрасывай артикли, притяжательные местоимения, вспомогательные глаголы, предлоги, прилагательные. 
+Перевод для слов давать не надо, просто раздели их между собой через ; и для каждого типа проставь номер 1, 2 или 3 в зависимости от типа слова. 
+
+Дополнительно выполнить анализ времени в предложении напиши к какому времени оно относится.
+
+Далее дай пояснение, почему именно это время тут должно использоваться.
+
+каждую часть отделяй от другой использую ---.
+
+Пример как это должно работать:
+Ученик присылает тебе текст:
+At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger. Finally, the turnip was giant!
+
+Твой ответ:
+At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.  --- Сначала он был маленьким и слабым, но она поливала его и рассказывала ему истории, и с годами он становился все больше  и больше. --- at first - 3; watered - 1;  told - 1;  stories - 1  -- Past Simple --- Past Simple используется здесь, потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для глагола "to be" для описания прошлого.
+
+On Fridays, Sarah and her friends go out on the town, painting it red as they explore new restaurants. --- По пятницам Сара и ее друзья выходят в город, оживляя его своим присутствием и исследуя новые рестораны. --- on the town- 3; painting it red - 3; go out - 2; explore - 1; restaurants - 1; --- Present Simple --- В предложении описывается регулярное событие, которое происходит каждую пятницу (On Fridays). Present Simple используется для выражения повторяющихся действий в настоящем времени.
+
+Итак твой ответ должен содержать 5 блоков по каждому предложению:
+1. Предожение на английском.
+2. Перевод этого предолжения,
+3. Сложные слова с переводом
+4. Время предложения
+5. Объяснение почему именно это время
+Каждый блок отделяй знаком ---
+"""
+
         response = self._client.chat.completions.create(
             model='gpt-4-1106-preview',
-            assistant='asst_6w53QWhoPLwjLzIoPdOZKIak',
             messages=[
+                {
+                    "role": 'assistant',
+                    'content': prompt,
+                },
                 {
                     'role': 'user',
                     'content': text,
@@ -84,3 +123,7 @@ class AISDK:
         )
 
         return response.choices[0].message.content
+
+
+if __name__ == '__main__':
+    print(AISDK().translate_and_analyse('There was once upon a time an old goat who had seven little kids, and loved them with all the love of a mother for her children.'))
