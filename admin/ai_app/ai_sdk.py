@@ -105,7 +105,8 @@ On Fridays, Sarah and her friends go out on the town, painting it red as they ex
 3. Сложные слова с переводом
 4. Время предложения
 5. Объяснение почему именно это время
-Каждый блок отделяй знаком ---
+Каждый блок отделяй знаком --- Не надо делать перенос строки, просто ставь знак ---.
+Новая строка только для новного предложания.
 """
 
         response = self._client.chat.completions.create(
@@ -126,4 +127,4 @@ On Fridays, Sarah and her friends go out on the town, painting it red as they ex
 
 
 if __name__ == '__main__':
-    print(AISDK().translate_and_analyse('There was once upon a time an old goat who had seven little kids, and loved them with all the love of a mother for her children.'))
+    print(AISDK().translate_and_analyse('There was once upon a time an old goat who had seven little kids, and loved them with all the love of a mother for her children. One day she wanted to go into the forest and fetch some food.'))
