@@ -4,7 +4,8 @@ from loguru import logger
 from nltk import sent_tokenize
 
 from ai_app import AISDK
-from books.models import BooksModel, BooksSentencesModel, WordsModel, TypeWordsModel
+from books.models import BooksModel, BooksSentencesModel, WordsModel
+from nlp_translate import translate_text
 
 
 global_index = 1
@@ -45,16 +46,14 @@ def create_sentences(instance: BooksModel, text: str) -> None:
     sentences = text_data.split('\n')
     sentences = [sentence for sentence in sentences if sentence and '---' in sentence]
     logger.debug(f'Sentences {sentences}')
-    type_word = TypeWordsModel.objects.get(type_word_id=1)
-    type_phrase = TypeWordsModel.objects.get(type_word_id=2)
     for sentence in sentences:
         sentence_data = sentence.split('---')
         english_sentence = sentence_data[0].strip()
         logger.debug(f'English sentence {english_sentence}')
         russian_sentence = sentence_data[1].strip()
         logger.debug(f'Russian sentence {russian_sentence}')
-        words_with_translate = sentence_data[2].replace('.', '').strip().split('; ')
-        logger.debug(f'Words with translate {words_with_translate}')
+        words_with_type = sentence_data[2].replace('.', '').split('; ')
+        logger.debug(f'Words with translate {words_with_type}')
         sentence_times = sentence_data[3].strip()
         logger.debug(f'Sentence times {sentence_times}')
         description_time = sentence_data[4].strip()
@@ -62,24 +61,26 @@ def create_sentences(instance: BooksModel, text: str) -> None:
 
         AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {global_index}')
 
-        all_words = [word.split(': ')[0] for word in words_with_translate]
-        logger.debug(f'All words {all_words}')
+        words = [{'word': word.split(' - ')[0].strip(), 'word_type': word.split(' - ')[1].strip()} for word in words_with_type]
+        logger.debug(f'Words {words}')
+        english_words = [word['word'] for word in words]
+        logger.debug(f'English words {english_words}')
+        words_in_database = WordsModel.objects.filter(word__in=english_words)
+        logger.debug(f'Words in database {words_in_database}')
+        new_english_words = set(english_words) - set(words_in_database.values_list('word', flat=True))
+        logger.debug(f'Words for translate {new_english_words}')
+        words_for_translate = '; '.join(new_english_words)
+        translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
+        logger.debug(f'Translates words {translate_words}')
 
-        words = WordsModel.objects.filter(word__in=all_words)
-        new_words = set(all_words) - set(words.values_list('word', flat=True))
+        for index_word, word in enumerate(words):
+            english_word = word['word']
+            type_word = int(word['word_type'])
+            translate_word = translate_words[index_word]
+            logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
+            WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word=type_word)
 
-        for words_with_translate in words_with_translate:
-            word, translates_word = words_with_translate.split(': ')
-            if word not in new_words or len(word) < 3:
-                continue
-
-            type_of_word = type_word
-            if ' ' in word:
-                type_of_word = type_phrase
-
-            WordsModel.objects.create(word=word, translation={'ru': translates_word}, type_word=type_of_word)
-
-        words = WordsModel.objects.filter(Q(word__in=all_words))
+        words = WordsModel.objects.filter(Q(word__in=english_words))
 
         book_sentence, created = BooksSentencesModel.objects.update_or_create(
             book=instance,
