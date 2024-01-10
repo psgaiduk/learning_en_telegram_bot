@@ -78,7 +78,7 @@ def create_sentences(instance: BooksModel, text: str) -> None:
             type_word = int(word['word_type'])
             translate_word = translate_words[index_word]
             logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
-            WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word=type_word)
+            WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
 
         words = WordsModel.objects.filter(Q(word__in=english_words))
 
