@@ -62,7 +62,7 @@ def create_sentences(instance: BooksModel, text: str) -> None:
         AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {global_index}')
 
         words = [
-            {'word': word.split(' - ')[0].strip(), 'word_type': word.split(' - ')[1].strip()}
+            {'word': word.split(' - ')[0].strip().lower(), 'word_type': word.split(' - ')[1].strip()}
             for word in words_with_type if ' - ' in word
         ]
         logger.debug(f'Words {words}')
