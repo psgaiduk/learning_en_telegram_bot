@@ -70,7 +70,7 @@ def create_sentences(instance: BooksModel, text: str) -> None:
         new_english_words = set(english_words) - set(words_in_database.values_list('word', flat=True))
         logger.debug(f'Words for translate {new_english_words}')
         if new_english_words:
-            words_for_translate = '; '.join(new_english_words)
+            words_for_translate = '; '.join(english_words)
             translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
             logger.debug(f'Translates words {translate_words}')
 
