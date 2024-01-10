@@ -53,7 +53,7 @@ def create_sentences(instance: BooksModel, text: str) -> None:
         russian_sentence = sentence_data[1].strip()
         logger.debug(f'Russian sentence {russian_sentence}')
         words_with_type = sentence_data[2].replace('.', '').split('; ')
-        logger.debug(f'Words with translate {words_with_type}')
+        logger.debug(f'Words with type {words_with_type}')
         sentence_times = sentence_data[3].strip()
         logger.debug(f'Sentence times {sentence_times}')
         description_time = sentence_data[4].strip()
@@ -61,7 +61,10 @@ def create_sentences(instance: BooksModel, text: str) -> None:
 
         AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {global_index}')
 
-        words = [{'word': word.split(' - ')[0].strip(), 'word_type': word.split(' - ')[1].strip()} for word in words_with_type]
+        words = [
+            {'word': word.split(' - ')[0].strip(), 'word_type': word.split(' - ')[1].strip()}
+            for word in words_with_type if ' - ' in word
+        ]
         logger.debug(f'Words {words}')
         english_words = [word['word'] for word in words]
         logger.debug(f'English words {english_words}')
