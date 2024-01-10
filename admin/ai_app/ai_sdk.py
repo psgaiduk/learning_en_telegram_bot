@@ -90,23 +90,19 @@ class AISDK:
 
 каждую часть отделяй от другой использую ---.
 
+Итак твой ответ должен содержать 5 блоков по каждому предложению, каждый блок должен быть обязательно:
+Предожение на английском --- Перевод этого предложения --- Сложные слова с переводом --- Время предложения --- Объяснение почему именно это время
+Новая строка только для новного предложания.
+
 Пример как это должно работать:
 Ученик присылает тебе текст:
-At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger. Finally, the turnip was giant!
+At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger. At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.
 
 Твой ответ:
 At first, it was small and weak, but she watered it and told it stories, and over the years, it got bigger and bigger.  --- Сначала он был маленьким и слабым, но она поливала его и рассказывала ему истории, и с годами он становился все больше  и больше. --- at first - 3; watered - 1;  told - 1;  stories - 1  -- Past Simple --- Past Simple используется здесь, потому что предложение описывает завершенное действие или состояние в прошлом. Признаки: использование формы "was" для глагола "to be" для описания прошлого.
 
 On Fridays, Sarah and her friends go out on the town, painting it red as they explore new restaurants. --- По пятницам Сара и ее друзья выходят в город, оживляя его своим присутствием и исследуя новые рестораны. --- on the town- 3; painting it red - 3; go out - 2; explore - 1; restaurants - 1; --- Present Simple --- В предложении описывается регулярное событие, которое происходит каждую пятницу (On Fridays). Present Simple используется для выражения повторяющихся действий в настоящем времени.
 
-Итак твой ответ должен содержать 5 блоков по каждому предложению:
-1. Предожение на английском.
-2. Перевод этого предолжения,
-3. Сложные слова с переводом
-4. Время предложения
-5. Объяснение почему именно это время
-Каждый блок отделяй знаком --- Не надо делать перенос строки, просто ставь знак ---.
-Новая строка только для новного предложания.
 """
 
         response = self._client.chat.completions.create(
