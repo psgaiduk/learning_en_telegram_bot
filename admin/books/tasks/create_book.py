@@ -82,7 +82,7 @@ def create_sentences(instance: BooksModel, text: str) -> None:
                     continue
                 english_word = word['word']
                 type_word = int(word['word_type'])
-                translate_word = translate_words[index_word]
+                translate_word = translate_words[index_word].lower()
                 logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
                 WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
 
