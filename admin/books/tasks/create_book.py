@@ -69,16 +69,19 @@ def create_sentences(instance: BooksModel, text: str) -> None:
         logger.debug(f'Words in database {words_in_database}')
         new_english_words = set(english_words) - set(words_in_database.values_list('word', flat=True))
         logger.debug(f'Words for translate {new_english_words}')
-        words_for_translate = '; '.join(new_english_words)
-        translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
-        logger.debug(f'Translates words {translate_words}')
+        if new_english_words:
+            words_for_translate = '; '.join(new_english_words)
+            translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
+            logger.debug(f'Translates words {translate_words}')
 
-        for index_word, word in enumerate(words):
-            english_word = word['word']
-            type_word = int(word['word_type'])
-            translate_word = translate_words[index_word]
-            logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
-            WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
+            for index_word, word in enumerate(words):
+                if word['word'] not in new_english_words:
+                    continue
+                english_word = word['word']
+                type_word = int(word['word_type'])
+                translate_word = translate_words[index_word]
+                logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
+                WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
 
         words = WordsModel.objects.filter(Q(word__in=english_words))
 
