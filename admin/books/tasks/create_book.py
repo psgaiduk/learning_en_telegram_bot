@@ -21,11 +21,13 @@ def create_book_task(book_id: int) -> None:
     logger.debug(f'Chain {chain}')
     sentences = sent_tokenize(instance.text)
     logger.debug(f'Sentences {sentences}')
+    avg_length = len(instance.text) // 700
     chunk = ""
     for sentence in sentences:
-        if len(chunk) + len(sentence) <= 700:
+        if len(chunk) + len(sentence) <= avg_length:
             chunk += " " + sentence
         else:
+            chunk += " " + sentence
             chain.append(create_sentences, instance, chunk.strip())
             logger.debug(f'Add sentence to chain {chunk.strip()}')
             chunk = sentence
