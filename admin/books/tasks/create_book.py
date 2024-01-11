@@ -1,3 +1,5 @@
+from math import ceil
+
 from django.db.models import Q
 from django_q.tasks import Chain
 from loguru import logger
@@ -21,7 +23,9 @@ def create_book_task(book_id: int) -> None:
     logger.debug(f'Chain {chain}')
     sentences = sent_tokenize(instance.text)
     logger.debug(f'Sentences {sentences}')
-    avg_length = len(instance.text) // 700
+    count_parts = ceil(len(instance.text) / 700)
+    avg_length = len(instance.text) / count_parts
+    logger.debug(f'Count parts {count_parts}, avg length {avg_length}')
     chunk = ""
     for sentence in sentences:
         if len(chunk) + len(sentence) <= avg_length:
