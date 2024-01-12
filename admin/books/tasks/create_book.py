@@ -15,6 +15,7 @@ global_index = 1
 
 def create_book_task(book_id: int) -> None:
     """Create books."""
+    global global_index
     logger.info(f'Create book {book_id}')
     instance = BooksModel.objects.get(book_id=book_id)
     logger.debug(f'Book {instance.book_id} - {instance.title}')
@@ -26,6 +27,8 @@ def create_book_task(book_id: int) -> None:
     count_parts = ceil(len(instance.text) / 700)
     avg_length = len(instance.text) / count_parts
     logger.debug(f'Count parts {count_parts}, avg length {avg_length}')
+    global_index = 1
+    logger.debug(f'Update global index {global_index}')
     chunk = ""
     for sentence in sentences:
         if len(chunk) + len(sentence) <= avg_length:
