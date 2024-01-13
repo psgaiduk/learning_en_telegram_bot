@@ -125,6 +125,44 @@ On Fridays, Sarah and her friends go out on the town, painting it red as they ex
 
         return response.choices[0].message.content
 
+    def get_words(self, text: str) -> str:
+        """
+        Get words from text.
+
+        :param text: text.
+        :return: words.
+        """
+
+        prompt = """Проанализируй текст и выдели слова которые ученик может не знать на уровне a1, ниже правила отбора слов:
+3. идиомы и стандартные литературные обороты, такие как (once upon a time, In times of old и другие)
+2. фразовые глаголы (Пример: such as, bring up, put up и другие).
+1. сложные слова (Пример: word, time, tulip и др.), отбрасывай артикли, притяжательные местоимения, вспомогательные глаголы, предлоги, прилагательные. 
+Перевод для слов давать не надо, просто раздели их между собой через ; и для каждого типа проставь номер 1, 2 или 3 в зависимости от типа слова. 
+Так же для слов не надо давать конеткста, типо такого kids (in the context of baby goats), так нельзя делать. 
+Отбрасывай так же вспомогательные глаголы will, was, have, to и так далее. 
+Цель постараться достичь 50 процентов слов из текста.
+пример сообщения от пользователя:
+On Fridays, Sarah and her friends go out on the town, painting it red as they explore new restaurants. 
+Твой ответ:
+on the town- 3; painting it red - 3; go out - 2; explore - 1; restaurants - 1
+"""
+
+        response = self._client.chat.completions.create(
+            model='gpt-4-1106-preview',
+            messages=[
+                {
+                    "role": 'assistant',
+                    'content': prompt,
+                },
+                {
+                    'role': 'user',
+                    'content': text,
+                },
+            ],
+        )
+
+        return response.choices[0].message.content
+
 
 if __name__ == '__main__':
     print(AISDK().translate_and_analyse('There was once upon a time an old goat who had seven little kids, and loved them with all the love of a mother for her children. One day she wanted to go into the forest and fetch some food.'))
