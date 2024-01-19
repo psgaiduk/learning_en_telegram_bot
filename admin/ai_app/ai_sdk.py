@@ -101,7 +101,8 @@ class AISDK:
         Другое предложение на английском --- Перевод этого предложения --- Сложные слова с переводом --- 
         Время предложения --- Объяснение почему именно это время
         
-        Новая строка только для новного предложания. Формат обязательно должен быть именно таким и никаким другим. Это важно!
+        Новая строка только для новного предложания. Формат обязательно должен быть именно таким и никаким другим. 
+        Это важно!
         
         Пример как это должно работать:
         Ученик присылает тебе текст:
@@ -185,4 +186,7 @@ class AISDK:
 
 
 if __name__ == '__main__':
-    print(AISDK().translate_and_analyse('There was once upon a time an old goat who had seven little kids, and loved them with all the love of a mother for her children. One day she wanted to go into the forest and fetch some food.'))
+    print(AISDK().translate_and_analyse(
+        'There was once upon a time an old goat who had seven little kids, and loved them with all the love of '
+        'a mother for her children. One day she wanted to go into the forest and fetch some food.'
+    ))
