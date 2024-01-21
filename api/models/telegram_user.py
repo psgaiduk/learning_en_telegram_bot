@@ -29,7 +29,6 @@ class Users(Base):
     # grammar_exercises_history = db.relationship('UsersGrammarExercisesHistory', back_populates='user')
     words_history = relationship('UsersWordsHistory', back_populates='user')
     # games_history = db.relationship('UsersGamesHistory', back_populates='user')
-    #
     level_en = relationship('LevelsEn', back_populates='users', uselist=False)
     hero_level = relationship('HeroLevels', back_populates='users', uselist=False)
     main_language = relationship('MainLanguages', back_populates='users', uselist=False)
