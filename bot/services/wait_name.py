@@ -18,7 +18,7 @@ class WaitNameService:
     _new_name: str
     _chat_id: int
 
-    def __init__(self, message: Message, state: FSMContext):
+    def __init__(self, message: Message, state: FSMContext) -> None:
         """Init."""
         self._message = message
         self._state = state
@@ -31,17 +31,17 @@ class WaitNameService:
         await self._get_user()
         await self._get_message_text()
 
-    async def _get_user(self):
+    async def _get_user(self) -> None:
         data = await self._state.get_data()
         self._telegram_user = data['user']
 
-    async def _get_message_text(self):
+    async def _get_message_text(self) -> None:
         if self._telegram_user.previous_stage == State.new_client.value:
             await self._update_name_for_new_client()
         else:
             await self._update_name_for_old_client()
 
-    async def _update_name_for_new_client(self):
+    async def _update_name_for_new_client(self) -> None:
 
         data_for_update_user = {
             'telegram_id': self._telegram_user.telegram_id,
@@ -67,7 +67,7 @@ class WaitNameService:
 
         await self._message.answer(text=message_text, reply_markup=inline_kb)
 
-    async def _update_name_for_old_client(self):
+    async def _update_name_for_old_client(self) -> None:
 
         data_for_update_user = {
             'telegram_id': self._telegram_user.telegram_id,
