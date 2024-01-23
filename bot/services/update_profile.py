@@ -9,7 +9,7 @@ class UpdateProfileService:
     _start_message_text: str
     _chat_id: int
 
-    def __init__(self, chat_id: int, start_message_text: str = ''):
+    def __init__(self, chat_id: int, start_message_text: str = '') -> None:
         """Init."""
         self._chat_id = chat_id
         self._start_message_text = start_message_text

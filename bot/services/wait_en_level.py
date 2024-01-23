@@ -17,7 +17,7 @@ class WaitEnLevelService:
     _new_level: int
     _chat_id: int
 
-    def __init__(self, callback_query: CallbackQuery, state: FSMContext):
+    def __init__(self, callback_query: CallbackQuery, state: FSMContext) -> None:
         """Init."""
         self._callback_query = callback_query
         self._state = state

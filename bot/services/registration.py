@@ -10,12 +10,12 @@ from settings import settings
 class RegistrationService:
     """Registration telegram user."""
 
-    def __init__(self, message: types.Message):
+    def __init__(self, message: types.Message) -> None:
         """Init."""
         self._message = message
         self._telegram_id = self._message.from_user.id
 
-    async def do(self):
+    async def do(self) -> None:
         """Registration."""
         await self._create_user()
         await self._send_greeting_message()

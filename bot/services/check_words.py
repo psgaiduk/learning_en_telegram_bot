@@ -21,7 +21,7 @@ class CheckWordsService:
         self._state = state
         self._start_text_message = start_text_message
 
-    async def do(self):
+    async def do(self) -> None:
         """Check words before sentence."""
 
         await self._get_user()
@@ -52,7 +52,7 @@ class CheckWordsService:
             url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
         )
 
-    async def _update_sentence(self):
+    async def _update_sentence(self) -> bool:
         words_ids = [word.word_id for word in self._words]
 
         data_for_update_history_sentence = {
@@ -66,7 +66,7 @@ class CheckWordsService:
             url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
         )
 
-    async def _send_message(self):
+    async def _send_message(self) -> None:
         inline_keyboard = InlineKeyboardMarkup()
         inline_keyboard.add(InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{self._first_word.word_id}'))
         inline_keyboard.add(InlineKeyboardButton(text='I don\'t know', callback_data=f'know_word_false_{self._first_word.word_id}'))
