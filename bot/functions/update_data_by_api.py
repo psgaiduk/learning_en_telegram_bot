@@ -12,7 +12,7 @@ async def update_data_by_api(telegram_id: int, params_for_update: dict, url_for_
     :param telegram_id: telegram id.
     :param params_for_update: Dict with params for update user by api.
     :param url_for_update: Url for update user by api.
-    :return:
+    :return: True or False
     """
     async with http_client() as client:
         url_update_telegram_user = f'{settings.api_url}/v1/{url_for_update}/'
