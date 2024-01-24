@@ -6,7 +6,7 @@ async def create_keyboard_for_en_levels(hero_level: int) -> InlineKeyboardMarkup
     Create keyboard for en levels.
 
     :param hero_level: user's hero level.
-    :return: keyboard with buttons lelels
+    :return: keyboard with buttons levels
     """
     inline_keyboard = InlineKeyboardMarkup()
     inline_keyboard.add(InlineKeyboardButton(text='A1 - Beginner', callback_data='level_en_1'))
