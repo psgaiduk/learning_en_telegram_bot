@@ -13,7 +13,14 @@ class TelegramSDK:
 
         self._url = f'https://api.telegram.org/bot{settings.telegram_token}'
 
-    def send_video_link(self, telegram_id: int, video_link: str, text_message: str = ''):
+    def send_video_link(self, telegram_id: int, video_link: str, text_message: str = '') -> None:
+        """
+        Sends video.
+
+        :param telegram_id: Telegram id.
+        :param video_link: link to video.
+        :param text_message: Optional, text to send.
+        """
         url = self._url + '/sendVideo'
 
         params_for_send_video = {
