@@ -31,7 +31,8 @@ class TelegramSDK:
 
         response = get(url, params=params_for_send_video)
 
-    def send_video_file(self):
+    def send_video_file(self) -> None:
+        """sends video file."""
         url = self._url + '/sendVideo'
         with open('video.mov', 'rb') as f:
             # Отправка POST запроса на сервер Telegram
