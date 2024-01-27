@@ -39,7 +39,13 @@ class TelegramSDK:
             response = post(url, data={'chat_id': 232540084}, files={'video': f})
             print(response.json())
 
-    def send_message(self, telegram_id: int, message: str):
+    def send_message(self, telegram_id: int, message: str) -> None:
+        """
+        Send message.
+
+        :param telegram_id: Telegram id.
+        :param message: message to send.
+        """
         url = self._url + '/sendMessage'
         params_for_send_message = {
             'chat_id': telegram_id,
