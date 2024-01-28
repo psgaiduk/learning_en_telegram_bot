@@ -23,7 +23,6 @@ class CheckWordsService:
 
     async def do(self) -> None:
         """Check words before sentence."""
-
         await self._get_user()
         self._words = self._telegram_user.new_sentence.words
         self._first_word = self._words.pop(0)

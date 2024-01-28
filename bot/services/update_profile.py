@@ -10,7 +10,12 @@ class UpdateProfileService:
     _chat_id: int
 
     def __init__(self, chat_id: int, start_message_text: str = '') -> None:
-        """Init."""
+        """
+        Init.
+
+        :param chat_id: Chat id.
+        :param start_message_text: Message text.
+        """
         self._chat_id = chat_id
         self._start_message_text = start_message_text
 

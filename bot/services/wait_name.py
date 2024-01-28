@@ -19,7 +19,12 @@ class WaitNameService:
     _chat_id: int
 
     def __init__(self, message: Message, state: FSMContext) -> None:
-        """Init."""
+        """
+        Init.
+
+        :param message: Message object.
+        :param state: State object.
+        """
         self._message = message
         self._state = state
         self._telegram_user = None

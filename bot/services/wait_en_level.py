@@ -18,7 +18,12 @@ class WaitEnLevelService:
     _chat_id: int
 
     def __init__(self, callback_query: CallbackQuery, state: FSMContext) -> None:
-        """Init."""
+        """
+        Init.
+
+        :param callback_query: Callback query.
+        :param state: Current state.
+        """
         self._callback_query = callback_query
         self._state = state
         self._telegram_user = None
