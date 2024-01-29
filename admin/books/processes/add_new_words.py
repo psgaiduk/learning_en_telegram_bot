@@ -10,7 +10,7 @@ class AddNewWordsProcess:
         self._words = words
         self._add_words_to_database()
 
-    def _add_words_to_database(self):
+    def _add_words_to_database(self) -> None:
         for word in self._words:
             WordsModel.objects.update_or_create(
                 word=word['word'],
