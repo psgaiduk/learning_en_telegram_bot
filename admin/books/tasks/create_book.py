@@ -8,7 +8,11 @@ from nlp_translate import translate_text
 
 
 def create_book_task(book_id: int) -> None:
-    """Create books."""
+    """
+    Create books.
+
+    :param book_id: book id.
+    """
     logger.info(f'Create book {book_id}')
     instance = BooksModel.objects.get(book_id=book_id)
     logger.debug(f'Book {instance.book_id} - {instance.title}')
@@ -24,8 +28,13 @@ def create_book_task(book_id: int) -> None:
 
 
 def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
-    """Translate and add sentence."""
+    """
+    Translate and add sentence.
 
+    :param instance: book instance.
+    :param sentence: sentence string.
+    :param index: index of sentence.
+    """
     sentence_data = sentence.split('---')
     english_sentence = sentence_data[0].strip()
     logger.debug(f'English sentence {english_sentence}')
