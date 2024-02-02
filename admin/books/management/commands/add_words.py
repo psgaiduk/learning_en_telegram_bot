@@ -7,12 +7,12 @@ from telegram_users.choices import Language
 class Command(BaseCommand):
     help = 'Add new words to the database.'
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Init."""
         super().__init__()
         self._add_new_words_process = AddNewWordsProcess()
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument('words', type=str)
         parser.add_argument('type_words', type=str)
 
