@@ -13,10 +13,21 @@ class Command(BaseCommand):
         self._add_new_words_process = AddNewWordsProcess()
 
     def add_arguments(self, parser) -> None:
+        """
+        Add arguments to the command line.
+
+        :param parser: Command line
+        """
         parser.add_argument('words', type=str)
         parser.add_argument('type_words', type=str)
 
     def handle(self, *args, **options) -> None:
+        """
+        Handle the command to add new words to the database.
+
+        :param args: Command line arguments.
+        :param options: Command line keyword arguments.
+        """
         words = []
         words_list = options.get('words').split('\n')
         for word in words_list:
