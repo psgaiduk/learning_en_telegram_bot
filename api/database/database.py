@@ -11,6 +11,11 @@ Base = declarative_base()
 
 
 def get_db():
+    """
+    Create a database session.
+
+    :return: A generator that yields a session.
+    """
     db = SessionLocal()
     try:
         yield db
