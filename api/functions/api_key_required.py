@@ -3,7 +3,7 @@ from fastapi import HTTPException, status, Request
 from settings import settings
 
 
-def api_key_required(request: Request):
+def api_key_required(request: Request) -> str:
     """Check API Key."""
     api_key = request.headers.get('X-API-Key')
     if api_key != settings.api_key:
