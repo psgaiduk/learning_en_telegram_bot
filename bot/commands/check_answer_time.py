@@ -10,7 +10,7 @@ from functions import delete_message, update_data_by_api
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and '_answer_time' in c.data, state=State.check_answer_time.value)
-async def handle_check_answer_time(message: CallbackQuery, state: FSMContext):
+async def handle_check_answer_time(message: CallbackQuery, state: FSMContext) -> None:
     """Handle check answer about time of read sentence."""
     message_text = []
     data = await state.get_data()
@@ -65,7 +65,7 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext):
 
 @dispatcher.message_handler(state=State.check_answer_time.value)
 @dispatcher.callback_query_handler(state=State.check_answer_time.value)
-async def handle_check_answer_time_other_data(message: Union[CallbackQuery, Message]):
+async def handle_check_answer_time_other_data(message: Union[CallbackQuery, Message]) -> None:
     """Handle check words after push button read."""
     message_text = 'Нужно нажать по кнопке со временем предложения.'
     await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML)
