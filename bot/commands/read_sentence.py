@@ -23,7 +23,7 @@ from functions import get_combinations, delete_message, update_data_by_api
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.read_book.value)
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.read_book.value)
-async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FSMContext):
+async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FSMContext) -> None:
     """Handle check words after push button read."""
 
     data = await state.get_data()
