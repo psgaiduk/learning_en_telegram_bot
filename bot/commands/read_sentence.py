@@ -109,7 +109,7 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
 
 @dispatcher.message_handler(state=State.read_book.value)
 @dispatcher.callback_query_handler(state=State.read_book.value)
-async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message]):
+async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message]) -> None:
     """Handle check words after push button read."""
     message_text = 'Нужно нажать по кнопке Read'
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
