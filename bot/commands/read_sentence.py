@@ -119,7 +119,7 @@ async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message]
 
 @dispatcher.message_handler(state=State.read_book_end.value)
 @dispatcher.callback_query_handler(state=State.read_book_end.value)
-async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message]):
+async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message]) -> None:
     """Handle if user read all sentences today."""
 
     message_text = 'Вы прочитали все предложения на сегодня. Приходите завтра.'
