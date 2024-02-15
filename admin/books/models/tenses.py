@@ -6,6 +6,7 @@ class TensesModel(Model):
     name = CharField(max_length=64)
     short_description = TextField()
     full_description = TextField()
+    image_telegram_id = TextField()
 
     def __str__(self) -> str:
         return self.name
