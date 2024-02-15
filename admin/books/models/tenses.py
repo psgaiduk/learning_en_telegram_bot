@@ -1,7 +1,7 @@
 from django.db.models import AutoField, CharField, Model, TextField
 
 
-class Tenses(Model):
+class TensesModel(Model):
     id = AutoField(primary_key=True)
     name = CharField(max_length=64)
     short_description = TextField()
