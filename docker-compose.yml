@@ -6,7 +6,6 @@ services:
     env_file:
       - .env
     volumes:
-      - dbdata:/var/lib/postgresql/data
       - ./db:/var/lib/postgresql/data
   bot:
     container_name: telegram_bot
@@ -70,5 +69,4 @@ services:
       - ./api:/app
 
 volumes:
-  dbdata:
   shared-data:
