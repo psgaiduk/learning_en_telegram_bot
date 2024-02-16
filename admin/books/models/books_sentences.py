@@ -1,6 +1,7 @@
 from django.db.models import AutoField, CASCADE, TextField, JSONField, IntegerField, ForeignKey, Model, ManyToManyField
 
 from books.models.books import BooksModel
+from books.models.tenses import TensesModel
 from books.models.words import WordsModel
 
 
@@ -13,8 +14,7 @@ class BooksSentencesModel(Model):
     text = TextField()
     translation = JSONField(null=True, blank=True)
     words = ManyToManyField(WordsModel, related_name='books_sentences')
-    sentence_times = TextField(null=True, blank=True)
-    description_time = TextField(null=True, blank=True)
+    tenses = ManyToManyField(TensesModel, related_name='books_sentences', blank=True)
 
     def __str__(self):
         return f'Book {self.book.title}, Sentence {self.order}'
