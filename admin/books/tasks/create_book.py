@@ -40,19 +40,13 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f'English sentence {english_sentence}')
     russian_sentence = sentence_data[1].strip()
     logger.debug(f'Russian sentence {russian_sentence}')
-    words_with_type = sentence_data[2].replace('.', '').split('; ')
-    logger.debug(f'Words with type {words_with_type}')
+    english_words = sentence_data[2].replace('.', '').split('; ')
+    logger.debug(f'Words {english_words}')
     sentence_tenses: list = sentence_data[3].strip().split(', ')
     logger.debug(f'Sentence times {sentence_tenses}')
 
     AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
 
-    words = [
-        {'word': word.split(' - ')[0].strip().lower(), 'word_type': word.split(' - ')[1].strip()}
-        for word in words_with_type if ' - ' in word
-    ]
-    logger.debug(f'Words {words}')
-    english_words = [word['word'] for word in words]
     logger.debug(f'English words {english_words}')
     words_in_database = WordsModel.objects.filter(word__in=english_words)
     logger.debug(f'Words in database {words_in_database}')
@@ -63,14 +57,12 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
         translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
         logger.debug(f'Translates words {translate_words}')
 
-        for index_word, word in enumerate(words):
-            if word['word'] not in new_english_words:
+        for index_word, word in enumerate(english_words):
+            if word not in new_english_words:
                 continue
-            english_word = word['word']
-            type_word = int(word['word_type'])
             translate_word = translate_words[index_word].lower()
-            logger.debug(f'English word {english_word} - {type_word} - {translate_word}')
-            WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
+            logger.debug(f'English word {word} - {translate_word}')
+            WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=1)
 
     words = WordsModel.objects.filter(Q(word__in=english_words))
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
