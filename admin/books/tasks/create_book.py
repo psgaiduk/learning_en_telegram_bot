@@ -3,7 +3,7 @@ from django_q.tasks import Chain
 from loguru import logger
 
 from ai_app import AISDK
-from books.models import BooksModel, BooksSentencesModel, WordsModel
+from books.models import BooksModel, BooksSentencesModel, TensesModel, WordsModel
 from nlp_translate import translate_text
 
 
@@ -42,10 +42,8 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f'Russian sentence {russian_sentence}')
     words_with_type = sentence_data[2].replace('.', '').split('; ')
     logger.debug(f'Words with type {words_with_type}')
-    sentence_times = sentence_data[3].strip()
-    logger.debug(f'Sentence times {sentence_times}')
-    description_time = sentence_data[4].strip()
-    logger.debug(f'Description time {description_time}')
+    sentence_tenses: list = sentence_data[3].strip().split(', ')
+    logger.debug(f'Sentence times {sentence_tenses}')
 
     AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
 
@@ -75,6 +73,7 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
             WordsModel.objects.create(word=english_word, translation={'ru': translate_word}, type_word_id=type_word)
 
     words = WordsModel.objects.filter(Q(word__in=english_words))
+    tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
 
     book_sentence, created = BooksSentencesModel.objects.update_or_create(
         book=instance,
@@ -82,9 +81,8 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
         defaults={
             'text': english_sentence,
             'translation': {'ru': russian_sentence},
-            'sentence_times': sentence_times,
-            'description_time': description_time,
         }
     )
 
     book_sentence.words.set(words)
+    book_sentence.tenses.set(tenses)
