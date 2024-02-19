@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, Text, String
 from sqlalchemy.orm import relationship
 
-from models.association_sentenses_words import sentence_word_association
+from models.association_sentences_tenses import sentence_tenses_association
 from database import Base
 
 
@@ -16,4 +16,4 @@ class Tenses(Base):
     full_description = Column(Text)
     image_telegram_id = Column(Text)
 
-    sentences = relationship('BooksSentences', secondary=sentence_word_association, back_populates='tenses')
+    sentences = relationship('BooksSentences', secondary=sentence_tenses_association, back_populates='tenses')
