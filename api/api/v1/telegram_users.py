@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from loguru import logger
 from sqlalchemy.orm import Session, joinedload
 
 from database import create_commit, get_db
@@ -75,7 +76,7 @@ async def create_user(request: CreateTelegramUserDTO, db: Session = Depends(get_
 )
 async def get_user(telegram_id: int, db: Session = Depends(get_db)):
     """Get telegram user."""
-
+    logger.debug(f'Getting user: {telegram_id}')
     telegram_user = await get_user_by_telegram_id(telegram_id, db)
     return await get_telegram_user_dto(telegram_user)
 
