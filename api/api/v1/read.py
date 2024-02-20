@@ -281,8 +281,16 @@ class ReadBookService:
         sentence_for_read['text'] = sentence_text
         sentence_for_read['translation'] = sentence_info['translation']
         sentence_for_read['order'] = sentence_info['order']
-        sentence_for_read['sentence_times'] = sentence_info['sentence_times'].title()
-        sentence_for_read['description_time'] = sentence_info['description_time']
+        sentence_for_read['sentence_times'] = []
+        sentence_for_read['description_time'] = []
+
+        for tense in self._need_sentence.tenses:
+            logger.debug(f'tense: {tense.__dict__}')
+            sentence_for_read['sentence_times'].append(tense.name)
+            sentence_for_read['description_time'].append(tense.short_description)
+
+        sentence_for_read['sentence_times'] = ', '.join(sentence_for_read['sentence_times'])
+        sentence_for_read['description_time'] = '\n'.join(sentence_for_read['description_time'])
 
         words_for_learn, words_for_sentence = await self._get_words_for_learn(words=sentence_info['words'])
 
