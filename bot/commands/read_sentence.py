@@ -19,6 +19,7 @@ from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
 from functions import get_combinations, delete_message, update_data_by_api
+from settings import settings
 
 
 @dispatcher.message_handler(Text(equals='Read'), state=State.read_book.value)
@@ -39,7 +40,7 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
     keyboard.add(KeyboardButton(text='Read'))
     file_path = f'static/audio/{telegram_user.new_sentence.book_id} - {telegram_user.new_sentence.order}.mp3'
 
-    if randint(1, 3) == 1 and path.isfile(file_path):
+    if (randint(1, 3) == 1 or settings.environment == 'local') and path.isfile(file_path):
         with open(file_path, 'rb') as audio:
 
             message_text = f'Translate:\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
@@ -55,7 +56,7 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
     else:
         message_text = f'{sentence_text}\n\n<tg-spoiler>{sentence_translation}</tg-spoiler>'
 
-    if randint(1, 6) == 1:
+    if randint(1, 6) == 1 or settings.environment == 'local':
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=ReplyKeyboardRemove())
         message_text = 'К какому времени относится предложение?'
         right_answer = telegram_user.new_sentence.sentence_times
