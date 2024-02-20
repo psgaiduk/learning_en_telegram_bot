@@ -87,11 +87,15 @@ class ReadBookService:
             .options(joinedload(Users.hero_level))
             .first()
         )
+        logger.debug(f'Get users by id {self._telegram_id}')
+        logger.debug(f'User: {self._user}')
 
         if not self._user:
+            logger.debug(f'User not found')
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
 
     async def _check_count_read_sentences_today(self):
+        logger.debug(f'Check count read sentences')
         count_read_sentences = (
             self._db.query(func.count(UsersBooksSentencesHistory.sentence_id))
             .filter(
@@ -101,6 +105,8 @@ class ReadBookService:
             )
             .scalar()
         )
+
+        logger.debug(f'Count read sentences: {count_read_sentences}')
 
         if count_read_sentences >= self._user.hero_level.count_sentences:
             raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
@@ -124,7 +130,10 @@ class ReadBookService:
 
         next_book = (
             self._db.query(BooksModel)
-            .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+            .options(
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
+            )
             .filter(BooksModel.previous_book_id == last_read_book_subquery)
             .first()
         )
@@ -149,7 +158,10 @@ class ReadBookService:
 
             selected_book = (
                 self._db.query(BooksModel)
-                .options(joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words))
+                .options(
+                    joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
+                    joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
+                )
                 .filter(
                     BooksModel.level_en_id == self._user.level_en_id,
                     not_(BooksModel.book_id.in_(read_books_subquery)),
@@ -256,6 +268,7 @@ class ReadBookService:
         self._need_sentence.words = words_with_history
 
         sentence_info = self._need_sentence.__dict__
+        logger.debug(f'sentence_info: {sentence_info}')
         sentence_for_read = {}
 
         if sentence_info['order'] == 1:
