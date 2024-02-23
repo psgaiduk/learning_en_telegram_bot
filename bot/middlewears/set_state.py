@@ -109,7 +109,7 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.check_answer_time.value
             if current_user.new_sentence.words:
                 return State.check_words.value
-            if current_user.new_sentence.text_with_words:
+            if current_user.new_sentence.text:
                 return State.read_book.value
 
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
