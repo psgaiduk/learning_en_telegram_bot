@@ -4,6 +4,7 @@ from typing import Optional
 from aiogram import types, dispatcher as aiogram_dispatcher
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.storage import FSMContext
+from loguru import logger
 
 from choices import State
 from context_managers import http_client
@@ -39,12 +40,15 @@ class SetStateMiddleware(BaseMiddleware):
             else:
                 self._state = State.error.value
 
+        storage = self.dispatcher.storage
+        fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
+        self._current_data = await fsm_context.get_data()
+        logger.debug(f'Current state data: {self._current_data}')
+
         if response_status == HTTPStatus.OK:
             self._telegram_user = TelegramUserDTOModel(**response_data)
 
         state = await self.get_real_state()
-        storage = self.dispatcher.storage
-        fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
 
         if response_status == HTTPStatus.OK:
             await fsm_context.set_data(data={'user': self._telegram_user})
@@ -95,6 +99,19 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def work_with_read_status(self) -> str:
         """Work with read status."""
+        logger.debug(f'work_with_read_status: {self._state}')
+        logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
+        current_user: TelegramUserDTOModel = self._current_data.get('user')
+
+        if current_user and current_user.new_sentence:
+            self._telegram_user.new_sentence = current_user.new_sentence
+            if self._state == State.check_answer_time.value:
+                return State.check_answer_time.value
+            if current_user.new_sentence.words:
+                return State.check_words.value
+            if current_user.new_sentence.text_with_words:
+                return State.read_book.value
+
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
@@ -110,3 +127,4 @@ class SetStateMiddleware(BaseMiddleware):
             if new_sentence['words']:
                 return State.check_words.value
             return State.read_book.value
+
