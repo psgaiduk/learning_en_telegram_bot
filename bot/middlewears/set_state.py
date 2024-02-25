@@ -47,6 +47,10 @@ class SetStateMiddleware(BaseMiddleware):
 
         if response_status == HTTPStatus.OK:
             self._telegram_user = TelegramUserDTOModel(**response_data)
+            logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
+            current_user: TelegramUserDTOModel = self._current_data.get('user')
+            if current_user and current_user.new_sentence:
+                self._telegram_user.new_sentence = current_user.new_sentence
 
         state = await self.get_real_state()
 
@@ -71,7 +75,7 @@ class SetStateMiddleware(BaseMiddleware):
             return self._state
 
         if self._message_text == '/profile':
-            if self._telegram_user.stage == State.read_book.value:
+            if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
 
                 params_for_update = {
                     'telegram_id': self._telegram_user.telegram_id,
@@ -100,16 +104,13 @@ class SetStateMiddleware(BaseMiddleware):
     async def work_with_read_status(self) -> str:
         """Work with read status."""
         logger.debug(f'work_with_read_status: {self._state}')
-        logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
-        current_user: TelegramUserDTOModel = self._current_data.get('user')
 
-        if current_user and current_user.new_sentence:
-            self._telegram_user.new_sentence = current_user.new_sentence
+        if self._telegram_user.new_sentence:
             if self._state == State.check_answer_time.value:
                 return State.check_answer_time.value
-            if current_user.new_sentence.words:
+            if self._telegram_user.new_sentence.words:
                 return State.check_words.value
-            if current_user.new_sentence.text:
+            if self._telegram_user.new_sentence.text:
                 return State.read_book.value
 
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
