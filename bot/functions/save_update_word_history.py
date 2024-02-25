@@ -5,7 +5,7 @@ from functions.update_data_by_api import update_data_by_api
 
 async def save_word_history(callback_query):
     is_known = False
-    start_text_message = 'Хорошо'
+    start_text_message = 'Хорошо. Повторим потом ещё раз.\n\n'
     word_id = int(callback_query.data.split('_')[-1])
     if 'know_word_true' in callback_query.data:
         is_known = True
