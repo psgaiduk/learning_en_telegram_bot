@@ -1,6 +1,6 @@
 from loguru import logger
 
-from functions import update_data_by_api
+from functions.update_data_by_api import update_data_by_api
 
 
 async def save_word_history(callback_query):
