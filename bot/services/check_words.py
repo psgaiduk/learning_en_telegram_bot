@@ -33,6 +33,8 @@ class CheckWordsService:
         if await self._update_sentence() is False:
             return
 
+        await self._state.set_data(data={'user': self._telegram_user})
+
         await self._send_message()
 
     async def _get_user(self) -> None:
@@ -64,6 +66,7 @@ class CheckWordsService:
             params_for_update=data_for_update_history_sentence,
             url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
         )
+
 
     async def _send_message(self) -> None:
         inline_keyboard = InlineKeyboardMarkup()
