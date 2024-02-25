@@ -18,7 +18,7 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
-from functions import get_combinations, delete_message, update_data_by_api
+from functions import get_combinations, delete_message, save_word_history, update_data_by_api
 from settings import settings
 
 
@@ -26,6 +26,9 @@ from settings import settings
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.read_book.value)
 async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FSMContext) -> None:
     """Handle check words after push button read."""
+
+    if isinstance(message, CallbackQuery):
+        await save_word_history(callback_query=message)
 
     data = await state.get_data()
     telegram_user: TelegramUserDTOModel = data['user']
@@ -106,6 +109,9 @@ async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FS
         await delete_message(message=message)
 
         await bot.send_message(chat_id=telegram_user.telegram_id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+
+    telegram_user.new_sentence.text = ''
+    await state.set_data(data={'user': telegram_user})
 
 
 @dispatcher.message_handler(state=State.read_book.value)
