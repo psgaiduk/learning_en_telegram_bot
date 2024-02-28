@@ -5,7 +5,7 @@ from pytest import mark, fixture
 from unittest.mock import ANY, AsyncMock, patch
 
 from bot import bot
-from choices import State
+from choices import EnglishLevels, State
 from services import ReadSentenceService
 from tests.fixtures import *
 
@@ -97,3 +97,15 @@ class TestReadSentenceService:
 
         mock_save_word_history.assert_not_called()
         assert service._telegram_user.new_sentence.text == ''
+
+    @mark.asyncio
+    async def test_get_user(self):
+        user = User(id=self._chat_id, is_bot=False, first_name='Test User')
+        message = Message(id=1, chat=self._chat_id, text='Read', from_user=user)
+        service = ReadSentenceService(message=message, state=self._state)
+
+        self._state.get_data = AsyncMock(return_value={'user': self._telegram_user})
+
+        await service._get_telegram_user()
+
+        assert service._telegram_user == self._telegram_user
