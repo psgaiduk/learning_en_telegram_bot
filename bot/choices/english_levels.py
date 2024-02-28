@@ -11,11 +11,12 @@ class EnglishLevels(Enum):
     C1 = ('upper-intermediate', 5)
     C2 = ('advanced', 6)
 
-    def __new__(cls, value, _):
+    def __new__(cls, description, order):
         obj = object.__new__(cls)
-        obj._value_ = value
+        obj._value_ = description
+        obj._order = order
         return obj
 
     @property
     def level_order(self):
-        return self.value[1]
+        return self._order
