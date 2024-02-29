@@ -106,3 +106,18 @@ class TestReadSentenceService:
 
         assert self._service._telegram_user == self._telegram_user
 
+    @mark.parametrize('english_level', [level.level_order for level in EnglishLevels])
+    @mark.asyncio
+    async def test_get_sentence(self, english_level):
+
+        self._telegram_user.level_en.order = english_level
+        self._service._telegram_user = self._telegram_user
+
+        await self._service._get_sentence()
+
+        if english_level < EnglishLevels.B1.level_order:
+            assert self._service._sentence_text == self._service._telegram_user.new_sentence.text_with_words
+        else:
+            assert self._service._sentence_text == self._service._telegram_user.new_sentence.text
+
+        assert self._service._sentence_translation == self._telegram_user.new_sentence.translation.get('ru')
