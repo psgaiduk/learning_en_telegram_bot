@@ -49,6 +49,7 @@ class TestSetStateMiddleware:
 
         fsm_context_mock = mocker.Mock(spec=FSMContext)
         fsm_context_mock.set_state = mocker.AsyncMock()
+        fsm_context_mock.get_data = AsyncMock(return_value={'user': TelegramUserDTOModel(**response_data['detail'])})
         mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
 
         mock_get_real_state = AsyncMock(return_value=expected_state)
