@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton, User
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User
 from pytest import mark, fixture
 from unittest.mock import ANY, AsyncMock, patch
 
@@ -121,3 +121,10 @@ class TestReadSentenceService:
             assert self._service._sentence_text == self._service._telegram_user.new_sentence.text
 
         assert self._service._sentence_translation == self._telegram_user.new_sentence.translation.get('ru')
+
+    @mark.asyncio
+    async def test_create_keyboard(self):
+        await self._service._create_keyboard()
+        expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+        expected_keyboard.add(KeyboardButton(text='Read'))
+        assert self._service._keyboard == expected_keyboard
