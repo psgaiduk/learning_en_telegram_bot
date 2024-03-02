@@ -128,3 +128,11 @@ class TestReadSentenceService:
         expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
         expected_keyboard.add(KeyboardButton(text='Read'))
         assert self._service._keyboard == expected_keyboard
+
+    @mark.asyncio
+    async def test_create_file_path(self):
+        self._service._telegram_user = self._telegram_user
+        await self._service._create_file_path()
+        file_name = f'{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order}'
+        expected_file_path = f'static/audio/{file_name}.mp3'
+        assert self._service._file_path == expected_file_path
