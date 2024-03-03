@@ -136,3 +136,28 @@ class TestReadSentenceService:
         file_name = f'{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order}'
         expected_file_path = f'static/audio/{file_name}.mp3'
         assert self._service._file_path == expected_file_path
+
+    @mark.parametrize('number, is_exist_file', [[1, True], [2, True], [1, False], [3, False]])
+    @patch('services.read_sentence.randint')
+    @patch('services.read_sentence.path.isfile')
+    @mark.asyncio
+    async def test_create_message_text(self, mock_path, mock_randint, number, is_exist_file):
+        mock_send_audio_message = AsyncMock(return_value=None)
+        self._service._send_audio_message = mock_send_audio_message
+
+        mock_randint.return_value = number
+        mock_path.return_value = is_exist_file
+        self._service._telegram_user = self._telegram_user
+        self._service._file_path = 'test_file'
+        sentence_text = 'Hello World!'
+        translate_text = 'Привет мир!'
+        self._service._sentence_text = sentence_text
+        self._service._sentence_translation = translate_text
+        await self._service._create_message_text()
+
+        if is_exist_file and number == 1:
+            self._service._send_audio_message.assert_called_once()
+        else:
+            self._service._send_audio_message.assert_not_called()
+            expected_text = f'{sentence_text}\n\n<tg-spoiler>{translate_text}</tg-spoiler>'
+            self._service._message_text = expected_text
