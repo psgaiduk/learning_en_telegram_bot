@@ -161,3 +161,24 @@ class TestReadSentenceService:
             self._service._send_audio_message.assert_not_called()
             expected_text = f'{sentence_text}\n\n<tg-spoiler>{translate_text}</tg-spoiler>'
             self._service._message_text = expected_text
+
+    @mark.parametrize('number', [i for i in range(1, 7)])
+    @patch('services.read_sentence.randint')
+    @mark.asyncio
+    async def test_send_message_or_tenses(self, mock_randint, number):
+        mock_send_tenses = AsyncMock(return_value=None)
+        self._service._send_tenses = mock_send_tenses
+
+        mock_randint.return_value = number
+
+        mock_send_message = AsyncMock(return_value=None)
+        self._service._send_message = mock_send_message
+
+        await self._service._send_message_or_tenses()
+
+        if number == 1:
+            self._service._send_tenses.assert_called_once()
+            self._service._send_message.assert_not_called()
+        else:
+            self._service._send_tenses.assert_not_called()
+            self._service._send_message.assert_called_once()
