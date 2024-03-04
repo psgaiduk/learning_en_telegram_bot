@@ -226,3 +226,32 @@ class TestReadSentenceService:
         else:
             mock_update_stage_user.assert_called_once()
             mock_send_text_with_tenses.assert_not_called()
+
+    @mark.parametrize('is_update', [True, False])
+    @patch('services.read_sentence.bot', new_callable=AsyncMock)
+    @patch('services.read_sentence.delete_message')
+    @mark.asyncio
+    async def test_send_message(self, mock_delete_message, mock_bot, is_update):
+        mock_update_history_sentence = AsyncMock(return_value=is_update)
+        self._service._update_history_sentence = mock_update_history_sentence
+
+        self._service._telegram_user = self._telegram_user
+        self._service._message_text = 'Test'
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text='Test'))
+        self._service._keyboard = keyboard
+
+        await self._service._send_message()
+
+        if is_update:
+            mock_update_history_sentence.assert_called_once()
+            mock_delete_message.assert_called_once()
+            mock_bot.send_message.assert_called_once_with(
+                chat_id=self._telegram_user.telegram_id,
+                text='Test',
+                parse_mode=ParseMode.HTML,
+                reply_markup=keyboard,
+            )
+        else:
+            mock_update_history_sentence.assert_called_once()
+            mock_delete_message.assert_not_called()
+            mock_bot.send_message.assert_not_called()
