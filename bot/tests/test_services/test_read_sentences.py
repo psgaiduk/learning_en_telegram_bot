@@ -1,8 +1,8 @@
 from copy import deepcopy
 
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User, ParseMode
 from pytest import mark, fixture
-from unittest.mock import ANY, AsyncMock, patch
+from unittest.mock import ANY, AsyncMock, mock_open, patch
 
 from bot import bot
 from choices import EnglishLevels, State
@@ -182,3 +182,29 @@ class TestReadSentenceService:
         else:
             self._service._send_tenses.assert_not_called()
             self._service._send_message.assert_called_once()
+
+    @patch('builtins.open', new_callable=mock_open, read_data='data')
+    @patch('services.read_sentence.bot', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_send_audio_message(self, mock_bot, mock_open_file):
+        self._service._file_path = 'test_file'
+        self._service._sentence_text = 'Hello World!'
+        self._service._sentence_translation = 'Привет мир!'
+        self._service._telegram_user = self._telegram_user
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(KeyboardButton(text='test'))
+        self._service._keyboard = keyboard
+
+        await self._service._send_audio_message()
+
+        mock_open_file.assert_called_once()
+        expected_text = 'Text:\n\n<tg-spoiler>Hello World!</tg-spoiler>'
+        expected_message = 'Translate:\n\n<tg-spoiler>Привет мир!</tg-spoiler>'
+        assert self._service._message_text == expected_message
+        mock_bot.send_audio.assert_called_once_with(
+            chat_id=self._telegram_user.telegram_id,
+            audio=ANY,
+            caption=expected_text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard,
+        )
