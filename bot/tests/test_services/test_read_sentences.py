@@ -208,3 +208,21 @@ class TestReadSentenceService:
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard,
         )
+
+    @mark.parametrize('is_update', [True, False])
+    @mark.asyncio
+    async def test_send_tenses(self, is_update):
+        mock_update_stage_user = AsyncMock(return_value=is_update)
+        self._service._update_stage_user = mock_update_stage_user
+
+        mock_send_text_with_tenses = AsyncMock(return_values=None)
+        self._service._send_text_with_tenses = mock_send_text_with_tenses
+
+        await self._service._send_tenses()
+
+        if is_update:
+            mock_update_stage_user.assert_called_once()
+            mock_send_text_with_tenses.assert_called_once()
+        else:
+            mock_update_stage_user.assert_called_once()
+            mock_send_text_with_tenses.assert_not_called()
