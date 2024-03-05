@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User, ParseMode
+from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User, ParseMode, ReplyKeyboardRemove
 from pytest import mark, fixture
 from unittest.mock import ANY, AsyncMock, mock_open, patch
 
@@ -255,3 +255,34 @@ class TestReadSentenceService:
             mock_update_history_sentence.assert_called_once()
             mock_delete_message.assert_not_called()
             mock_bot.send_message.assert_not_called()
+
+    @patch('services.read_sentence.bot.send_message', new_callable=AsyncMock)
+    @patch('services.read_sentence.get_combinations', return_value=['Test1', 'Test2', 'Test3', 'Test4', 'Test5'])
+    @mark.asyncio
+    async def test_send_text_with_tenses(self, mock_get_combinations, mock_bot):
+        self._service._telegram_user = self._telegram_user
+        expected_message = 'Test message'
+        self._service._message_text = expected_message
+
+        await self._service._send_text_with_tenses()
+
+        assert mock_bot.call_count == 2
+        mock_get_combinations.assert_called_once_with(1)
+
+        first_calls_args = mock_bot.call_args_list[0]
+        second_calls_args = mock_bot.call_args_list[1]
+
+        assert first_calls_args[1]['chat_id'] == self._telegram_user.telegram_id
+        assert first_calls_args[1]['text'] == expected_message
+        assert first_calls_args[1]['parse_mode'] == ParseMode.HTML
+        assert first_calls_args[1]['reply_markup'] == ReplyKeyboardRemove()
+
+        assert second_calls_args[1]['chat_id'] == self._telegram_user.telegram_id
+        assert second_calls_args[1]['text'] == 'К какому времени относится предложение?'
+        assert second_calls_args[1]['parse_mode'] == ParseMode.HTML
+        keyboard = second_calls_args[1]['reply_markup']['inline_keyboard']
+        assert len(keyboard) == 4
+        assert len([key for key in keyboard if key[0].callback_data == 'right_answer_time']) == 1
+        assert len([key for key in keyboard if key[0].callback_data == 'wrong_answer_time']) == 3
+        assert all([len(key) == 1 for key in keyboard]) is True
+
