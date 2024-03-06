@@ -300,3 +300,20 @@ class TestReadSentenceService:
             url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
         )
 
+    @patch('services.read_sentence.update_data_by_api')
+    @mark.asyncio
+    async def test_update_history_sentence(self, mock_update_data_by_api):
+        self._service._telegram_user = self._telegram_user
+
+        await self._service._update_history_sentence()
+
+        expected_params = {
+            'id': self._telegram_user.new_sentence.history_sentence_id,
+            'is_read': True,
+        }
+
+        mock_update_data_by_api.assert_called_once_with(
+            telegram_id=self._telegram_user.telegram_id,
+            params_for_update=expected_params,
+            url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
+        )
