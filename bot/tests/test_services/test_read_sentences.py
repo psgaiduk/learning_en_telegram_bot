@@ -32,9 +32,8 @@ class TestReadSentenceService:
     @mark.asyncio
     @patch('services.read_sentence.save_word_history')
     async def test_do_callback(self, mock_save_word_history):
-        user = User(id=self._chat_id, is_bot=False, first_name='Test User')
-        mock_callback = CallbackQuery(id=1, chat=self._chat_id, data='test_data', from_user=user)
-        mock_callback.from_user = user
+        mock_callback = CallbackQuery(id=1, chat=self._chat_id, data='test_data', from_user=self._user)
+        mock_callback.from_user = self._user
         service = ReadSentenceService(message=mock_callback, state=self._state)
 
         mock_get_telegram_user = AsyncMock(return_value=None)
