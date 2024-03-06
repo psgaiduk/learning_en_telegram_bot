@@ -1,10 +1,17 @@
 from copy import deepcopy
 
-from aiogram.types import CallbackQuery, Message, ReplyKeyboardMarkup, KeyboardButton, User, ParseMode, ReplyKeyboardRemove
-from pytest import mark, fixture
+from aiogram.types import (
+    CallbackQuery,
+    KeyboardButton,
+    Message,
+    ParseMode,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    User,
+)
+from pytest import fixture, mark
 from unittest.mock import ANY, AsyncMock, mock_open, patch
 
-from bot import bot
 from choices import EnglishLevels, State
 from services import ReadSentenceService
 from tests.fixtures import *
