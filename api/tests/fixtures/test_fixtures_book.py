@@ -2,7 +2,7 @@ from faker import Faker
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import BooksModel, LevelsEn, BooksSentences, Words
+from models import BooksModel, LevelsEn, Tenses, BooksSentences, Words
 from tests.fixtures.test_fixtures_services import level_en_mock, type_words_mock
 
 
@@ -54,6 +54,22 @@ def book_mock(level_en_mock):
 
 
 @fixture()
+def tenses_mock():
+    with db_session as db:
+        tenses = ['Present Simple', 'Past Simple', 'Future Simple']
+        for tense_id, tense in enumerate(tenses):
+            tenses_data = {
+                'id': tense_id + 1,
+                'name': tense,
+                'short_description': 'short',
+                'full_description': 'full',
+                'image_telegram_id': 'image',
+            }
+            tense = Tenses(**tenses_data)
+            db.add(tense)
+
+
+@fixture()
 def book_sentences_mock():
     with db_session() as db:
 
@@ -69,11 +85,11 @@ def book_sentences_mock():
 
                 sentences_data = [
                     {'sentence_id': sentence_id + 1, 'book_id': book.book_id, 'order': 1, 'text': 'First sentence',
-                     'translation': {'ru': 'Первое предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
+                     'translation': {'ru': 'Первое предложение'}},
                     {'sentence_id': sentence_id + 2, 'book_id': book.book_id, 'order': 2, 'text': 'Second sentence',
-                     'translation': {'ru': 'Второе предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
+                     'translation': {'ru': 'Второе предложение'}},
                     {'sentence_id': sentence_id + 3, 'book_id': book.book_id, 'order': 3, 'text': 'Third sentence',
-                     'translation': {'ru': 'Третье предложение'}, 'sentence_times': 'Present Simple', 'description_time': 'Every day'},
+                     'translation': {'ru': 'Третье предложение'}},
                 ]
 
                 sentence_id += 3
