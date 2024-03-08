@@ -55,7 +55,7 @@ def book_mock(level_en_mock):
 
 @fixture()
 def tenses_mock():
-    with db_session as db:
+    with db_session() as db:
         tenses = ['Present Simple', 'Past Simple', 'Future Simple']
         for tense_id, tense in enumerate(tenses):
             tenses_data = {
@@ -67,6 +67,7 @@ def tenses_mock():
             }
             tense = Tenses(**tenses_data)
             db.add(tense)
+        db.commit()
 
 
 @fixture()
