@@ -17,6 +17,7 @@ from tests.fixtures import (
     level_en_mock,
     main_language_mock,
     hero_level_mock,
+    tenses_mock,
 )
 from tests.connect_db import db_session
 

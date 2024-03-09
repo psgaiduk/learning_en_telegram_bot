@@ -15,6 +15,7 @@ from tests.fixtures import (
     hero_level_mock,
     main_language_mock,
     type_words_mock,
+    tenses_mock,
 )
 from models import BooksModel, BooksSentences
 from settings import settings
