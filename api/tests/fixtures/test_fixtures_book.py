@@ -71,12 +71,14 @@ def tenses_mock():
 
 
 @fixture()
-def book_sentences_mock():
+def book_sentences_mock(tenses_mock):
     with db_session() as db:
 
         levels = db.query(LevelsEn).all()
 
         sentence_id = 0
+
+        tenses = db.query(Tenses).all()
 
         for level_en in levels:
 
@@ -95,9 +97,11 @@ def book_sentences_mock():
 
                 sentence_id += 3
 
-                for sentence_data in sentences_data:
+                for index_sentence, sentence_data in enumerate(sentences_data):
                     sentence = BooksSentences(**sentence_data)
                     db.add(sentence)
+                    tense = tenses[index_sentence]
+                    tense.sentences.append(sentence)
 
         db.commit()
 
