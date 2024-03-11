@@ -115,7 +115,7 @@ class ReadBookService:
         """Get first sentence from book."""
         logger.debug(f'Get first sentence from book for user {self._telegram_id}')
 
-        next_book = await self._get_next_book()
+        next_book = await self._get_sentence_from_next_book()
 
         self._title_book = ''
 
@@ -162,7 +162,7 @@ class ReadBookService:
         new_history_book = UsersBooksHistory(telegram_user_id=self._telegram_id, book_id=self._need_sentence.book_id)
         self._db.add(new_history_book)
 
-    async  def _get_next_book(self):
+    async  def _get_sentence_from_next_book(self):
         UsersBooksHistoryAlias = aliased(UsersBooksHistory)
 
         last_read_book_subquery = (
