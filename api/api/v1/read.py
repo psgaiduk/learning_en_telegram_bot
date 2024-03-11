@@ -121,31 +121,10 @@ class ReadBookService:
 
         if next_book:
             selected_book = next_book
-
         else:
-
             selected_book = await self._get_sentence_from_random_book()
-
             if not selected_book:
-                selected_book = (
-                    self._db.query(BooksModel)
-                    .options(
-                        joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
-                        joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
-                    )
-                    .filter(
-                        BooksModel.level_en_id == self._user.level_en_id,
-                        BooksModel.previous_book_id.is_(None),
-                    )
-                    .order_by(func.random())
-                    .first()
-                )
-
-                logger.debug(f'Get old random book {selected_book.__dict__}')
-
-                self._title_book += f'Закончились доступные книги на этом уровне. Повторим ранее прочитанную книгу\n'
-
-                logger.debug(f'title book: {self._title_book}')
+                selected_book = await self._get_sentence_from_old_book()
 
         self._title_book += f'{selected_book.author} - {selected_book.title}'
         logger.debug(f'title book: {self._title_book}')
@@ -219,6 +198,28 @@ class ReadBookService:
 
         logger.debug(f'Get first sentence from random book {selected_book.__dict__ if selected_book else "not found"}')
 
+        return selected_book
+
+    async def _get_sentence_from_old_book(self):
+        selected_book = (
+            self._db.query(BooksModel)
+            .options(
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
+            )
+            .filter(
+                BooksModel.level_en_id == self._user.level_en_id,
+                BooksModel.previous_book_id.is_(None),
+            )
+            .order_by(func.random())
+            .first()
+        )
+
+        logger.debug(f'Get old random book {selected_book.__dict__}')
+
+        self._title_book += f'Закончились доступные книги на этом уровне. Повторим ранее прочитанную книгу\n'
+
+        logger.debug(f'title book: {self._title_book}')
         return selected_book
 
     async def _get_next_sentence(self):
