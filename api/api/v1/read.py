@@ -115,30 +115,7 @@ class ReadBookService:
         """Get first sentence from book."""
         logger.debug(f'Get first sentence from book for user {self._telegram_id}')
 
-        UsersBooksHistoryAlias = aliased(UsersBooksHistory)
-
-        last_read_book_subquery = (
-            self._db.query(UsersBooksHistoryAlias.book_id)
-            .filter(
-                UsersBooksHistoryAlias.telegram_user_id == self._telegram_id,
-                UsersBooksHistoryAlias.end_read.isnot(None)
-            )
-            .order_by(UsersBooksHistoryAlias.end_read.desc())
-            .limit(1)
-            .subquery()
-        )
-
-        next_book = (
-            self._db.query(BooksModel)
-            .options(
-                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
-                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
-            )
-            .filter(BooksModel.previous_book_id == last_read_book_subquery)
-            .first()
-        )
-
-        logger.debug(f'Get first sentence from next book for user {self._telegram_id} - {next_book.__dict__ if next_book else "not found"}')
+        next_book = await self._get_next_book()
 
         self._title_book = ''
 
@@ -210,6 +187,35 @@ class ReadBookService:
 
         new_history_book = UsersBooksHistory(telegram_user_id=self._telegram_id, book_id=self._need_sentence.book_id)
         self._db.add(new_history_book)
+
+    async  def _get_next_book(self):
+        UsersBooksHistoryAlias = aliased(UsersBooksHistory)
+
+        last_read_book_subquery = (
+            self._db.query(UsersBooksHistoryAlias.book_id)
+            .filter(
+                UsersBooksHistoryAlias.telegram_user_id == self._telegram_id,
+                UsersBooksHistoryAlias.end_read.isnot(None)
+            )
+            .order_by(UsersBooksHistoryAlias.end_read.desc())
+            .limit(1)
+            .subquery()
+        )
+
+        next_book = (
+            self._db.query(BooksModel)
+            .options(
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
+            )
+            .filter(BooksModel.previous_book_id == last_read_book_subquery)
+            .first()
+        )
+
+        logger.debug(f'Get first sentence from next book for user {self._telegram_id} - {next_book.__dict__ if next_book else "not found"}')
+
+        return next_book
+
 
     async def _get_next_sentence(self):
         UsersBooksSentencesHistoryAlias = aliased(UsersBooksSentencesHistory)
