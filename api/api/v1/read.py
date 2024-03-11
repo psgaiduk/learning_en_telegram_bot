@@ -124,33 +124,7 @@ class ReadBookService:
 
         else:
 
-            logger.debug(f'Get first sentence from random book for user {self._telegram_id}')
-
-            read_books_subquery = (
-                self._db.query(UsersBooksHistory.book_id)
-                .filter(
-                    UsersBooksHistory.telegram_user_id == self._telegram_id,
-                    UsersBooksHistory.end_read.isnot(None)
-                )
-                .subquery()
-            )
-
-            selected_book = (
-                self._db.query(BooksModel)
-                .options(
-                    joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
-                    joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
-                )
-                .filter(
-                    BooksModel.level_en_id == self._user.level_en_id,
-                    not_(BooksModel.book_id.in_(read_books_subquery)),
-                    BooksModel.previous_book_id.is_(None),
-                )
-                .order_by(func.random())
-                .first()
-            )
-
-            logger.debug(f'Get first sentence from random book {selected_book.__dict__ if selected_book else "not found"}')
+            selected_book = await self._get_sentence_from_random_book()
 
             if not selected_book:
                 selected_book = (
@@ -216,6 +190,36 @@ class ReadBookService:
 
         return next_book
 
+    async def _get_sentence_from_random_book(self):
+        logger.debug(f'Get first sentence from random book for user {self._telegram_id}')
+
+        read_books_subquery = (
+            self._db.query(UsersBooksHistory.book_id)
+            .filter(
+                UsersBooksHistory.telegram_user_id == self._telegram_id,
+                UsersBooksHistory.end_read.isnot(None)
+            )
+            .subquery()
+        )
+
+        selected_book = (
+            self._db.query(BooksModel)
+            .options(
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.words),
+                joinedload(BooksModel.books_sentences).joinedload(BooksSentences.tenses)
+            )
+            .filter(
+                BooksModel.level_en_id == self._user.level_en_id,
+                not_(BooksModel.book_id.in_(read_books_subquery)),
+                BooksModel.previous_book_id.is_(None),
+            )
+            .order_by(func.random())
+            .first()
+        )
+
+        logger.debug(f'Get first sentence from random book {selected_book.__dict__ if selected_book else "not found"}')
+
+        return selected_book
 
     async def _get_next_sentence(self):
         UsersBooksSentencesHistoryAlias = aliased(UsersBooksSentencesHistory)
