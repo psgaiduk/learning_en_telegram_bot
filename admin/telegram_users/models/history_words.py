@@ -16,6 +16,9 @@ class UsersWordsHistoryModel(Model):
     correct_answers = PositiveIntegerField(default=0)
     incorrect_answers = PositiveIntegerField(default=0)
     correct_answers_in_row = PositiveIntegerField(default=0)
+    increase_factor = PositiveIntegerField(default=2)
+    interval_repeat = PositiveIntegerField(default=600)
+    repeat_datetime = DateTimeField(default=datetime.utcnow)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
 
