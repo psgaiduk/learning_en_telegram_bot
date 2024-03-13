@@ -63,7 +63,10 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
                 continue
             translate_word = translate_words[index_word].lower()
             logger.debug(f'English word {word} - {translate_word}')
-            WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=1)
+            type_word_id = 1
+            if ' ' in word:
+                type_word_id = 2
+            WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
 
     words = WordsModel.objects.filter(Q(word__in=english_words))
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
