@@ -41,7 +41,7 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     russian_sentence = sentence_data[1].strip()
     logger.debug(f'Russian sentence {russian_sentence}')
     english_words = sentence_data[2].replace('.', '').split('; ')
-    english_words = [word.strip().lower() for word in english_words]
+    english_words = set([word.strip().lower() for word in english_words])
     logger.debug(f'Words {english_words}')
     sentence_tenses: list = sentence_data[3].strip().split(', ')
     logger.debug(f'Sentence times {sentence_tenses}')
@@ -51,7 +51,7 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f'English words {english_words}')
     words_in_database = WordsModel.objects.filter(word__in=english_words)
     logger.debug(f'Words in database {words_in_database}')
-    new_english_words = set(english_words) - set(words_in_database.values_list('word', flat=True))
+    new_english_words = english_words - set(words_in_database.values_list('word', flat=True))
     logger.debug(f'Words for translate {new_english_words}')
     if new_english_words:
         words_for_translate = '; '.join(english_words)
