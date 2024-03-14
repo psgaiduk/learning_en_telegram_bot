@@ -48,6 +48,30 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
 
     AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
 
+    create_words_in_db(english_words=english_words)
+
+    words = WordsModel.objects.filter(Q(word__in=english_words))
+    tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
+
+    book_sentence, created = BooksSentencesModel.objects.update_or_create(
+        book=instance,
+        order=index + 1,
+        defaults={
+            'text': english_sentence,
+            'translation': {'ru': russian_sentence},
+        }
+    )
+
+    book_sentence.words.set(words)
+    book_sentence.tenses.set(tenses)
+
+
+def create_words_in_db(english_words: set) -> None:
+    """
+    Create words in database.
+
+    :param english_words: list of words
+    """
     logger.debug(f'English words {english_words}')
     words_in_database = WordsModel.objects.filter(word__in=english_words)
     logger.debug(f'Words in database {words_in_database}')
@@ -67,18 +91,3 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
             if ' ' in word:
                 type_word_id = 2
             WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
-
-    words = WordsModel.objects.filter(Q(word__in=english_words))
-    tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
-
-    book_sentence, created = BooksSentencesModel.objects.update_or_create(
-        book=instance,
-        order=index + 1,
-        defaults={
-            'text': english_sentence,
-            'translation': {'ru': russian_sentence},
-        }
-    )
-
-    book_sentence.words.set(words)
-    book_sentence.tenses.set(tenses)
