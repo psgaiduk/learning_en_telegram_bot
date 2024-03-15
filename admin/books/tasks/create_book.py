@@ -77,17 +77,19 @@ def create_words_in_db(english_words: set) -> None:
     logger.debug(f'Words in database {words_in_database}')
     new_english_words = english_words - set(words_in_database.values_list('word', flat=True))
     logger.debug(f'Words for translate {new_english_words}')
-    if new_english_words:
-        words_for_translate = '; '.join(english_words)
-        translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
-        logger.debug(f'Translates words {translate_words}')
+    if not new_english_words:
+        return
 
-        for index_word, word in enumerate(english_words):
-            if word not in new_english_words:
-                continue
-            translate_word = translate_words[index_word].lower()
-            logger.debug(f'English word {word} - {translate_word}')
-            type_word_id = 1
-            if ' ' in word:
-                type_word_id = 2
-            WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
+    words_for_translate = '; '.join(english_words)
+    translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
+    logger.debug(f'Translates words {translate_words}')
+
+    for index_word, word in enumerate(english_words):
+        if word not in new_english_words:
+            continue
+        translate_word = translate_words[index_word].lower()
+        logger.debug(f'English word {word} - {translate_word}')
+        type_word_id = 1
+        if ' ' in word:
+            type_word_id = 2
+        WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
