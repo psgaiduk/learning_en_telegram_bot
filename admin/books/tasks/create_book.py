@@ -80,13 +80,11 @@ def create_words_in_db(english_words: set) -> None:
     if not new_english_words:
         return
 
-    words_for_translate = '; '.join(english_words)
+    words_for_translate = '; '.join(new_english_words)
     translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
     logger.debug(f'Translates words {translate_words}')
 
-    for index_word, word in enumerate(english_words):
-        if word not in new_english_words:
-            continue
+    for index_word, word in enumerate(new_english_words):
         translate_word = translate_words[index_word].lower()
         logger.debug(f'English word {word} - {translate_word}')
         type_word_id = 1
