@@ -78,7 +78,7 @@ def create_words_in_db(english_words: set) -> None:
     new_english_words = english_words - set(words_in_database.values_list('word', flat=True))
     logger.debug(f'Words for translate {new_english_words}')
     if not new_english_words:
-        return
+        return None
 
     words_for_translate = '; '.join(new_english_words)
     translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
@@ -91,3 +91,5 @@ def create_words_in_db(english_words: set) -> None:
         if ' ' in word:
             type_word_id = 2
         WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
+
+    return None
