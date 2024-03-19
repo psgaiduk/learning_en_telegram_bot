@@ -3,6 +3,7 @@ from django_q.tasks import Chain
 from loguru import logger
 
 from ai_app import AISDK
+from books.choices import TypeWordId
 from books.models import BooksModel, BooksSentencesModel, TensesModel, WordsModel
 from nlp_translate import translate_text
 
@@ -87,9 +88,9 @@ def create_words_in_db(english_words: set) -> None:
     for index_word, word in enumerate(new_english_words):
         translate_word = translate_words[index_word].lower()
         logger.debug(f'English word {word} - {translate_word}')
-        type_word_id = 1
+        type_word_id = TypeWordId.word.value
         if ' ' in word:
-            type_word_id = 2
+            type_word_id = TypeWordId.phrase_verb.value
         WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
 
     return None
