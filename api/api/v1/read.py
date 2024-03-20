@@ -165,7 +165,8 @@ class ReadBookService:
             .first()
         )
 
-        logger.debug(f'Get first sentence from next book for user {self._telegram_id} - {next_book.__dict__ if next_book else "not found"}')
+        logger.debug('Get first sentence from next book:')
+        logger.debug(f'{self._telegram_id} - {next_book.__dict__ if next_book else "not found"}')
 
         return next_book
 
