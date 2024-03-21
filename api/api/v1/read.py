@@ -109,7 +109,9 @@ class ReadBookService:
         logger.debug(f'Count read sentences: {count_read_sentences}')
 
         if count_read_sentences >= self._user.hero_level.count_sentences:
-            raise HTTPException(status_code=status.HTTP_206_PARTIAL_CONTENT, detail='You have  read the maximum number of sentences today.')
+            raise HTTPException(
+                status_code=status.HTTP_206_PARTIAL_CONTENT,
+                detail='You have  read the maximum number of sentences today.')
 
     async def _get_first_sentence_from_book(self):
         """Get first sentence from book."""
@@ -228,7 +230,10 @@ class ReadBookService:
 
         not_read_sentence_in_user_history = (
             self._db.query(BooksSentences, UsersBooksSentencesHistoryAlias)
-            .join(UsersBooksSentencesHistoryAlias, BooksSentences.sentence_id == UsersBooksSentencesHistoryAlias.sentence_id)
+            .join(
+                UsersBooksSentencesHistoryAlias,
+                BooksSentences.sentence_id == UsersBooksSentencesHistoryAlias.sentence_id
+            )
             .filter(
                 UsersBooksSentencesHistoryAlias.telegram_user_id == self._telegram_id,
                 UsersBooksSentencesHistoryAlias.is_read.is_(False),
