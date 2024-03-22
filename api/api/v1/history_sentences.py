@@ -7,7 +7,14 @@ from database import get_db
 from dto.models import HistoryBookSentenceModelDTO, HistoryWordModelDTO
 from dto.requests import CreateBooksSentencesDTO, UpdateHistoryBooksSentencesDTO
 from dto.responses import OneResponseDTO
-from models import BooksSentences, Users, UsersBooksSentencesHistory, UsersWordsHistory, Words, sentence_word_association
+from models import (
+    BooksSentences,
+    Users,
+    UsersBooksSentencesHistory,
+    UsersWordsHistory,
+    Words,
+    sentence_word_association,
+)
 
 
 async def get_sentence_history_dto(sentence_info: dict) -> HistoryBookSentenceModelDTO:
@@ -125,13 +132,19 @@ async def create_history_sentences_for_telegram_id(request: CreateBooksSentences
     },
     status_code=status.HTTP_200_OK,
 )
-async def update_history_sentences_for_telegram_id(history_book_sentence_id, request: UpdateHistoryBooksSentencesDTO, db: Session = Depends(get_db)):
+async def update_history_sentences_for_telegram_id(
+        history_book_sentence_id: int,
+        request: UpdateHistoryBooksSentencesDTO,
+        db: Session = Depends(get_db),
+):
     """Update history sentence for telegram user."""
 
     is_read = request.is_read
     check_words = request.check_words
 
-    history_book_sentence = db.query(UsersBooksSentencesHistory).filter(UsersBooksSentencesHistory.id == history_book_sentence_id).first()
+    history_book_sentence = db.query(UsersBooksSentencesHistory).filter(
+        UsersBooksSentencesHistory.id == history_book_sentence_id
+    ).first()
     if not history_book_sentence:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='History sentence not found.')
     
