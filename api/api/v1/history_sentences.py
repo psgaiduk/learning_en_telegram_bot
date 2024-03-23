@@ -64,7 +64,10 @@ async def get_sentence_history_dto(sentence_info: dict) -> HistoryBookSentenceMo
     },
     status_code=status.HTTP_201_CREATED,
 )
-async def create_history_sentences_for_telegram_id(request: CreateBooksSentencesDTO, db: Session = Depends(get_db)):
+async def create_history_sentences_for_telegram_id(
+        request: CreateBooksSentencesDTO,
+        db: Session = Depends(get_db)
+) -> OneResponseDTO:
     """Create history sentence for telegram user."""
 
     telegram_id = request.telegram_id
@@ -136,7 +139,7 @@ async def update_history_sentences_for_telegram_id(
         history_book_sentence_id: int,
         request: UpdateHistoryBooksSentencesDTO,
         db: Session = Depends(get_db),
-):
+) -> OneResponseDTO:
     """Update history sentence for telegram user."""
 
     is_read = request.is_read
