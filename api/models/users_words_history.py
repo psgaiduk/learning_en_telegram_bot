@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, BigInteger, Column, DateTime, ForeignKey, Integer
+from sqlalchemy import Boolean, BigInteger, Column, DateTime, Float, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -19,6 +19,8 @@ class UsersWordsHistory(Base):
     correct_answers = Column(Integer, default=0)
     incorrect_answers = Column(Integer, default=0)
     correct_answers_in_row = Column(Integer, default=0)
+    increase_factor = Column(Float, default=2.0)
+    interval_repeat = Column(Integer, default=600)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
