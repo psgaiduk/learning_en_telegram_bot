@@ -21,6 +21,7 @@ class UsersWordsHistory(Base):
     correct_answers_in_row = Column(Integer, default=0)
     increase_factor = Column(Float, default=2.0)
     interval_repeat = Column(Integer, default=600)
+    repeat_datetime = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
