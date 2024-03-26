@@ -19,6 +19,7 @@ class HistoryWordModelDTO(BaseModel):
     correct_answers_in_row: Optional[int]
     increase_factor: Optional[float]
     interval_repeat: Optional[int]
+    repeat_datetime: Optional[datetime]
     translation: Optional[dict]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
