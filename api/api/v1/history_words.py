@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import ceil
 
 from fastapi import Depends, HTTPException, status
+from sqlalchemy import DateTime, func
 from sqlalchemy.orm import Session, joinedload
 
 from api.v1.history import version_1_history_router
@@ -181,6 +182,40 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
     history_word_dto = await get_words_history_dto(history_word.__dict__)
 
     return OneResponseDTO(detail=history_word_dto)
+
+
+@version_1_history_router.get(
+    path='/learn_words/{telegram_id}/',
+    # response_model=list[HistoryWordModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {'description': 'User not found.'},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_lern_words_by_telegram_id(
+        telegram_id: int,
+        db: Session = Depends(get_db),
+):
+    """Get history book by history book id."""
+
+    telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
+    if not telegram_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+
+    learn_words = (
+        db.query(UsersWordsHistory)
+        .options(joinedload(UsersWordsHistory.word))
+        .filter(
+            UsersWordsHistory.telegram_user_id == telegram_id,
+            UsersWordsHistory.is_known is True,
+            UsersWordsHistory.updated_at + func.cast(timedelta(seconds=UsersWordsHistory.interval_repeat), DateTime) <= func.now()
+        ).limit(20)
+    ).all()
+
+    print(learn_words)
+
+    return learn_words
+
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
