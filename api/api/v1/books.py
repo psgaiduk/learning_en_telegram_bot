@@ -17,7 +17,12 @@ version_1_books_router = APIRouter(
 
 
 async def get_book_dto(book: BooksModel) -> BooksModelDTO:
-    """Create book dot from book model."""
+    """
+    Create book dot from book model.
+
+    :param book: book model.
+    :return: book by model dto.
+    """
     if not book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
 
