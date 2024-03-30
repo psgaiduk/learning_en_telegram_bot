@@ -36,7 +36,13 @@ async def get_book_dto(book: BooksModel) -> BooksModelDTO:
 
 @version_1_books_router.get('/{book_id}/', response_model=BooksModelDTO)
 async def get_book_by_id(book_id: int, db: Session = Depends(get_db)):
-    """Get book by id."""
+    """
+    Get book by id.
+
+    :param book_id: book id.
+    :param db: session for connect to db.
+    :return book by model dto.
+    """
 
     book = (
         db.query(BooksModel)
