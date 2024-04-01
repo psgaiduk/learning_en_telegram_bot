@@ -59,8 +59,14 @@ async def get_book_by_id(book_id: int, db: Session = Depends(get_db)) -> BooksMo
 
 
 @version_1_books_router.get('/get-random-book/{telegram_id}/', response_model=BooksModelDTO)
-async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends(get_db)):
-    """Get random book by telegram id."""
+async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends(get_db)) -> BooksModelDTO:
+    """
+    Get random book by telegram id.
+
+    :param telegram_id: telegram id.
+    :param db: session for connect to db.
+    :return: book by model dto.
+    """
 
     user_level_id = (
         db.query(Users.level_en_id)
