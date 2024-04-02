@@ -19,7 +19,13 @@ async def get_history_book_dto(user_history_book_db: UsersBooksHistory) -> Books
 
 
 async def get_book(history_book_id: int, db: Session = Depends(get_db)):
-    """Get book by history book id."""
+    """
+    Get book by history book id.
+
+    :param history_book_id: history book id.
+    :param db: session for connect to db.
+    :return: book model dto.
+    """
 
     user_history_book_db = (
         db.query(UsersBooksHistory)
