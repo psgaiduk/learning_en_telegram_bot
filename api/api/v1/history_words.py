@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from math import ceil
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy import DateTime, func
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 from api.v1.history import version_1_history_router
@@ -207,12 +207,10 @@ async def get_learn_words_by_telegram_id(
         .options(joinedload(UsersWordsHistory.word))
         .filter(
             UsersWordsHistory.telegram_user_id == telegram_id,
-            UsersWordsHistory.is_known is True,
-            UsersWordsHistory.updated_at + func.cast(timedelta(seconds=UsersWordsHistory.interval_repeat), DateTime) <= func.now()
+            UsersWordsHistory.is_known == True,
+            UsersWordsHistory.repeat_datetime <= func.now()
         ).limit(20)
     ).all()
-
-    print(learn_words)
 
     return learn_words
 
