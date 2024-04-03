@@ -192,7 +192,7 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
     },
     status_code=status.HTTP_200_OK,
 )
-async def get_lern_words_by_telegram_id(
+async def get_learn_words_by_telegram_id(
         telegram_id: int,
         db: Session = Depends(get_db),
 ):
@@ -215,7 +215,6 @@ async def get_lern_words_by_telegram_id(
     print(learn_words)
 
     return learn_words
-
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
