@@ -196,7 +196,12 @@ async def get_learn_words_by_telegram_id(
         telegram_id: int,
         db: Session = Depends(get_db),
 ):
-    """Get history book by history book id."""
+    """
+    Get history book by history book id.
+
+    :param telegram_id: telegram id.
+    :param db: session for db.
+    """
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
     if not telegram_user:
