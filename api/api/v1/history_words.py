@@ -214,7 +214,7 @@ async def get_learn_words_by_telegram_id(
             UsersWordsHistory.telegram_user_id == telegram_id,
             UsersWordsHistory.is_known == True,
             UsersWordsHistory.repeat_datetime <= func.now()
-        ).limit(20)
+        ).limit(10)
     ).all()
 
     return learn_words
