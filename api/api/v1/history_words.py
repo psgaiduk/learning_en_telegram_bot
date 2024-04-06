@@ -186,7 +186,7 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
 
 @version_1_history_router.get(
     path='/learn_words/{telegram_id}/',
-    # response_model=list[HistoryWordModelDTO],
+    response_model=list[HistoryWordModelDTO],
     responses={
         status.HTTP_404_NOT_FOUND: {'description': 'User not found.'},
     },
@@ -217,7 +217,7 @@ async def get_learn_words_by_telegram_id(
         ).limit(10)
     ).all()
 
-    return learn_words
+    return [await get_words_history_dto(learn_word.__dict__) for learn_word in learn_words]
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
