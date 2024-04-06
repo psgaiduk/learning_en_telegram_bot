@@ -193,7 +193,7 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
 async def get_learn_words_by_telegram_id(
         telegram_id: int,
         db: Session = Depends(get_db),
-):
+) -> list[HistoryWordModelDTO]:
     """
     Get history book by history book id.
 
