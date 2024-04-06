@@ -195,7 +195,7 @@ async def get_learn_words_by_telegram_id(
         db: Session = Depends(get_db),
 ) -> list[HistoryWordModelDTO]:
     """
-    Get history book by history book id.
+    Get words for learn for user.
 
     :param telegram_id: telegram id.
     :param db: session for db.
