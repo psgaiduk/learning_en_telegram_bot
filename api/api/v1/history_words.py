@@ -201,6 +201,7 @@ async def get_learn_words_by_telegram_id(
 
     :param telegram_id: telegram id.
     :param db: session for db.
+    :return: list of history words.
     """
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
