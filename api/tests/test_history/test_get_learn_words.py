@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from fastapi.testclient import TestClient
 from fastapi import status
@@ -35,3 +35,18 @@ class TestGetLearnWordsAPI:
 
         assert len(response) == 1
         assert response[0]['repeat_datetime'] < datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
+
+    def test_get_learn_words_with_bad_repeat_datetime(self, history_word_mock):
+        with db_session() as db:
+            history_word: UsersWordsHistory = db.query(UsersWordsHistory).first()
+            history_word.is_known = True
+            history_word.repeat_datetime = datetime.utcnow() + timedelta(hours=4)
+            db.commit()
+            telegram_id = history_word.telegram_user_id
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_200_OK
+        response = response.json()
+
+        assert len(response) == 0
