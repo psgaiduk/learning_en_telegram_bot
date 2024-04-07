@@ -84,6 +84,9 @@ def history_word_mock(words_mock, telegram_users_mock):
             correct_answers=0,
             incorrect_answers=0,
             correct_answers_in_row=0,
+            increase_factor=2,
+            interval_repeat=600,
+            repeat_datetime=datetime.utcnow() - timedelta(hours=3),
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
         )
