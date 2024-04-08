@@ -64,3 +64,12 @@ class TestGetLearnWordsAPI:
         response = response.json()
 
         assert len(response) == 0
+
+    def test_not_get_learn_words_with_wrong_telegram_id(self, history_word_mock):
+        with db_session() as db:
+            history_word: UsersWordsHistory = db.query(UsersWordsHistory).first()
+            telegram_id = history_word.telegram_user_id + 1
+
+        url = f'{self._url}/{telegram_id}/'
+        response = self._client.get(url=url, headers=self._headers)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
