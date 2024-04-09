@@ -93,7 +93,7 @@ class ReadSentenceService:
             )
 
     async def _send_tenses(self) -> None:
-        is_update = await self._update_stage_user()
+        is_update = await self._update_stage_user(stage=State.check_answer_time.value)
         if is_update is False:
             return
 
@@ -142,10 +142,10 @@ class ReadSentenceService:
             reply_markup=keyboard,
         )
 
-    async def _update_stage_user(self) -> bool:
+    async def _update_stage_user(self, stage: str) -> bool:
         params_for_update_user = {
             'telegram_id': self._message.from_user.id,
-            'stage': State.check_answer_time.value,
+            'stage': stage,
         }
 
         return await update_data_by_api(
