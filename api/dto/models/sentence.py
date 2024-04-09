@@ -23,6 +23,7 @@ class SentenceModelForReadDTO(BaseModel):
     book_id: int
     text: str
     text_with_words: str
+    text_with_new_words: str
     translation: dict[str, str]
     sentence_times: str
     description_time: str
