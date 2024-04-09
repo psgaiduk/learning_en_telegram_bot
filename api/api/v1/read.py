@@ -399,7 +399,8 @@ class ReadBookService:
                         count_view=word_info['count_view'],
                         correct_answers=word_info['correct_answers'],
                         incorrect_answers=word_info['incorrect_answers'],
-                        correct_answers_in_row=word_info['correct_answers_in_row']
+                        correct_answers_in_row=word_info['correct_answers_in_row'],
+                        repeat_datetime=datetime.utcnow(),
                     )
                     self._db.add(new_word)
 
