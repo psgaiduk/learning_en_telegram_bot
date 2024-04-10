@@ -14,6 +14,7 @@ class NewSentenceDTOModel(BaseModel):
     book_id: int
     text: str
     text_with_words: str
+    text_with_new_words: str
     translation: Optional[dict[str, str]]
     sentence_times: Optional[str]
     description_time: Optional[str]
