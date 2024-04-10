@@ -332,8 +332,8 @@ class ReadBookService:
 
         words_for_learn, words_for_sentence = await self._get_words_for_learn(words=sentence_info['words'])
 
-        text_with_words = replace_with_translation(text=sentence_text, words=words_for_sentence)
-        text_with_new_words = replace_with_translation(text=sentence_text, words=words_for_learn)
+        text_with_words = replace_with_translation(text=sentence_text, words=words_for_sentence['all'])
+        text_with_new_words = replace_with_translation(text=sentence_text, words=words_for_sentence['new'])
 
         sentence_for_read['text_with_words'] = text_with_words
         sentence_for_read['text_with_new_words'] = text_with_new_words
@@ -356,7 +356,7 @@ class ReadBookService:
 
         return sentence
 
-    async def _get_words_for_learn(self, words: list) -> tuple[list, list]:
+    async def _get_words_for_learn(self, words: list) -> tuple[list, dict]:
         """Get words for learn."""
 
         check_words = []
@@ -365,7 +365,7 @@ class ReadBookService:
             check_words = self._need_sentence.check_words or [0]
 
         words_for_learn = []
-        words_for_sentence = []
+        words_for_sentence = {'all': [], 'new': []}
         for word in words:
             word_info = {}
             words_history = {}
@@ -374,7 +374,9 @@ class ReadBookService:
 
             is_known_word = words_history.get('is_known', False)
 
-            words_for_sentence.append(word)
+            words_for_sentence['all'].append(word)
+            if is_known_word is False:
+                words_for_sentence['new'].append(word)
 
             if check_words and word.word_id not in check_words:
                 continue
