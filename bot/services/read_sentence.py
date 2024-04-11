@@ -54,8 +54,8 @@ class ReadSentenceService:
 
     async def _get_sentence(self) -> None:
         self._sentence_text = self._telegram_user.new_sentence.text
-        if self._telegram_user.level_en.order < EnglishLevels.B1.level_order:
-            self._sentence_text = self._telegram_user.new_sentence.text_with_words
+        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
+            self._sentence_text = self._telegram_user.new_sentence.text_with_new_words
 
         self._sentence_translation = self._telegram_user.new_sentence.translation.get('ru')
 
