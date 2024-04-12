@@ -71,7 +71,7 @@ class ReadSentenceService:
         if randint(1, 3) == 1 and path.isfile(self._file_path):
             await self._send_audio_message()
         else:
-            self._message_text = f'{self._sentence_text}\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+            self._message_text = f'{self._sentence_text}'
 
     async def _send_message_or_tenses(self) -> None:
         if randint(1, 6) == 1:
@@ -81,7 +81,7 @@ class ReadSentenceService:
 
     async def _send_audio_message(self) -> None:
         with open(self._file_path, 'rb') as audio:
-            self._message_text = f'Translate:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+            self._message_text = ''
             sentence_text = f'Text:\n\n<tg-spoiler>{self._sentence_text}</tg-spoiler>'
 
             await bot.send_audio(
@@ -107,12 +107,16 @@ class ReadSentenceService:
 
         await delete_message(message=self._message)
 
-        await bot.send_message(
-            chat_id=self._telegram_user.telegram_id,
-            text=self._message_text,
-            parse_mode=ParseMode.HTML,
-            reply_markup=self._keyboard,
-        )
+        if self._message_text:
+            await bot.send_message(
+                chat_id=self._telegram_user.telegram_id,
+                text=self._message_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=self._keyboard,
+            )
+
+        await self._send_clue()
+        await self._send_translate()
 
     async def _send_text_with_tenses(self) -> None:
         await bot.send_message(
@@ -164,4 +168,22 @@ class ReadSentenceService:
             telegram_id=self._telegram_user.telegram_id,
             params_for_update=data_for_update_history_sentence,
             url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
+        )
+
+    async def _send_clue(self) -> None:
+        clue_text = f'Clue:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
+        await bot.send_message(
+            chat_id=self._telegram_user.telegram_id,
+            text=clue_text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=self._keyboard,
+        )
+
+    async def _send_translate(self) -> None:
+        translate_text = f'Translate:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+        await bot.send_message(
+            chat_id=self._telegram_user.telegram_id,
+            text=translate_text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=self._keyboard,
         )
