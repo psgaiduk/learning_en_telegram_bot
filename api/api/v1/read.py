@@ -332,7 +332,7 @@ class ReadBookService:
 
         words_for_learn, words_for_sentence = await self._get_words_for_learn(words=sentence_info['words'])
 
-        text_with_words = replace_with_translation(text=sentence_text, words=words_for_sentence['all'])
+        text_with_words = replace_with_translation(text=sentence_info['text'], words=words_for_sentence['all'])
         text_with_new_words = replace_with_translation(text=sentence_text, words=words_for_sentence['new'])
 
         sentence_for_read['text_with_words'] = text_with_words
