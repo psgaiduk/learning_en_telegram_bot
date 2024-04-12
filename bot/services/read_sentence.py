@@ -125,6 +125,8 @@ class ReadSentenceService:
             parse_mode=ParseMode.HTML,
             reply_markup=ReplyKeyboardRemove(),
         )
+        await self._send_clue()
+        await self._send_translate()
         message_text = 'К какому времени относится предложение?'
         right_answer = self._telegram_user.new_sentence.sentence_times
         count_times_in_sentence = right_answer.count(',') + 1
