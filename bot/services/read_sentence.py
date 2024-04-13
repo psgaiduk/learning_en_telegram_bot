@@ -105,6 +105,10 @@ class ReadSentenceService:
         if is_update_sentence is False:
             return
 
+        is_update_stage = await self._update_stage_user(stage=State.learn_words.value)
+        if is_update_stage is False:
+            return
+
         await delete_message(message=self._message)
 
         if self._message_text:
