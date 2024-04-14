@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -15,3 +16,6 @@ class WordDTOModel(BaseModel):
     correct_answers: int
     incorrect_answers: int
     correct_answers_in_row: int
+    increase_factor: float
+    interval_repeat: int
+    repeat_datetime: datetime
