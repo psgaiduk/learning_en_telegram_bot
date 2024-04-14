@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pytest import fixture
 
 from dto import WordDTOModel
@@ -15,4 +17,7 @@ def word_new():
             correct_answers=0,
             incorrect_answers=0,
             correct_answers_in_row=0,
+            increase_factor=2.0,
+            interval_repeat=600,
+            repeat_datetime=datetime.utcnow(),
         )
