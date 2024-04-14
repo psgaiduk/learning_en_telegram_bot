@@ -6,6 +6,7 @@ from .hero_level import HeroLevelDTOModel
 from .level_en import LevelEnDTOModel
 from .main_language import MainLanguageDTOModel
 from .new_sentence import NewSentenceDTOModel
+from .words import WordDTOModel
 
 
 class TelegramUserDTOModel(BaseModel):
@@ -22,3 +23,4 @@ class TelegramUserDTOModel(BaseModel):
     hero_level: Optional[HeroLevelDTOModel]
 
     new_sentence: Optional[NewSentenceDTOModel]
+    learn_words: Optional[list[WordDTOModel]]
