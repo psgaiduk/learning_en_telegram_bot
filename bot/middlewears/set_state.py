@@ -96,6 +96,9 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.records.value
             return State.achievements.value
 
+        if self._state == State.learn_words.value:
+            await self._work_with_learn_words_status()
+
         if self._state in {State.read_book.value, State.check_answer_time.value}:
             return await self.work_with_read_status()
 
@@ -129,3 +132,29 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.check_words.value
             return State.read_book.value
 
+    async def _work_with_learn_words_status(self) -> str:
+        """Work with learn words status."""
+        logger.debug(f'work_with_learn_words_status: {self._state}')
+        if self._telegram_user.learn_words is None:
+            logger.debug(f'user without learn_words: {self._telegram_user.learn_words}')
+            url_get_words_for_learn = f'{settings.api_url}/v1/history/learn-words/{self._telegram_user.telegram_id}/'
+            async with http_client() as client:
+                words_for_learn, response_status = await client.get(
+                    url=url_get_words_for_learn,
+                    headers=settings.api_headers,
+                )
+                logger.debug(f'words_for_learn: {words_for_learn}, status: {response_status}')
+                if response_status != HTTPStatus.OK:
+                    logger.debug('learn words status is not ok, return error')
+                    return State.error.value
+
+                if not words_for_learn:
+                    logger.debug('User does not have words for learn')
+                    return State.read_book.value
+
+                logger.debug('User has words for learn, add them to user.')
+                self._telegram_user.learn_words = words_for_learn
+                logger.debug(f'user learn_words: {self._telegram_user.learn_words}')
+
+        logger.debug(f'User already learned words: {self._telegram_user.learn_words}')
+        return State.learn_words.value
