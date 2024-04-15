@@ -322,3 +322,18 @@ class TestReadSentenceService:
             params_for_update=expected_params,
             url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
         )
+
+    @patch('services.read_sentence.bot', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_send_clue(self, mock_bot):
+        self._service._telegram_user = self._telegram_user
+        self._service._message_text = 'Test'
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text='Test'))
+        self._service._keyboard = keyboard
+        await self._service._send_clue()
+        mock_bot.send_message.assert_called_once_with(
+            chat_id=self._telegram_user.telegram_id,
+            text=f'Clue:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>',
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard,
+        )
