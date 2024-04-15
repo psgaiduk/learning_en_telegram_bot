@@ -165,8 +165,7 @@ class TestReadSentenceService:
             self._service._send_audio_message.assert_called_once()
         else:
             self._service._send_audio_message.assert_not_called()
-            expected_text = f'{sentence_text}\n\n<tg-spoiler>{translate_text}</tg-spoiler>'
-            self._service._message_text = expected_text
+            assert self._service._message_text == sentence_text
 
     @mark.parametrize('number', [i for i in range(1, 7)])
     @patch('services.read_sentence.randint')
