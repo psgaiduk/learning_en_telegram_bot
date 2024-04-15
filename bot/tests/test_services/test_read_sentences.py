@@ -290,17 +290,18 @@ class TestReadSentenceService:
         assert len([key for key in keyboard if key[0].callback_data == 'wrong_answer_time']) == 3
         assert all([len(key) == 1 for key in keyboard]) is True
 
+    @mark.parametrize('stage', [State.check_answer_time.value, State.learn_words.value, State.read_book.value])
     @patch('services.read_sentence.update_data_by_api')
     @mark.asyncio
-    async def test_update_stage_user(self, mock_update_data_by_api):
+    async def test_update_stage_user(self, mock_update_data_by_api, stage: str):
         self._message.from_user = self._user
         self._service._message = self._message
 
-        await self._service._update_stage_user()
+        await self._service._update_stage_user(stage=stage)
 
         mock_update_data_by_api.assert_called_once_with(
             telegram_id=self._telegram_user.telegram_id,
-            params_for_update={'telegram_id': self._telegram_user.telegram_id, 'stage': State.check_answer_time.value},
+            params_for_update={'telegram_id': self._telegram_user.telegram_id, 'stage': stage},
             url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
         )
 
