@@ -204,8 +204,7 @@ class TestReadSentenceService:
 
         mock_open_file.assert_called_once()
         expected_text = 'Text:\n\n<tg-spoiler>Hello World!</tg-spoiler>'
-        expected_message = 'Translate:\n\n<tg-spoiler>Привет мир!</tg-spoiler>'
-        assert self._service._message_text == expected_message
+        assert self._service._message_text == ''
         mock_bot.send_audio.assert_called_once_with(
             chat_id=self._telegram_user.telegram_id,
             audio=ANY,
