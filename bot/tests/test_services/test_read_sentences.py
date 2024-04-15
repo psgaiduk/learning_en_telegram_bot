@@ -227,10 +227,10 @@ class TestReadSentenceService:
         await self._service._send_tenses()
 
         if is_update:
-            mock_update_stage_user.assert_called_once()
+            mock_update_stage_user.assert_called_once_with(stage=State.check_answer_time.value)
             mock_send_text_with_tenses.assert_called_once()
         else:
-            mock_update_stage_user.assert_called_once()
+            mock_update_stage_user.assert_called_once_with(stage=State.check_answer_time.value)
             mock_send_text_with_tenses.assert_not_called()
 
     @mark.parametrize('is_update', [True, False])
