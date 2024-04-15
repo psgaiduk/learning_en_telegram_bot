@@ -337,3 +337,19 @@ class TestReadSentenceService:
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard,
         )
+
+    @patch('services.read_sentence.bot', new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_send_translate(self, mock_bot):
+        self._service._telegram_user = self._telegram_user
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text='Test'))
+        self._service._keyboard = keyboard
+        translation = 'Test translation text'
+        self._service._sentence_translation = translation
+        await self._service._send_translate()
+        mock_bot.send_message.assert_called_once_with(
+            chat_id=self._telegram_user.telegram_id,
+            text=f'Translate:\n\n<tg-spoiler>{translation}</tg-spoiler>',
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard,
+        )
