@@ -121,8 +121,8 @@ class TestReadSentenceService:
 
         await self._service._get_sentence()
 
-        if english_level < EnglishLevels.B1.level_order:
-            assert self._service._sentence_text == self._service._telegram_user.new_sentence.text_with_words
+        if english_level < EnglishLevels.C1.level_order:
+            assert self._service._sentence_text == self._service._telegram_user.new_sentence.text_with_new_words
         else:
             assert self._service._sentence_text == self._service._telegram_user.new_sentence.text
 
