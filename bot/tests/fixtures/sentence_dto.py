@@ -5,7 +5,7 @@ from .word_dto import word_new
 
 
 @fixture
-def text_with_new_words(word_new):
+def sentence_with_word(word_new):
     return NewSentenceDTOModel(
         history_sentence_id=1,
         book_id=1,
