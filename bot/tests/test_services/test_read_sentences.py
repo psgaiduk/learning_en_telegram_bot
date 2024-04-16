@@ -231,34 +231,51 @@ class TestReadSentenceService:
             mock_update_stage_user.assert_called_once_with(stage=State.check_answer_time.value)
             mock_send_text_with_tenses.assert_not_called()
 
-    @mark.parametrize('is_update', [True, False])
+    @mark.parametrize(
+        'is_update_history, is_update_stage, message_text',
+        [[True, True, 'Text'], [True, True, ''], [True, False, ''], [False, True, ''], [False, False, '']]
+    )
     @patch('services.read_sentence.bot', new_callable=AsyncMock)
     @patch('services.read_sentence.delete_message')
     @mark.asyncio
-    async def test_send_message(self, mock_delete_message, mock_bot, is_update):
-        mock_update_history_sentence = AsyncMock(return_value=is_update)
+    async def test_send_message(self, mock_delete_message, mock_bot, is_update_history, is_update_stage, message_text):
+        mock_update_history_sentence = AsyncMock(return_value=is_update_history)
         self._service._update_history_sentence = mock_update_history_sentence
+        mock_update_stage_user = AsyncMock(return_value=is_update_stage)
+        self._service._update_stage_user = mock_update_stage_user
+        mock_send_clue = AsyncMock(return_value=None)
+        self._service._send_clue = mock_send_clue
+        mock_send_translate = AsyncMock(return_value=None)
+        self._service._send_translate = mock_send_translate
 
         self._service._telegram_user = self._telegram_user
-        self._service._message_text = 'Test'
+        self._service._message_text = message_text
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text='Test'))
         self._service._keyboard = keyboard
 
         await self._service._send_message()
 
-        if is_update:
+        if is_update_history and is_update_stage:
             mock_update_history_sentence.assert_called_once()
+            mock_update_stage_user.assert_called_once_with(stage=State.learn_words.value)
             mock_delete_message.assert_called_once()
-            mock_bot.send_message.assert_called_once_with(
-                chat_id=self._telegram_user.telegram_id,
-                text='Test',
-                parse_mode=ParseMode.HTML,
-                reply_markup=keyboard,
-            )
+            if message_text:
+                mock_bot.send_message.assert_called_once_with(
+                    chat_id=self._telegram_user.telegram_id,
+                    text=message_text,
+                    parse_mode=ParseMode.HTML,
+                    reply_markup=keyboard,
+                )
+            else:
+                mock_bot.send_message.assert_not_called()
+            mock_send_clue.assert_called_once()
+            mock_send_translate.assert_called_once()
         else:
             mock_update_history_sentence.assert_called_once()
             mock_delete_message.assert_not_called()
             mock_bot.send_message.assert_not_called()
+            mock_send_clue.assert_not_called()
+            mock_send_translate.assert_not_called()
 
     @patch('services.read_sentence.bot.send_message', new_callable=AsyncMock)
     @patch('services.read_sentence.get_combinations', return_value=['Test1', 'Test2', 'Test3', 'Test4', 'Test5'])
