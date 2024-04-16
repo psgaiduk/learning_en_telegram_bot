@@ -268,6 +268,11 @@ class TestReadSentenceService:
         expected_message = 'Test message'
         self._service._message_text = expected_message
 
+        mock_send_clue = AsyncMock(return_values=None)
+        self._service._send_clue = mock_send_clue
+        mock_send_translate = AsyncMock(return_values=None)
+        self._service._send_translate = mock_send_translate
+
         await self._service._send_text_with_tenses()
 
         assert mock_bot.call_count == 2
