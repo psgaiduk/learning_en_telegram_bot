@@ -1,4 +1,5 @@
 from services.check_words import CheckWordsService
+from services.learn_words import LearnWordsService
 from services.read_sentence import ReadSentenceService
 from services.registration import RegistrationService
 from services.update_profile import UpdateProfileService
