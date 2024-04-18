@@ -8,4 +8,5 @@ graph TD;
     ]
     check_state_words -->|Есть| get_first_word[Вытаскиваем  первое слово из telegram_user.learn_words]
     dont_have_words --> get_first_word
+    
 ```
