@@ -19,4 +19,8 @@ graph TD;
     check_callback_data --> |Да| get_first_word
     check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть по кнопке. 
     I remember или I don't remember]
+    get_first_word --> send_message[Отправляем сообщение
+    `Помните перевод слова: WORD
+    Перевод: TRANSLATE`
+    TRANSLATE будет скрыт]
 ```
