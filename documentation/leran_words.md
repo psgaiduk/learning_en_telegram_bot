@@ -16,8 +16,18 @@ graph TD;
     что нужно нажать по кнопке Read]
     check_test_message --> |Да| get_first_word[Вытаскиваем  первое слово из 
     telegram_user.learn_words]
-    check_callback_data --> |Да| get_first_word
-    check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть по кнопке. 
+    check_callback_data --> |Да| check_callback_answer[Что пришло в callback?]
+    check_callback_answer --> |learn_word_yes| remember_word[Обновляем переменные:
+    interval_repeat = interval_repeat * increase_factor
+    repeat_datetime = now +  seconds form interval_repeat]
+    check_callback_answer --> |learn_word_no| dont_remember_word[Обновляем переменные:
+    increase_factor = increase_factor - 0.1
+    interval_repeat = 60
+    repeat_datetime = now + 1 minute]
+    remember_word --> get_first_word
+    dont_remember_word --> get_first_word 
+    check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть
+    по кнопке. 
     I remember или I don't remember]
     get_first_word --> send_message[Отправляем сообщение
     `Помните перевод слова: WORD
