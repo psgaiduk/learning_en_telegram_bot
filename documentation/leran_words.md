@@ -26,6 +26,7 @@ graph TD;
     interval_repeat = 60
     repeat_datetime = now + 1 minute]
     remember_word --> check_increase_factor[Проверяем значение increase_factor]
+    dont_remember_word --> check_increase_factor
     check_increase_factor --> |Больше 2| more_2_increase_factor[increase_factor = 2]
     check_increase_factor --> |Меньше 1.1| less_1.1_increase_factor[increase_factor = 1.1]
     less_1.1_increase_factor --> save_words_history
@@ -33,7 +34,15 @@ graph TD;
     Обновляем историю слова поля:
     increase_factor, interval_repeat, repeat_datetime
     ]
-    dont_remember_word --> get_first_word 
+    save_words_history --> check_save_words_history[Проверяем сохранилась ли история]
+    check_save_words_history --> |Нет| bad_save_words_history[
+    Отправляем сообщение
+    Что-то пошло не так, попробуй ещё раз
+    ]
+    check_save_words_history --> |Да| good_save_words_history[
+    Обновляем State
+    Сохраняем learn_words без первого слова
+    ]
     check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть
     по кнопке. 
     I remember или I don't remember]
