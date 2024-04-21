@@ -8,14 +8,12 @@ graph TD;
     ]
     check_state_words --> |Есть| check_type_message(Проверяем тип сообщения)
     dont_have_words --> check_type_message
-    check_type_message --> |message| check_test_message[Проверяем текст сообщения. 
+    check_type_message --> |message| check_text_message[Проверяем текст сообщения. 
     Содержит ли он текст Read]
     check_type_message --> |callback| check_callback_data[Проверяем callback data
     Есть ли там learn_word_ ?]
-    check_test_message --> |Нет| wrong_text_message[Отправялем текст с ошибкой, 
+    check_text_message --> |Нет| wrong_text_message[Отправялем текст с ошибкой, 
     что нужно нажать по кнопке Read]
-    check_test_message --> |Да| get_first_word[Вытаскиваем  первое слово из 
-    telegram_user.learn_words]
     check_callback_data --> |Да| check_callback_answer[Что пришло в callback?]
     check_callback_answer --> |learn_word_yes| remember_word[Обновляем переменные:
     increase_factor = increase_factor + 0.05
@@ -46,9 +44,16 @@ graph TD;
     check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть
     по кнопке. 
     I remember или I don't remember]
-    get_first_word --> send_message[Отправляем сообщение
+    check_text_message --> |Да| get_first_word[Получаем  первое слово из 
+    telegram_user.learn_words]
+    good_save_words_history --> get_first_word
+        get_first_word --> send_message[
+        Отправляем сообщение
     `Помните перевод слова: WORD
     Перевод: TRANSLATE`
     TRANSLATE будет скрыт
+    Добавляем 2 кнопки:
+    I remember: callback=learn_word_yes 
+    I don't remember: callback=learn_word_no
     ]
 ```
