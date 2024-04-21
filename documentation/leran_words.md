@@ -44,9 +44,18 @@ graph TD;
     check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть
     по кнопке. 
     I remember или I don't remember]
-    check_text_message --> |Да| get_first_word[Получаем  первое слово из 
+    check_text_message --> |Да| send_first_message[
+    Отправляем сообщение:
+    `Прежде чем продолжить повторим слова`]
+    send_first_message --> |Да| check_learn_words[Проверяем остались ли слова?]
+    check_learn_words --> |Нет| send_last_message[
+    Отправляем сообщение:
+    `Слова для повторения закончились,
+    Продолжим читать текст`
+    И добавляем кнопку Read] 
+    check_learn_words --> |Да| get_first_word[Получаем  первое слово из 
     telegram_user.learn_words]
-    good_save_words_history --> get_first_word
+    good_save_words_history --> check_learn_words
         get_first_word --> send_message[
         Отправляем сообщение
     `Помните перевод слова: WORD
