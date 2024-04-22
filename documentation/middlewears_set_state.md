@@ -20,4 +20,7 @@ graph TD;
     и есть ли для него предложение
     current_user.new_sentence
     }}
+    check_current_user --> |Да| update_new_sentence[self._telegram_user.new_sentence 
+    = current_user.new_sentence
+    ]
 ```
