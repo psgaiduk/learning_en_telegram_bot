@@ -23,4 +23,11 @@ graph TD;
     check_current_user --> |Да| update_new_sentence[self._telegram_user.new_sentence 
     = current_user.new_sentence
     ]
+    user_not_found --> check_current_state{{
+    Проверяем текущий state.
+    Равен ли он одному из значений:
+    `Registration, Error, Grammar`
+    }}
+    error_user --> check_current_state
+    update_new_sentence --> check_current_state
 ```
