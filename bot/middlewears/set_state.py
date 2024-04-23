@@ -74,21 +74,25 @@ class SetStateMiddleware(BaseMiddleware):
         if self._state in {State.registration.value, State.grammar.value, State.error.value}:
             return self._state
 
-        if self._message_text == '/profile':
-            if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
+        conditions_for_update_profile = {
+            self._message_text == '/profile',
+            self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}
+        }
 
-                params_for_update = {
-                    'telegram_id': self._telegram_user.telegram_id,
-                    'previous_stage': self._telegram_user.stage,
-                }
+        if all(conditions_for_update_profile):
 
-                is_update = await update_data_by_api(
-                    telegram_id=self._telegram_user.telegram_id,
-                    params_for_update=params_for_update,
-                    url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
-                )
-                if is_update is False:
-                    return State.error.value
+            params_for_update = {
+                'telegram_id': self._telegram_user.telegram_id,
+                'previous_stage': self._telegram_user.stage,
+            }
+
+            is_update = await update_data_by_api(
+                telegram_id=self._telegram_user.telegram_id,
+                params_for_update=params_for_update,
+                url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
+            )
+            if is_update is False:
+                return State.error.value
             return State.update_profile.value
 
         if self._state != State.update_profile.value and self._message_text in {'/records', '/achievements'}:
