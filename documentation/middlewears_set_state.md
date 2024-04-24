@@ -30,4 +30,10 @@ graph TD;
     }}
     error_user --> check_current_state
     update_new_sentence --> check_current_state
+    check_current_state --> |Нет| check_update_profile_state{{
+    Проверяем равно ли: 
+    text = '/profile' и
+    текущий stage или read_book.value
+    или check_answer_time
+    }}
 ```
