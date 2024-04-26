@@ -36,4 +36,15 @@ graph TD;
     текущий stage или read_book.value
     или check_answer_time
     }}
+    check_update_profile_state --> |Да| update_stage_to_profile[
+    Обновляем стадию пользователя по апи
+    на previous_stage = Текущий Stage]
+    update_stage_to_profile --> check_update_stage_to_profile{{
+    Проверяем обновился ли статус по апи?
+    }}
+    check_update_stage_to_profile --> |Нет| return_error_update_stage_profile[
+    Возвращаем стадию ERROR]
+    check_update_stage_to_profile --> |Да| return_update_profle_stage[
+    Возвращаем стадию UPDATE_PROFILE]
+    
 ```
