@@ -17,4 +17,5 @@ class State(Enum):
     error = 'ERROR'
     records = 'RECORDS'
     achievements = 'ACHIEVEMENTS'
+    start_learn_words = 'START_LEARN_WORDS'
     learn_words = 'LEARN_WORDS'
