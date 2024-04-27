@@ -31,12 +31,17 @@ graph TD;
     error_user --> check_current_state
     update_new_sentence --> check_current_state
     check_current_state --> |Нет| check_update_profile_state{{
-    Проверяем равно ли: 
-    text = '/profile' и
-    текущий stage или read_book.value
+    Проверяем: 
+    1. text = '/profile' и
+    текущий stage или read_book
     или check_answer_time
+    2. text = '/records' и 
+    текущий статус не равен update_profile
+    3. text = '/achievements' и 
+    текущий статус не равен update_profile
+    4. Ни одна проверка не выполнена
     }}
-    check_update_profile_state --> |Да| update_stage_to_profile[
+    check_update_profile_state --> |1| update_stage_to_profile[
     Обновляем стадию пользователя по апи
     на previous_stage = Текущий Stage]
     update_stage_to_profile --> check_update_stage_to_profile{{
