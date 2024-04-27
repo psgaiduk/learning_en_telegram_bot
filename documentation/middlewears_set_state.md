@@ -53,6 +53,7 @@ graph TD;
     Возвращаем стадию UPDATE_PROFILE]
     check_update_profile_state --> |2| return_records_stage[
     Возвращаем стадию RECORDS]
-    
+    check_update_profile_state --> |3| return_achievements_stage[
+    Возвращаем стадию ACHIEVEMENTS]
     
 ```
