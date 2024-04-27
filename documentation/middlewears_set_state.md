@@ -51,5 +51,8 @@ graph TD;
     Возвращаем стадию ERROR]
     check_update_stage_to_profile --> |Да| return_update_profle_stage[
     Возвращаем стадию UPDATE_PROFILE]
+    check_update_profile_state --> |2| return_records_stage[
+    Возвращаем стадию RECORDS]
+    
     
 ```
