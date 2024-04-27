@@ -97,7 +97,7 @@ class SetStateMiddleware(BaseMiddleware):
 
         elif self._state != State.update_profile.value and self._message_text == '/records':
             return State.records.value
-        elif self._state == State.update_profile.value and self._message_text == '/achievements':
+        elif self._state != State.update_profile.value and self._message_text == '/achievements':
             return State.achievements.value
 
         if self._state == State.learn_words.value:
