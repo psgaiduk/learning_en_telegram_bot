@@ -181,3 +181,26 @@ class TestSetStateMiddleware:
             assert self._service._telegram_user.new_sentence == NewSentenceDTOModel(**response_data['detail'])
         else:
             assert self._service._telegram_user.new_sentence is None
+
+    @mark.parametrize('response_status, expected_state, response_data', [
+        (HTTPStatus.OK, State.start_learn_words.value, ['words']),
+        (HTTPStatus.BAD_REQUEST, State.error.value, ['words']),
+        (HTTPStatus.OK, State.read_book.value, []),
+    ])
+    @mark.asyncio
+    async def test_work_with_start_learn_words_status(self, response_status, expected_state, response_data):
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
+            state = await self._service._work_with_start_learn_words_status()
+
+        mocked_get.assert_called_once_with(
+            url=f'{settings.api_url}/v1/history/learn-words/{self._chat}/',
+            headers=settings.api_headers,
+        )
+
+        assert state == expected_state
+        if response_status == HTTPStatus.OK and response_data:
+            assert self._service._telegram_user.learn_words == response_data
+        else:
+            assert self._service._telegram_user.learn_words is None
