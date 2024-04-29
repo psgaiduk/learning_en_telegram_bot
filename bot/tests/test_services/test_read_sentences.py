@@ -257,7 +257,7 @@ class TestReadSentenceService:
 
         if is_update_history and is_update_stage:
             mock_update_history_sentence.assert_called_once()
-            mock_update_stage_user.assert_called_once_with(stage=State.learn_words.value)
+            mock_update_stage_user.assert_called_once_with(stage=State.start_learn_words.value)
             mock_delete_message.assert_called_once()
             if message_text:
                 mock_bot.send_message.assert_called_once_with(
