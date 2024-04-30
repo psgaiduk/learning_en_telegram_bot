@@ -66,4 +66,24 @@ graph TD;
     изучения по апи для 
     этого пользователя
     ]
+    get_learn_words --> check_get_learn_words{{
+    Получили код 200?
+    }}
+    check_get_learn_words --> |Нет| return_error_after_get_learn_words[
+    Возвращаем ERROR
+    ]
+    check_get_learn_words --> |Да| check_have_words{{
+    Проверяем, есть ли слова
+    для изучения?
+    }}
+    check_have_words --> |Нет| return_read_book_after_get_learn_words[
+    Возвращаем stage 
+    READ_BOOK
+    ]
+    check_have_words --> |Да| return_start_learn_words_after_learn_words[
+    Возвращаем stage
+    START_LEARN_WORDS]
+    return_error_after_get_learn_words --> check_is_read_book
+    return_read_book_after_get_learn_words --> check_is_read_book
+    return_start_learn_words_after_learn_words --> check_is_read_book
 ```
