@@ -54,7 +54,16 @@ graph TD;
     check_message_text --> |text = '/achievements', 
     stage != 'user_profile'| return_achievements_stage[
     Возвращаем стадию ACHIEVEMENTS]
-    check_message_text --> |Другое| check_stage_start_learn_words[
+    check_message_text --> |Другое| check_stage_start_learn_words{{
+    Проверяем stage = START_LEARN_WORDS
+    }}
+    check_stage_start_learn_words --> |Нет| check_is_read_book{{
+    Проверяем stage in 
+    &lbrack; READ_BOOK, CHECK_ANSWER_TIME &rbrack;
+    }}
+    check_stage_start_learn_words --> |Да| get_learn_words[
+    Получаем слова для 
+    изучения по апи для 
+    этого пользователя
     ]
-    
 ```
