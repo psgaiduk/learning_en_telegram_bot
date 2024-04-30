@@ -86,4 +86,14 @@ graph TD;
     return_error_after_get_learn_words --> check_is_read_book
     return_read_book_after_get_learn_words --> check_is_read_book
     return_start_learn_words_after_learn_words --> check_is_read_book
+    check_is_read_book --> |Да| check_new_sentence{{
+    Проверяем есть ли
+    new_sentence у этого
+    telegram_user
+    }}
+    check_is_read_book --> |Нет| return_current_stage[
+    Возвращаем текущий
+    статус
+    ]
+    
 ```
