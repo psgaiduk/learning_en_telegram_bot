@@ -30,30 +30,31 @@ graph TD;
     }}
     error_user --> check_current_state
     update_new_sentence --> check_current_state
-    check_current_state --> |Нет| check_update_profile_state{{
-    Проверяем: 
-    1. text = '/profile' и
-    текущий stage или read_book
-    или check_answer_time
-    2. text = '/records' и 
-    текущий статус не равен update_profile
-    3. text = '/achievements' и 
-    текущий статус не равен update_profile
-    4. Ни одна проверка не выполнена
+    check_current_state --> |Нет| check_message_text{{
+    Проверяем текст:
     }}
-    check_update_profile_state --> |1| update_stage_to_profile[
+    check_message_text --> |text = '/profile'| check_current_stage_after_profile{{
+    stage или read_book
+    или check_answer_time?
+    }}
+    check_current_stage_after_profile --> |Да| update_stage_to_profile[
     Обновляем стадию пользователя по апи
     на previous_stage = Текущий Stage]
+    check_current_stage_after_profile --> |Нет| return_update_profile_stage
     update_stage_to_profile --> check_update_stage_to_profile{{
     Проверяем обновился ли статус по апи?
     }}
     check_update_stage_to_profile --> |Нет| return_error_update_stage_profile[
     Возвращаем стадию ERROR]
-    check_update_stage_to_profile --> |Да| return_update_profle_stage[
+    check_update_stage_to_profile --> |Да| return_update_profile_stage[
     Возвращаем стадию UPDATE_PROFILE]
-    check_update_profile_state --> |2| return_records_stage[
+    check_message_text --> |text = '/records', 
+    stage != 'user_profile'| return_records_stage[
     Возвращаем стадию RECORDS]
-    check_update_profile_state --> |3| return_achievements_stage[
+    check_message_text --> |text = '/achievements', 
+    stage != 'user_profile'| return_achievements_stage[
     Возвращаем стадию ACHIEVEMENTS]
+    check_message_text --> |Другое| check_stage_start_learn_words[
+    ]
     
 ```
