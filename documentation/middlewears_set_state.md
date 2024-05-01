@@ -118,5 +118,9 @@ graph TD;
     Возвращаем stage
     READ_BOOK
     ]
-    
+    check_new_sentence --> |Нет| get_new_sentence_by_api[
+    Получаем новое предложение
+    по api для этого пользователя
+    ]
+    check_text_for_sentence --> |Нет| get_new_sentence_by_api
 ```
