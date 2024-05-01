@@ -110,5 +110,13 @@ graph TD;
     Возвращаем stage
     CHECK_WORDS
     ]
+    check_words_for_sentence --> |Нет| check_text_for_sentence{{
+    Проверяем есть ли текст
+    в этом предложении?
+    }}
+    check_text_for_sentence --> |Да| return_read_this_sentence[
+    Возвращаем stage
+    READ_BOOK
+    ]
     
 ```
