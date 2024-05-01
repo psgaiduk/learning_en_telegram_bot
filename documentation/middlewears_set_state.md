@@ -124,9 +124,9 @@ graph TD;
     ]
     check_text_for_sentence --> |Нет| get_new_sentence_by_api
     get_new_sentence_by_api --> |Статус PARTIAL_CONTENT
-    и state != check_answer_time| return_read_book_after_get_sentence[
+    и state != check_answer_time| return_end_read_book_after_get_sentence[
     Возвращаем stage
-    READ_BOOK]
+    END_READ_BOOK]
     get_new_sentence_by_api --> |Статус != 200| return_error_after_get_sentence[
     Возвращаем stage
     ERROR
@@ -143,5 +143,21 @@ graph TD;
     update_new_sentence_for_user --> return_read_book_after_get_sentence[
     Возвращаем stage
     READ_BOOK]
-    
+    return_read_book_after_get_sentence --> check_status_get_telegram_user{{
+    Проверяем статус получения
+    пользователя по апи
+    равен ли он 200?
+    }}
+    return_check_words_after_get_sentence --> check_status_get_telegram_user
+    return_check_answer_time_after_get_sentence --> check_status_get_telegram_user
+    return_end_read_book_after_get_sentence --> check_status_get_telegram_user
+    return_error_after_get_sentence --> check_status_get_telegram_user
+    return_read_this_sentence --> check_status_get_telegram_user
+    return_check_words_for_sentence --> check_status_get_telegram_user
+    return_check_answer_time --> check_status_get_telegram_user
+    return_current_stage --> check_status_get_telegram_user
+    return_achievements_stage --> check_status_get_telegram_user
+    return_records_stage --> check_status_get_telegram_user
+    return_update_profile_stage --> check_status_get_telegram_user
+    return_error_update_stage_profile --> check_status_get_telegram_user
 ```
