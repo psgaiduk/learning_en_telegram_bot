@@ -99,7 +99,7 @@ graph TD;
     Проверяем stage = check_answer_time?
     }}
     check_stage_after_new_sentence_is_time --> |Да| return_check_answer_time[
-    Возвращаем stege
+    Возвращаем stage
     CHECK_ANSWER_TIME
     ]
     
