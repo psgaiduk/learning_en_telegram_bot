@@ -123,4 +123,25 @@ graph TD;
     по api для этого пользователя
     ]
     check_text_for_sentence --> |Нет| get_new_sentence_by_api
+    get_new_sentence_by_api --> |Статус PARTIAL_CONTENT
+    и state != check_answer_time| return_read_book_after_get_sentence[
+    Возвращаем stage
+    READ_BOOK]
+    get_new_sentence_by_api --> |Статус != 200| return_error_after_get_sentence[
+    Возвращаем stage
+    ERROR
+    ]
+    get_new_sentence_by_api --> |Статус == 200| update_new_sentence_for_user[
+    Обновляем свойство
+    new_sentence данными с апи]
+    update_new_sentence_for_user --> |state = check_answer_time| return_check_answer_time_after_get_sentence[
+    Возвращаем stage
+    CHECK_ANSWER_TIME]
+    update_new_sentence_for_user --> |words не пустой список| return_check_words_after_get_sentence[
+    Возвращаем stage
+    CHECK_WORDS]
+    update_new_sentence_for_user --> return_read_book_after_get_sentence[
+    Возвращаем stage
+    READ_BOOK]
+    
 ```
