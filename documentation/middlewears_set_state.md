@@ -102,5 +102,13 @@ graph TD;
     Возвращаем stage
     CHECK_ANSWER_TIME
     ]
+    check_stage_after_new_sentence_is_time --> |Нет| check_words_for_sentence{{
+    Проверяем есть ли слова
+    для этого предложения
+}}
+    check_words_for_sentence --> |Да| return_check_words_for_sentence[
+    Возвращаем stage
+    CHECK_WORDS
+    ]
     
 ```
