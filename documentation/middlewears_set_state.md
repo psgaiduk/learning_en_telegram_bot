@@ -95,5 +95,12 @@ graph TD;
     Возвращаем текущий
     статус
     ]
+    check_new_sentence --> |Да| check_stage_after_new_sentence_is_time{{
+    Проверяем stage = check_answer_time?
+    }}
+    check_stage_after_new_sentence_is_time --> |Да| return_check_answer_time[
+    Возвращаем stege
+    CHECK_ANSWER_TIME
+    ]
     
 ```
