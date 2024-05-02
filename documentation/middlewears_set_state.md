@@ -160,4 +160,12 @@ graph TD;
     return_records_stage --> check_status_get_telegram_user
     return_update_profile_stage --> check_status_get_telegram_user
     return_error_update_stage_profile --> check_status_get_telegram_user
+    check_status_get_telegram_user --> |Да| save_data_context[
+    в fsm_context data записываем
+    &lbrace;user: telegram_user&rbrace;
+    ]
+    save_data_context --> update_state_context
+    check_status_get_telegram_user --> |Нет| update_state_context[
+    обновляем fsm_context state
+    ]
 ```
