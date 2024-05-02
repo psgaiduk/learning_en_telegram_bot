@@ -1,5 +1,40 @@
 ```mermaid
 graph TD;
+    start[Stage = START_LEARN_WORDS] --> check_text{{
+    Проверяем есть ли текст Read
+    }}
+    check_text --> |Нет| return_error_message[
+    Отправляем сообщение, что ошибка, 
+    нужно кликнуть по кнопке Read
+    ]
+    check_text -->|Да| update_user_stage[
+    Обновляем stage по api
+    stage = LEARN_WORDS
+    ]
+    update_user_stage --> check_update_user_stage{{
+    Проверяем обновился ли stage
+    }}
+    check_update_user_stage --> |Нет| not_update_user_stage[
+    Возвращаем сообщение об ошибке.
+    ]
+    check_update_user_stage -->|Да| send_first_message[
+    Отправляем сообщение:
+    `Прежде чем продолжить повторим слова`]
+    send_first_message -->  get_first_word[Получаем  первое слово из 
+    telegram_user.learn_words]
+    get_first_word --> send_message[
+    Отправляем сообщение
+    `Помните перевод слова: WORD
+    Перевод: TRANSLATE`
+    TRANSLATE будет скрыт
+    Добавляем 2 кнопки:
+    I remember: callback=learn_word_yes 
+    I don't remember: callback=learn_word_no
+    ]
+```
+
+```mermaid
+graph TD;
     start[Stage = LEARN_WORDS] --> check_state_words[Проверяем есть  ли в state пользователя learn_words];
     check_state_words-->|Нет| dont_have_words[
     Получаем по api слова для повторения, и 
