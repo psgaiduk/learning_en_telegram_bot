@@ -43,7 +43,10 @@ graph TD;
     ]
     check_type_message --> |callback| check_callback_data[Проверяем callback data
     Есть ли там learn_word_ ?]
-    check_callback_data --> |Да| check_callback_answer[Что пришло в callback?]
+    check_callback_data --> |Да| get_first_word[
+    Вытаскиваем первое слово
+    из learn_words пользователя]
+    get_first_word --> check_callback_answer[Что пришло в callback?]
     check_callback_answer --> |learn_word_yes| remember_word[Обновляем переменные:
     increase_factor = increase_factor + 0.05
     interval_repeat = interval_repeat * increase_factor
