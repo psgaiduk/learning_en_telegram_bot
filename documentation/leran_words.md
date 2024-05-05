@@ -69,15 +69,21 @@ graph TD;
     Отправляем сообщение
     Что-то пошло не так, попробуй ещё раз
     ]
-    check_save_words_history --> |Да| good_save_words_history[
-    Обновляем State
-    Сохраняем learn_words без первого слова
-    ]
     check_callback_data --> |Нет| wrong_callback_data[Отправляем текст, что нужно кликнуть
     по кнопке. 
     I remember или I don't remember]
-    good_save_words_history --> send_message[
-        Отправляем сообщение
+    check_save_words_history --> |Да| update_context_learn_words[
+    Сохраняем learn_words без первого слова
+    ]
+    update_context_learn_words --> |Да| check_learn_words{{
+    Проверяем есть ли ещё
+    слова в learn_words этого
+    пользователя
+    }}
+    check_learn_words --> |Да| send_message[
+    Получаем первое слово из
+    списка слов в learn_words
+    Отправляем сообщение
     `Помните перевод слова: WORD
     Перевод: TRANSLATE`
     TRANSLATE будет скрыт
@@ -85,4 +91,23 @@ graph TD;
     I remember: callback=learn_word_yes 
     I don't remember: callback=learn_word_no
     ]
+    check_learn_words --> |Нет| update_stage_user[
+    обновляем stage = READ_BOOK по апи
+    ]
+    update_stage_user --> check_update_stage_user{{
+    Проверяем обновился ли пользователь
+    }}
+    check_update_stage_user --> |Нет| send_error_after_not_update_user[
+    Отправляем сообщение
+    Что-то пошло не так, попробуй ещё раз
+    ]
+    check_update_stage_user --> |Да| send_message_end_words[
+    Отправляем сообщение
+    Повторили все слова
+    Можно продолжать читать
+    
+    и добавляем кнопку Read
+    ]
+    
+    classDef new fill:#69f,stroke:#333,stroke-width:2px;
 ```
