@@ -57,7 +57,17 @@ graph TD;
     check_message_text --> |Другое| check_stage_start_learn_words{{
     Проверяем stage = START_LEARN_WORDS
     }}
-    check_stage_start_learn_words --> |Нет| check_is_read_book{{
+    check_stage_start_learn_words --> |Нет| check_stage_learn_words{{
+    Проверяем 
+    stage = LEARN_WORDS 
+    learn_words < 2 или None
+    }}
+    
+    check_stage_learn_words:::new --> |Да| change_state_learn_words_to_read_book[
+    обновляем stage = READ_BOOK
+    ]
+    change_state_learn_words_to_read_book:::new --> check_is_read_book
+    check_stage_learn_words --> |Нет| check_is_read_book{{
     Проверяем stage in 
     &lbrack; READ_BOOK, CHECK_ANSWER_TIME &rbrack;
     }}
@@ -168,4 +178,6 @@ graph TD;
     check_status_get_telegram_user --> |Нет| update_state_context[
     обновляем fsm_context state
     ]
+    
+    classDef new fill:#69f,stroke:#333,stroke-width:2px;
 ```
