@@ -102,12 +102,7 @@ graph TD;
     Что-то пошло не так, попробуй ещё раз
     ]
     check_update_stage_user --> |Да| send_message_end_words[
-    Отправляем сообщение
-    Повторили все слова
-    Можно продолжать читать
-    
-    и добавляем кнопку Read
-    ]
+    Заканчиваем работу]
     
     classDef new fill:#69f,stroke:#333,stroke-width:2px;
 ```
