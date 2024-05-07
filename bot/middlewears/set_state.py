@@ -98,6 +98,16 @@ class SetStateMiddleware(BaseMiddleware):
         if self._state == State.start_learn_words.value:
             await self._work_with_start_learn_words_status()
 
+        conditions_for_change_learn_words = (
+            self._state == State.learn_words.value,
+            self._telegram_user.learn_words,
+            len(self._telegram_user.learn_words) < 2
+        )
+
+        if all(conditions_for_change_learn_words):
+            self._telegram_user.new_sentence = None
+            self._state = State.read_book.value
+
         if self._state in {State.read_book.value, State.check_answer_time.value}:
             return await self.work_with_read_status()
 
