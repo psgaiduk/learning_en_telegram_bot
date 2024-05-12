@@ -101,8 +101,10 @@ graph TD;
     Отправляем сообщение
     Что-то пошло не так, попробуй ещё раз
     ]
-    check_update_stage_user --> |Да| send_message_end_words[
-    Заканчиваем работу]
+    check_update_stage_user --> |Да| send_ok_status[
+    Возвращаем True]
+    send_error_after_not_update_user --> send_error_status[
+    Возвращаем False]
     
     classDef new fill:#69f,stroke:#333,stroke-width:2px;
 ```
