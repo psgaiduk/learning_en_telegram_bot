@@ -101,36 +101,38 @@ class TestSetStateMiddleware:
         assert await self._service.get_real_state() == state
         mock_work_with_read_status.assert_called_once()
 
-    @mark.parametrize('message_text, state, expected_state, is_update', [
-        ('/profile', State.registration.value, State.registration.value, None),
-        ('/profile', State.error.value, State.error.value, None),
-        ('/profile', State.grammar.value, State.grammar.value, None),
-        ('/profile', State.read_book.value, State.update_profile.value, True),
-        ('/profile', State.read_book.value, State.error.value, False),
-        ('/profile', State.wait_name.value, State.update_profile.value, None),
-        ('/profile', State.wait_en_level.value, State.update_profile.value, None),
-        ('/records', State.registration.value, State.registration.value, None),
-        ('/records', State.error.value, State.error.value, None),
-        ('/records', State.grammar.value, State.grammar.value, None),
-        ('/records', State.update_profile.value, State.update_profile.value, None),
-        ('/records', State.read_book.value, State.records.value, None),
-        ('/achievements', State.registration.value, State.registration.value, None),
-        ('/achievements', State.error.value, State.error.value, None),
-        ('/achievements', State.grammar.value, State.grammar.value, None),
-        ('/achievements', State.update_profile.value, State.update_profile.value, None),
-        ('/achievements', State.read_book.value, State.achievements.value, None),
-        ('just text', State.update_profile.value, State.update_profile.value, None),
-        ('just text', State.read_book.value, State.read_book.value, None),
-        ('just text', State.start_learn_words.value, State.start_learn_words.value, None),
+    @mark.parametrize('message_text, state, expected_state, words', [
+        ('/profile', State.registration.value, State.registration.value, []),
+        ('/profile', State.error.value, State.error.value, []),
+        ('/profile', State.grammar.value, State.grammar.value, []),
+        ('/profile', State.read_book.value, State.update_profile.value, []),
+        ('/profile', State.read_book.value, State.error.value, []),
+        ('/profile', State.wait_name.value, State.update_profile.value, []),
+        ('/profile', State.wait_en_level.value, State.update_profile.value, []),
+        ('/records', State.registration.value, State.registration.value, []),
+        ('/records', State.error.value, State.error.value, []),
+        ('/records', State.grammar.value, State.grammar.value, []),
+        ('/records', State.update_profile.value, State.update_profile.value, []),
+        ('/records', State.read_book.value, State.records.value, []),
+        ('/achievements', State.registration.value, State.registration.value, []),
+        ('/achievements', State.error.value, State.error.value, []),
+        ('/achievements', State.grammar.value, State.grammar.value, []),
+        ('/achievements', State.update_profile.value, State.update_profile.value, []),
+        ('/achievements', State.read_book.value, State.achievements.value, []),
+        ('just text', State.update_profile.value, State.update_profile.value, []),
+        ('just text', State.read_book.value, State.read_book.value, []),
+        ('just text', State.start_learn_words.value, State.start_learn_words.value, []),
     ])
     @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
-    async def test_get_real_state_regular_work(self, mock_update_user, message_text, state, expected_state, is_update):
+    async def test_get_real_state_regular_work(self, mock_update_user, message_text, state, expected_state, words):
         self._service._state = state
         self._service._message_text = message_text
         self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
         self._service._telegram_user.stage = state
-        mock_update_user.side_effect = [is_update]
+        mock_update_user.side_effect = [None]
+        if expected_state == State.error.value:
+            mock_update_user.side_effect = [False]
 
         mock_work_with_read_status = AsyncMock(return_value=state)
 
