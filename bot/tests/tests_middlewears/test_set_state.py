@@ -121,6 +121,7 @@ class TestSetStateMiddleware:
         ('/achievements', State.read_book.value, State.achievements.value, None),
         ('just text', State.update_profile.value, State.update_profile.value, None),
         ('just text', State.read_book.value, State.read_book.value, None),
+        ('just text', State.start_learn_words.value, State.start_learn_words.value, None),
     ])
     @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
