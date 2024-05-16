@@ -27,6 +27,16 @@ class SetStateMiddleware(BaseMiddleware):
         self._state = ''
         self._telegram_user = None
 
+    async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
+        """Set state for message."""
+        self._message_text = message.text
+        await self.set_state_data(message.from_user.id, message.chat.id)
+
+    async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
+        """Set state for callback_query."""
+        self._message_text = callback_query.data
+        await self.set_state_data(callback_query.from_user.id, callback_query.message.chat.id)
+
     async def set_state_data(self, user, telegram_id) -> None:
         url_get_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
 
@@ -58,16 +68,6 @@ class SetStateMiddleware(BaseMiddleware):
             await fsm_context.set_data(data={'user': self._telegram_user})
 
         await fsm_context.set_state(state=state)
-
-    async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
-        """Set state for message."""
-        self._message_text = message.text
-        await self.set_state_data(message.from_user.id, message.chat.id)
-
-    async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
-        """Set state for callback_query."""
-        self._message_text = callback_query.data
-        await self.set_state_data(callback_query.from_user.id, callback_query.message.chat.id)
 
     async def get_real_state(self) -> str:
         """Get real state."""
