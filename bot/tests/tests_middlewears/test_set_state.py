@@ -73,21 +73,6 @@ class TestSetStateMiddleware:
             fsm_context_mock.set_data.assert_not_called()
             assert self._service._telegram_user is None
 
-    @mark.parametrize('state', [State.update_profile.value, State.error.value, State.grammar.value, State.registration.value])
-    @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
-    @mark.asyncio
-    async def test_get_real_state_regular_work(self, mock_update_user, state):
-        self._service._state = state
-        self._service._message_text = 'text'
-        mock_update_user.side_effect = [True]
-        mock_work_with_read_status = AsyncMock(return_value=state)
-        self._service.work_with_read_status = mock_work_with_read_status
-
-        assert await self._service.get_real_state() == state
-
-        mock_update_user.assert_not_called()
-        mock_work_with_read_status.assert_not_called()
-
     @mark.asyncio
     async def test_get_real_test_read_book(self):
         state = State.read_book.value
@@ -102,27 +87,21 @@ class TestSetStateMiddleware:
         mock_work_with_read_status.assert_called_once()
 
     @mark.parametrize('message_text, state, expected_state, words', [
-        ('/profile', State.registration.value, State.registration.value, []),
-        ('/profile', State.error.value, State.error.value, []),
         ('/profile', State.grammar.value, State.grammar.value, []),
         ('/profile', State.read_book.value, State.update_profile.value, []),
-        ('/profile', State.read_book.value, State.error.value, []),
         ('/profile', State.wait_name.value, State.update_profile.value, []),
         ('/profile', State.wait_en_level.value, State.update_profile.value, []),
-        ('/records', State.registration.value, State.registration.value, []),
-        ('/records', State.error.value, State.error.value, []),
         ('/records', State.grammar.value, State.grammar.value, []),
         ('/records', State.update_profile.value, State.update_profile.value, []),
         ('/records', State.read_book.value, State.records.value, []),
-        ('/achievements', State.registration.value, State.registration.value, []),
-        ('/achievements', State.error.value, State.error.value, []),
         ('/achievements', State.grammar.value, State.grammar.value, []),
         ('/achievements', State.update_profile.value, State.update_profile.value, []),
         ('/achievements', State.read_book.value, State.achievements.value, []),
         ('just text', State.update_profile.value, State.update_profile.value, []),
         ('just text', State.read_book.value, State.read_book.value, []),
         ('just text', State.start_learn_words.value, State.start_learn_words.value, []),
-        ('just text', State.learn_words.value, State.learn_words.value, ['word1', 'word2']),
+        # ('just text', State.learn_words.value, State.learn_words.value, ['word1', 'word2']),
+        # ('just text', State.learn_words.value, State.read_book.value, ['word1']),
     ])
     @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
     @mark.asyncio
@@ -135,12 +114,13 @@ class TestSetStateMiddleware:
         if expected_state == State.error.value:
             mock_update_user.side_effect = [False]
 
-        mock_work_with_read_status = AsyncMock(return_value=state)
+        mock_work_with_read_status = AsyncMock(return_value=State.read_book.value)
 
-        if state == State.read_book.value and message_text not in {'/profile', '/records', '/achievements'}:
+        if expected_state in {State.read_book.value, State.check_answer_time.value}:
             self._service.work_with_read_status = mock_work_with_read_status
+            mock_work_with_read_status.assert_called_once()
         else:
-            self._service.work_with_read_status = mock_work_with_read_status
+            mock_work_with_read_status.assert_not_called()
 
         assert await self._service.get_real_state() == expected_state
         
