@@ -19,6 +19,7 @@ class SetStateMiddleware(BaseMiddleware):
     _state: str
     _message_text: str
     _telegram_user: Optional[TelegramUserDTOModel]
+    _telegram_id: int
 
     def __init__(self, dispatcher: aiogram_dispatcher) -> None:
         """Init."""
@@ -30,15 +31,31 @@ class SetStateMiddleware(BaseMiddleware):
     async def on_pre_process_message(self, message: types.Message, data: dict) -> None:
         """Set state for message."""
         self._message_text = message.text
-        await self.set_state_data(message.from_user.id, message.chat.id)
+        self._telegram_id = message.chat.id
+        await self._get_current_state()
+        await self.set_state_data(message.from_user.id)
 
     async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
         """Set state for callback_query."""
         self._message_text = callback_query.data
-        await self.set_state_data(callback_query.from_user.id, callback_query.message.chat.id)
+        self._telegram_id = callback_query.message.chat.id
+        await self._get_current_state()
+        await self.set_state_data(callback_query.from_user.id)
 
-    async def set_state_data(self, user, telegram_id) -> None:
-        url_get_user = f'{settings.api_url}/v1/telegram_user/{telegram_id}'
+    async def set_state_data(self, user) -> None:
+
+        storage = self.dispatcher.storage
+        fsm_context = FSMContext(storage=storage, chat=self._telegram_id, user=user)
+        self._current_data = await fsm_context.get_data()
+        logger.debug(f'Current state data: {self._current_data}')
+
+        if self._telegram_user:
+            await fsm_context.set_data(data={'user': self._telegram_user})
+
+        await fsm_context.set_state(state=self._state)
+
+    async def _get_current_state(self) -> None:
+        url_get_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_id}'
 
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_user, headers=settings.api_headers)
@@ -47,31 +64,18 @@ class SetStateMiddleware(BaseMiddleware):
             elif response_status == HTTPStatus.OK:
                 response_data = response['detail']
                 self._state = response_data['stage']
+                self._telegram_user = TelegramUserDTOModel(**response_data)
+                logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
+                current_user: TelegramUserDTOModel = self._current_data.get('user')
+                if current_user and current_user.new_sentence:
+                    self._telegram_user.new_sentence = current_user.new_sentence
+                await self.get_real_state()
             else:
                 self._state = State.error.value
 
-        storage = self.dispatcher.storage
-        fsm_context = FSMContext(storage=storage, chat=telegram_id, user=user)
-        self._current_data = await fsm_context.get_data()
-        logger.debug(f'Current state data: {self._current_data}')
-
-        if response_status == HTTPStatus.OK:
-            self._telegram_user = TelegramUserDTOModel(**response_data)
-            logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
-            current_user: TelegramUserDTOModel = self._current_data.get('user')
-            if current_user and current_user.new_sentence:
-                self._telegram_user.new_sentence = current_user.new_sentence
-
-        state = await self.get_real_state()
-
-        if response_status == HTTPStatus.OK:
-            await fsm_context.set_data(data={'user': self._telegram_user})
-
-        await fsm_context.set_state(state=state)
-
     async def get_real_state(self) -> str:
         """Get real state."""
-        if self._state in {State.registration.value, State.grammar.value, State.error.value}:
+        if self._state == State.grammar.value:
             return self._state
 
         if self._message_text == '/profile':
