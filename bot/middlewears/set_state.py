@@ -75,7 +75,7 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def get_real_state(self) -> str:
         """Get real state."""
-        if self._state == State.grammar.value:
+        if self._state in {State.grammar.value, State.update_profile.value}:
             return self._state
 
         if self._message_text == '/profile':
@@ -94,9 +94,9 @@ class SetStateMiddleware(BaseMiddleware):
                     return State.error.value
             return State.update_profile.value
 
-        elif self._state != State.update_profile.value and self._message_text == '/records':
+        elif self._message_text == '/records':
             return State.records.value
-        elif self._state != State.update_profile.value and self._message_text == '/achievements':
+        elif self._message_text == '/achievements':
             return State.achievements.value
 
         if self._state == State.start_learn_words.value:
