@@ -73,11 +73,27 @@ class SetStateMiddleware(BaseMiddleware):
             else:
                 self._state = State.error.value
 
-    async def get_real_state(self) -> str:
+    async def get_real_state(self) -> None:
         """Get real state."""
         if self._state in {State.grammar.value, State.update_profile.value}:
-            return self._state
+            return
 
+        if self._message_text in {'/profile', '/records', 'achievements'}:
+            return await self._work_with_message_text()
+
+        if self._state == State.start_learn_words.value:
+            await self._work_with_start_learn_words_status()
+
+        if self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
+            self._telegram_user.new_sentence = None
+            self._state = State.read_book.value
+
+        if self._state in {State.read_book.value, State.check_answer_time.value}:
+            return await self.work_with_read_status()
+
+        return
+
+    async def _work_with_message_text(self) -> None:
         if self._message_text == '/profile':
             if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
                 params_for_update = {
@@ -91,27 +107,15 @@ class SetStateMiddleware(BaseMiddleware):
                     url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
                 )
                 if is_update is False:
-                    return State.error.value
-            return State.update_profile.value
-
+                    self._state = State.error.value
+                    return
+            self._state = State.update_profile.value
         elif self._message_text == '/records':
-            return State.records.value
+            self._state = State.records.value
         elif self._message_text == '/achievements':
-            return State.achievements.value
+            self._state = State.achievements.value
 
-        if self._state == State.start_learn_words.value:
-            await self._work_with_start_learn_words_status()
-
-        if self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
-            self._telegram_user.new_sentence = None
-            self._state = State.read_book.value
-
-        if self._state in {State.read_book.value, State.check_answer_time.value}:
-            return await self.work_with_read_status()
-
-        return self._state
-
-    async def work_with_read_status(self) -> str:
+    async def work_with_read_status(self) -> None:
         """Work with read status."""
         logger.debug(f'work_with_read_status: {self._state}')
 
