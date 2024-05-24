@@ -1,0 +1,9 @@
+.idea
+**/__pycache__
+**/.pytest_cache
+/admin/static/audio
+/venv
+/db
+.env
+.env.prod
+.env.test
