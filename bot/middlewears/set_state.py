@@ -95,25 +95,29 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def _work_with_message_text(self) -> None:
         if self._message_text == '/profile':
-            if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
-                params_for_update = {
-                    'telegram_id': self._telegram_user.telegram_id,
-                    'previous_stage': self._telegram_user.stage,
-                }
-
-                is_update = await update_data_by_api(
-                    telegram_id=self._telegram_user.telegram_id,
-                    params_for_update=params_for_update,
-                    url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
-                )
-                if is_update is False:
-                    self._state = State.error.value
-                    return
-            self._state = State.update_profile.value
+            is_update = await self._update_state()
+            if is_update is False:
+                self._state = State.error.value
+            else:
+                self._state = State.update_profile.value
         elif self._message_text == '/records':
             self._state = State.records.value
         elif self._message_text == '/achievements':
             self._state = State.achievements.value
+        
+    async def _update_state(self) -> bool:
+        if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
+            params_for_update = {
+                'telegram_id': self._telegram_user.telegram_id,
+                'previous_stage': self._telegram_user.stage,
+            }
+
+            is_update = await update_data_by_api(
+                telegram_id=self._telegram_user.telegram_id,
+                params_for_update=params_for_update,
+                url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
+            )
+            return is_update
 
     async def work_with_read_status(self) -> None:
         """Work with read status."""
