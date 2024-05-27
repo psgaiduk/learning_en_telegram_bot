@@ -104,7 +104,7 @@ class SetStateMiddleware(BaseMiddleware):
             self._state = State.records.value
         elif self._message_text == '/achievements':
             self._state = State.achievements.value
-        
+
     async def _update_state(self) -> bool:
         if self._telegram_user.stage in {State.read_book.value, State.check_answer_time.value}:
             params_for_update = {
@@ -130,26 +130,10 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.check_words.value
             if self._telegram_user.new_sentence.text:
                 return State.read_book.value
-
-        url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
-        async with http_client() as client:
-            response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
-            if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
-                return State.read_book_end.value
-            elif response_status != HTTPStatus.OK:
-                return State.error.value
-
-            new_sentence = response['detail']
-            self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
-            if self._state == State.check_answer_time.value:
-                return State.check_answer_time.value
-            if new_sentence['words']:
-                return State.check_words.value
-            return State.read_book.value
+        return await self._get_new_sentence()
 
     async def _work_with_start_learn_words_status(self) -> str:
         """Work with learn words status."""
-
         logger.debug(f'user without learn_words: {self._telegram_user.learn_words}')
         url_get_words_for_learn = f'{settings.api_url}/v1/history/learn-words/{self._telegram_user.telegram_id}/'
         async with http_client() as client:
@@ -172,3 +156,20 @@ class SetStateMiddleware(BaseMiddleware):
 
         logger.debug(f'User already learned words: {self._telegram_user.learn_words}')
         return State.start_learn_words.value
+
+    async def _get_new_sentence(self) -> str:
+        url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
+        async with http_client() as client:
+            response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
+            if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
+                return State.read_book_end.value
+            elif response_status != HTTPStatus.OK:
+                return State.error.value
+
+            new_sentence = response['detail']
+            self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
+            if self._state == State.check_answer_time.value:
+                return State.check_answer_time.value
+            if new_sentence['words']:
+                return State.check_words.value
+            return State.read_book.value
