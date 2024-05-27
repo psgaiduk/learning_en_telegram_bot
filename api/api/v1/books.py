@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from database import get_db
 from dto.models import BooksModelDTO
 from functions import api_key_required
-from models import BooksModel, BooksSentences, Users, UsersBooksHistory, Words
+from models import BooksModel, BooksSentences, Users, UsersBooksHistory
 
 
 version_1_books_router = APIRouter(
@@ -98,6 +98,3 @@ async def get_random_book_by_telegram_id(telegram_id: int, db: Session = Depends
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Books not found')
 
     return await get_book_dto(book=random_book)
-
-
-
