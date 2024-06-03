@@ -78,18 +78,21 @@ class SetStateMiddleware(BaseMiddleware):
         if self._state in {State.grammar.value, State.update_profile.value}:
             return
 
-        if self._message_text in {'/profile', '/records', 'achievements'}:
+        if self._message_text in {'/profile', '/records', '/achievements'}:
             return await self._work_with_message_text()
 
         if self._state == State.start_learn_words.value:
-            await self._work_with_start_learn_words_status()
+            self._state = await self._work_with_start_learn_words_status()
+            return
 
-        if self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
+        elif self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
             self._telegram_user.new_sentence = None
             self._state = State.read_book.value
+            self._state = await self.work_with_read_status()
+            return
 
         if self._state in {State.read_book.value, State.check_answer_time.value}:
-            return await self.work_with_read_status()
+            self._state = await self.work_with_read_status()
 
         return
 
@@ -130,6 +133,7 @@ class SetStateMiddleware(BaseMiddleware):
                 return State.check_words.value
             if self._telegram_user.new_sentence.text:
                 return State.read_book.value
+
         return await self._get_new_sentence()
 
     async def _work_with_start_learn_words_status(self) -> str:
@@ -148,7 +152,8 @@ class SetStateMiddleware(BaseMiddleware):
 
             if not words_for_learn:
                 logger.debug('User does not have words for learn')
-                return State.read_book.value
+                self._state = State.read_book.value
+                return await self.work_with_read_status()
 
             logger.debug('User has words for learn, add them to user.')
             self._telegram_user.learn_words = words_for_learn
@@ -163,9 +168,9 @@ class SetStateMiddleware(BaseMiddleware):
             response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
             if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
                 return State.read_book_end.value
-            elif response_status != HTTPStatus.OK:
-                return State.error.value
 
+            if response_status != HTTPStatus.OK:
+                return State.error.value
             new_sentence = response['detail']
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
             if self._state == State.check_answer_time.value:
