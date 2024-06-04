@@ -23,161 +23,61 @@ graph TD;
     check_current_user --> |Да| update_new_sentence[self._telegram_user.new_sentence 
     = current_user.new_sentence
     ]
-    user_not_found --> check_current_state{{
-    Проверяем текущий state.
-    Равен ли он одному из значений:
-    `Registration, Error, Grammar`
+    check_current_user --> |Нет| check_current_state{{
+        Проверяем текущий State
     }}
-    error_user --> check_current_state
     update_new_sentence --> check_current_state
-    check_current_state --> |Нет| check_message_text{{
-    Проверяем текст:
-    }}
-    check_message_text --> |text = '/profile'| check_current_stage_after_profile{{
-    stage или read_book
-    или check_answer_time?
-    }}
-    check_current_stage_after_profile --> |Да| update_stage_to_profile[
-    Обновляем стадию пользователя по апи
-    на previous_stage = Текущий Stage]
-    check_current_stage_after_profile --> |Нет| return_update_profile_stage
-    update_stage_to_profile --> check_update_stage_to_profile{{
-    Проверяем обновился ли статус по апи?
-    }}
-    check_update_stage_to_profile --> |Нет| return_error_update_stage_profile[
-    Возвращаем стадию ERROR]
-    check_update_stage_to_profile --> |Да| return_update_profile_stage[
-    Возвращаем стадию UPDATE_PROFILE]
-    check_message_text --> |text = '/records', 
-    stage != 'user_profile'| return_records_stage[
-    Возвращаем стадию RECORDS]
-    check_message_text --> |text = '/achievements', 
-    stage != 'user_profile'| return_achievements_stage[
-    Возвращаем стадию ACHIEVEMENTS]
-    check_message_text --> |Другое| check_stage_start_learn_words{{
-    Проверяем stage = START_LEARN_WORDS
-    }}
-    check_stage_start_learn_words --> |Нет| check_stage_learn_words{{
-    Проверяем 
-    stage = LEARN_WORDS 
-    learn_words < 2 или None
-    }}
-    
-    check_stage_learn_words:::new --> |Да| change_state_learn_words_to_read_book[
-    обновляем stage = READ_BOOK
+    check_current_state --> |grammar or update_profile| return_current_state[
+        Заканчиваем работу
     ]
-    change_state_learn_words_to_read_book:::new --> check_is_read_book
-    check_stage_learn_words --> |Нет| check_is_read_book{{
-    Проверяем stage in 
-    &lbrack; READ_BOOK, CHECK_ANSWER_TIME &rbrack;
+    check_current_state --> |другой| check_message_text{{
+        Проверяем текст сообщения
     }}
-    check_stage_start_learn_words --> |Да| get_learn_words[
-    Получаем слова для 
-    изучения по апи для 
-    этого пользователя
+    check_message_text --> |/profile| save_previous_state[Сохраняю предыдущий статус]
+    save_previous_state --> |Обновили| good_update_update_profile_state[
+        Обновляю state на UPDATE_PROFILE
     ]
-    get_learn_words --> check_get_learn_words{{
-    Получили код 200?
+    save_previous_state --> |Не обновили |bad_update_update_profile_state[
+        Обновляю state на ERROR
+    ]
+    check_message_text --> |/records| update_record_state[Обновляю state на RECORDS]
+    check_message_text --> |/achievements| update_achievements_state[Обновляю state на ACHIEVEMENTS]
+    check_message_text --> |другой| check_status[Проверяю текущий статус
+    ]
+    check_status --> |START_LEARN_WORDS| get_learn_words_by_api[
+        Получаю слова для изучения по апи
+    ]
+    get_learn_words_by_api --> |Статсут != 200| retrun_error_after_get_words[
+        Возвращаем ERROR
+    ]
+    get_learn_words_by_api --> |Всё хорошо| retrun_start_learn_words_after_get_words[
+        Обновляем learn_words для пользоватлея
+        Возвращаем START_LEARN_WORDS
+    ]
+    get_learn_words_by_api --> |Список слов пуст| retrun_read_book_after_get_words[
+        Возвращаем READ_BOOK
+    ]
+    check_status --> |LEARN_WORDS и learn_words < 2| return_read_book_last_word[
+        Делаю new_sentence = None для пользователя
+        state = READ_BOOK
+    ]
+    check_status --> |READ_BOOK или CHECK_ANSWER_TIME| check_new_sentence{{
+        Првоеряю есть ли new_sentence для юзера
     }}
-    check_get_learn_words --> |Нет| return_error_after_get_learn_words[
-    Возвращаем ERROR
+    return_read_book_last_word --> check_new_sentence
+    retrun_read_book_after_get_words --> check_new_sentence
+    check_new_sentence --> |Да и state = CHECK_ANSWER_TIME| return_check_answer_time[
+        Возвращаем state = CHECK_ANSWER_TIME
     ]
-    check_get_learn_words --> |Да| check_have_words{{
-    Проверяем, есть ли слова
-    для изучения?
-    }}
-    check_have_words --> |Нет| return_read_book_after_get_learn_words[
-    Возвращаем stage 
-    READ_BOOK
+    check_new_sentence --> |Да и есть words для пользователя| return_check_words[
+        Возвращаем state = CHECK_WORDS
     ]
-    check_have_words --> |Да| return_start_learn_words_after_learn_words[
-    Возвращаем stage
-    START_LEARN_WORDS]
-    return_error_after_get_learn_words --> check_is_read_book
-    return_read_book_after_get_learn_words --> check_is_read_book
-    return_start_learn_words_after_learn_words --> check_is_read_book
-    check_is_read_book --> |Да| check_new_sentence{{
-    Проверяем есть ли
-    new_sentence у этого
-    telegram_user
-    }}
-    check_is_read_book --> |Нет| return_current_stage[
-    Возвращаем текущий
-    статус
-    ]
-    check_new_sentence --> |Да| check_stage_after_new_sentence_is_time{{
-    Проверяем stage = check_answer_time?
-    }}
-    check_stage_after_new_sentence_is_time --> |Да| return_check_answer_time[
-    Возвращаем stage
-    CHECK_ANSWER_TIME
-    ]
-    check_stage_after_new_sentence_is_time --> |Нет| check_words_for_sentence{{
-    Проверяем есть ли слова
-    для этого предложения
-}}
-    check_words_for_sentence --> |Да| return_check_words_for_sentence[
-    Возвращаем stage
-    CHECK_WORDS
-    ]
-    check_words_for_sentence --> |Нет| check_text_for_sentence{{
-    Проверяем есть ли текст
-    в этом предложении?
-    }}
-    check_text_for_sentence --> |Да| return_read_this_sentence[
-    Возвращаем stage
-    READ_BOOK
+    check_new_sentence --> |Да и есть text для пользователя| return_check_read_books[
+        Возвращаем state = READ_BOOK
     ]
     check_new_sentence --> |Нет| get_new_sentence_by_api[
-    Получаем новое предложение
-    по api для этого пользователя
-    ]
-    check_text_for_sentence --> |Нет| get_new_sentence_by_api
-    get_new_sentence_by_api --> |Статус PARTIAL_CONTENT
-    и state != check_answer_time| return_end_read_book_after_get_sentence[
-    Возвращаем stage
-    END_READ_BOOK]
-    get_new_sentence_by_api --> |Статус != 200| return_error_after_get_sentence[
-    Возвращаем stage
-    ERROR
-    ]
-    get_new_sentence_by_api --> |Статус == 200| update_new_sentence_for_user[
-    Обновляем свойство
-    new_sentence данными с апи]
-    update_new_sentence_for_user --> |state = check_answer_time| return_check_answer_time_after_get_sentence[
-    Возвращаем stage
-    CHECK_ANSWER_TIME]
-    update_new_sentence_for_user --> |words не пустой список| return_check_words_after_get_sentence[
-    Возвращаем stage
-    CHECK_WORDS]
-    update_new_sentence_for_user --> return_read_book_after_get_sentence[
-    Возвращаем stage
-    READ_BOOK]
-    return_read_book_after_get_sentence --> check_status_get_telegram_user{{
-    Проверяем статус получения
-    пользователя по апи
-    равен ли он 200?
-    }}
-    return_check_words_after_get_sentence --> check_status_get_telegram_user
-    return_check_answer_time_after_get_sentence --> check_status_get_telegram_user
-    return_end_read_book_after_get_sentence --> check_status_get_telegram_user
-    return_error_after_get_sentence --> check_status_get_telegram_user
-    return_read_this_sentence --> check_status_get_telegram_user
-    return_check_words_for_sentence --> check_status_get_telegram_user
-    return_check_answer_time --> check_status_get_telegram_user
-    return_current_stage --> check_status_get_telegram_user
-    return_achievements_stage --> check_status_get_telegram_user
-    return_records_stage --> check_status_get_telegram_user
-    return_update_profile_stage --> check_status_get_telegram_user
-    return_error_update_stage_profile --> check_status_get_telegram_user
-    check_status_get_telegram_user --> |Да| save_data_context[
-    в fsm_context data записываем
-    &lbrace;user: telegram_user&rbrace;
-    ]
-    save_data_context --> update_state_context
-    check_status_get_telegram_user --> |Нет| update_state_context[
-    обновляем fsm_context state
+        Получаем новое предложение по api
     ]
     
-    classDef new fill:#69f,stroke:#333,stroke-width:2px;
+
 ```
