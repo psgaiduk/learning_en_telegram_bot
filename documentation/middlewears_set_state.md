@@ -78,6 +78,23 @@ graph TD;
     check_new_sentence --> |Нет| get_new_sentence_by_api[
         Получаем новое предложение по api
     ]
-    
-
+    get_new_sentence_by_api --> |Status_code = 206 и
+    state != check_answer_time| return_read_book_end_after_get_sentence[
+        state = READ_BOOK_END
+    ]
+    get_new_sentence_by_api --> |Status_code != 200| return_error_after_get_sentence[
+        state = ERROR
+    ]
+    get_new_sentence_by_api --> |Status_code == 200| update_sentence_for_user[
+        Обновляем предложние для пользователя
+    ]
+    update_sentence_for_user --> |state = check_answer_time| return_check_answer_time_after_get_sentence[
+        state = CHECK_ANSWER_TIME
+    ]
+    update_sentence_for_user --> |Есть слова в words| return_check_words_after_get_sentence[
+        state = CHECK_WORDS
+    ]
+    update_sentence_for_user --> |Остальное| return_read_book_get_sentence[
+        state = READ_BOOK
+    ]
 ```
