@@ -1,0 +1,94 @@
+2023-05-18 23:26:57 || 232540084 || 1684438017.95892 || DEBUG || message = {"message_id": 1656, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438018, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-18 23:27:00 || 232540084 || 1684438017.95892 || DEBUG || Get user = <db.models.users.Users object at 0x105a12680>
+2023-05-18 23:31:02 || 232540084 || 1684438017.95892 || DEBUG || get callback data = cancel
+2023-05-18 23:31:30 || 232540084 || 1684438290.762047 || DEBUG || message = {"message_id": 1658, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438290, "text": "Start"}
+2023-05-18 23:31:33 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x1076d2ef0>
+2023-05-18 23:31:33 || 232540084 || 1684438290.762047 || DEBUG || check have user text today = None
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || Get new text text_id = 1136
+There was a baker named John.
+He had a small bakery in town.
+Everyone loved John's bread.
+He made it fresh every day.
+One day, a *mysterious* man entered his bakery.
+The man ordered a special type of bread.
+John had never heard of it.
+He was *curious* and a bit nervous.
+He decided to accept the challenge.
+John started researching the bread.
+He found the recipe in an old cookbook.
+It was a *complex* recipe.
+John spent the whole day baking.
+He made the bread with great care.
+Finally, the bread was ready.
+It looked and smelled wonderful.
+The mysterious man was very pleased.
+He said it was the best bread he ever tasted.
+John felt very proud.
+His bakery became even more popular.
+And John continued to bake with love and passion.
+Жил-был пекарь по имени Джон.
+У него была небольшая пекарня в городе.
+Все любили хлеб Джона.
+Он пек его каждый день.
+Однажды в его пекарню вошел таинственный человек.
+Он заказал особый сорт хлеба.
+Джон никогда о таком не слышал.
+Ему стало любопытно и немного нервно.
+Он решил принять вызов.
+Джон начал исследовать хлеб.
+Он нашел рецепт в старой поваренной книге.
+Это был *сложный* рецепт.
+Джон потратил целый день на выпечку.
+Он готовил хлеб с особой тщательностью.
+Наконец, хлеб был готов.
+Он выглядел и пах замечательно.
+Таинственный человек был очень доволен.
+Он сказал, что это лучший хлеб, который он когда-либо пробовал.
+Джон почувствовал себя очень гордым.
+Его пекарня стала еще более популярной.
+А Джон продолжал печь с любовью и страстью.
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || Split sentences
+['There was a baker named John.', 'He had a small bakery in town.', "Everyone loved John's bread.", 'He made it fresh every day.', 'One day, a *mysterious* man entered his bakery.', 'The man ordered a special type of bread.', 'John had never heard of it.', 'He was *curious* and a bit nervous.', 'He decided to accept the challenge.', 'John started researching the bread.', 'He found the recipe in an old cookbook.', 'It was a *complex* recipe.', 'John spent the whole day baking.', 'He made the bread with great care.', 'Finally, the bread was ready.', 'It looked and smelled wonderful.', 'The mysterious man was very pleased.', 'He said it was the best bread he ever tasted.', 'John felt very proud.', 'His bakery became even more popular.', 'And John continued to bake with love and passion.']
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || 
+Split translate sentences
+['Жил-был пекарь по имени Джон.', 'У него была небольшая пекарня в городе.', 'Все любили хлеб Джона.', 'Он пек его каждый день.', 'Однажды в его пекарню вошел таинственный человек.', 'Он заказал особый сорт хлеба.', 'Джон никогда о таком не слышал.', 'Ему стало любопытно и немного нервно.', 'Он решил принять вызов.', 'Джон начал исследовать хлеб.', 'Он нашел рецепт в старой поваренной книге.', 'Это был *сложный* рецепт.', 'Джон потратил целый день на выпечку.', 'Он готовил хлеб с особой тщательностью.', 'Наконец, хлеб был готов.', 'Он выглядел и пах замечательно.', 'Таинственный человек был очень доволен.', 'Он сказал, что это лучший хлеб, который он когда-либо пробовал.', 'Джон почувствовал себя очень гордым.', 'Его пекарня стала еще более популярной.', 'А Джон продолжал печь с любовью и страстью.']
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || len texts = 21, 21
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || List sentences and translate:
+[('There was a baker named John. He had a small bakery in town.', 'Жил-был пекарь по имени Джон. У него была небольшая пекарня в городе.'), ('He made it fresh every day. One day, a *mysterious* man entered his bakery.', 'Он пек его каждый день. Однажды в его пекарню вошел таинственный человек.'), ('John had never heard of it. He was *curious* and a bit nervous.', 'Джон никогда о таком не слышал. Ему стало любопытно и немного нервно.'), ('John started researching the bread. He found the recipe in an old cookbook.', 'Джон начал исследовать хлеб. Он нашел рецепт в старой поваренной книге.'), ('John spent the whole day baking. He made the bread with great care.', 'Джон потратил целый день на выпечку. Он готовил хлеб с особой тщательностью.'), ('It looked and smelled wonderful. The mysterious man was very pleased.', 'Он выглядел и пах замечательно. Таинственный человек был очень доволен.'), ('John felt very proud. His bakery became even more popular.', 'Джон почувствовал себя очень гордым. Его пекарня стала еще более популярной.')]
+2023-05-18 23:31:34 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('There was a baker named John. He had a small bakery in town.', 'Жил-был пекарь по имени Джон. У него была небольшая пекарня в городе.')
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031c880>
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('He made it fresh every day. One day, a *mysterious* man entered his bakery.', 'Он пек его каждый день. Однажды в его пекарню вошел таинственный человек.')
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031cac0>
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('John had never heard of it. He was *curious* and a bit nervous.', 'Джон никогда о таком не слышал. Ему стало любопытно и немного нервно.')
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031cd30>
+2023-05-18 23:31:48 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('John started researching the bread. He found the recipe in an old cookbook.', 'Джон начал исследовать хлеб. Он нашел рецепт в старой поваренной книге.')
+2023-05-18 23:31:49 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031fb50>
+2023-05-18 23:31:49 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('John spent the whole day baking. He made the bread with great care.', 'Джон потратил целый день на выпечку. Он готовил хлеб с особой тщательностью.')
+2023-05-18 23:31:50 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031fcd0>
+2023-05-18 23:31:50 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('It looked and smelled wonderful. The mysterious man was very pleased.', 'Он выглядел и пах замечательно. Таинственный человек был очень доволен.')
+2023-05-18 23:31:50 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031f580>
+2023-05-18 23:31:50 || 232540084 || 1684438290.762047 || DEBUG || current sentence
+('John felt very proud. His bakery became even more popular.', 'Джон почувствовал себя очень гордым. Его пекарня стала еще более популярной.')
+2023-05-18 23:31:51 || 232540084 || 1684438290.762047 || DEBUG || Get user = <db.models.users.Users object at 0x11031fe20>
+2023-05-18 23:31:53 || 232540084 || 1684438313.863313 || DEBUG || message = {"message_id": 1675, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438314, "text": "Start"}
+2023-05-18 23:31:54 || 232540084 || 1684438313.863313 || DEBUG || Get user = <db.models.users.Users object at 0x11031d330>
+2023-05-18 23:31:54 || 232540084 || 1684438313.863313 || DEBUG || check have user text today = <db.models.users_texts.UsersText object at 0x11031d870>
+2023-05-18 23:31:54 || 232540084 || 1684438313.863313 || DEBUG || user today have text, send about this
+2023-05-18 23:31:59 || 232540084 || 1684438319.801496 || DEBUG || message = {"message_id": 1677, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438320, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-18 23:32:00 || 232540084 || 1684438319.801496 || DEBUG || Get user = <db.models.users.Users object at 0x110368430>
+2023-05-18 23:33:38 || 232540084 || 1684438418.559662 || DEBUG || message = {"message_id": 1679, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438418, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-18 23:33:40 || 232540084 || 1684438418.559662 || DEBUG || Get user = <db.models.users.Users object at 0x1054c6e30>
+2023-05-18 23:33:52 || 232540084 || 1684438418.559662 || DEBUG || get callback data = level_2
+2023-05-18 23:33:53 || 232540084 || 1684438418.559662 || DEBUG || Get user = <db.models.users.Users object at 0x106130e50>
+2023-05-18 23:33:59 || 232540084 || 1684438439.8184 || DEBUG || message = {"message_id": 1681, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438440, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-18 23:34:00 || 232540084 || 1684438439.8184 || DEBUG || Get user = <db.models.users.Users object at 0x106131f30>
+2023-05-18 23:34:04 || 232540084 || 1684438439.8184 || DEBUG || get callback data = level_1
+2023-05-18 23:34:05 || 232540084 || 1684438439.8184 || DEBUG || Get user = <db.models.users.Users object at 0x106133d00>
+2023-05-18 23:36:04 || 232540084 || 1684438564.999335 || DEBUG || message = {"message_id": 1683, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684438565, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-18 23:36:07 || 232540084 || 1684438564.999335 || DEBUG || Get user = <db.models.users.Users object at 0x106e52e30>

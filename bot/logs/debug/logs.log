@@ -1,0 +1,521 @@
+2023-05-19 00:04:02 || 232540084 || 1684440242.269943 || DEBUG || message = {"message_id": 1685, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684440242, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:04:04 || 232540084 || 1684440242.269943 || DEBUG || Get user = None
+2023-05-19 00:04:04 || 232540084 || 1684440242.269943 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:04:05 || 232540084 || 1684440242.269943 || DEBUG || New user = <db.models.users.Users object at 0x108be0a30>
+2023-05-19 00:04:42 || 232540084 || 1684440282.189302 || DEBUG || message = {"message_id": 1690, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684440282, "text": "Start"}
+2023-05-19 00:04:44 || 232540084 || 1684440282.189302 || DEBUG || Get user = None
+2023-05-19 00:04:44 || 232540084 || 1684440282.189302 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:04:45 || 232540084 || 1684440282.189302 || DEBUG || New user = <db.models.users.Users object at 0x1051c1330>
+2023-05-19 00:04:46 || 232540084 || 1684440282.189302 || DEBUG || check have user text today = None
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || Get new text text_id = 1127
+Peter is a young boy.
+He lives in a *picturesque* village.
+Peter loves animals.
+He has a pet dog named Spot.
+One day, Spot ran away.
+Peter was very worried.
+He looked for Spot everywhere.
+He asked his friends if they had seen Spot.
+Nobody had seen him.
+Peter felt very *desperate*.
+In the evening, he heard a bark.
+It was coming from the old barn.
+Peter rushed to the barn.
+He found Spot trapped under some hay.
+Peter was *relieved*.
+He took Spot home.
+Spot was safe and sound.
+Peter promised to take better care of Spot.
+From that day, he always kept an eye on Spot.
+And Spot never ran away again.
+Питер - молодой парень.
+Он живет в живописной деревне.
+Питер любит животных.
+У него есть домашняя собака по имени Спот.
+Однажды Спот убежал.
+Питер очень переживал.
+Он искал Спота повсюду.
+Он спросил своих друзей, не видели ли они Спота.
+Никто его не видел.
+Питер чувствовал себя очень *отчаянно*.
+Вечером он услышал лай.
+Он доносился из старого сарая.
+Питер бросился к сараю.
+Он нашел Спота в ловушке под сеном.
+Питер почувствовал *облегчение*.
+Он отнес Спота домой.
+Спот был цел и невредим.
+Питер пообещал, что будет лучше заботиться о Споте.
+С того дня он всегда присматривал за Спотом.
+И Спот больше никогда не убегал.
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || Split sentences
+['Peter is a young boy.', 'He lives in a *picturesque* village.', 'Peter loves animals.', 'He has a pet dog named Spot.', 'One day, Spot ran away.', 'Peter was very worried.', 'He looked for Spot everywhere.', 'He asked his friends if they had seen Spot.', 'Nobody had seen him.', 'Peter felt very *desperate*.', 'In the evening, he heard a bark.', 'It was coming from the old barn.', 'Peter rushed to the barn.', 'He found Spot trapped under some hay.', 'Peter was *relieved*.', 'He took Spot home.', 'Spot was safe and sound.', 'Peter promised to take better care of Spot.', 'From that day, he always kept an eye on Spot.', 'And Spot never ran away again.']
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || 
+Split translate sentences
+['Питер - молодой парень.', 'Он живет в живописной деревне.', 'Питер любит животных.', 'У него есть домашняя собака по имени Спот.', 'Однажды Спот убежал.', 'Питер очень переживал.', 'Он искал Спота повсюду.', 'Он спросил своих друзей, не видели ли они Спота.', 'Никто его не видел.', 'Питер чувствовал себя очень *отчаянно*.', 'Вечером он услышал лай.', 'Он доносился из старого сарая.', 'Питер бросился к сараю.', 'Он нашел Спота в ловушке под сеном.', 'Питер почувствовал *облегчение*.', 'Он отнес Спота домой.', 'Спот был цел и невредим.', 'Питер пообещал, что будет лучше заботиться о Споте.', 'С того дня он всегда присматривал за Спотом.', 'И Спот больше никогда не убегал.']
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || len texts = 20, 20
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || List sentences and translate:
+[('Peter is a young boy. He lives in a *picturesque* village. Peter loves animals.', 'Питер - молодой парень. Он живет в живописной деревне. Питер любит животных.'), ('One day, Spot ran away. Peter was very worried. He looked for Spot everywhere.', 'Однажды Спот убежал. Питер очень переживал. Он искал Спота повсюду.'), ('Nobody had seen him. Peter felt very *desperate*.', 'Никто его не видел. Питер чувствовал себя очень *отчаянно*.'), ('It was coming from the old barn. Peter rushed to the barn.', 'Он доносился из старого сарая. Питер бросился к сараю.'), ('Peter was *relieved*. He took Spot home. Spot was safe and sound.', 'Питер почувствовал *облегчение*. Он отнес Спота домой. Спот был цел и невредим.'), ('From that day, he always kept an eye on Spot. And Spot never ran away again.', 'С того дня он всегда присматривал за Спотом. И Спот больше никогда не убегал.')]
+2023-05-19 00:04:47 || 232540084 || 1684440282.189302 || DEBUG || current sentence
+('Peter is a young boy. He lives in a *picturesque* village. Peter loves animals.', 'Питер - молодой парень. Он живет в живописной деревне. Питер любит животных.')
+2023-05-19 00:04:53 || 232540084 || 1684440282.189302 || DEBUG || get callback data = level_0
+2023-05-19 00:05:00 || 232540084 || 1684440282.189302 || DEBUG || get callback data = level_0
+2023-05-19 00:05:49 || 232540084 || 1684440349.994564 || DEBUG || message = {"message_id": 1692, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684440350, "text": "Start"}
+2023-05-19 00:05:52 || 232540084 || 1684440349.994564 || DEBUG || Get user = <db.models.users.Users object at 0x106c9b7f0>
+2023-05-19 00:05:52 || 232540084 || 1684440349.994564 || DEBUG || check have user text today = None
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || Get new text text_id = 1137
+There was a little girl named Mia.
+She had a lovely dollhouse.
+She liked to play with it all day.
+One day, Mia's friend Lily visited her.
+Lily was *amazed* by the dollhouse.
+She wanted to play with it too.
+Mia and Lily had a lot of fun.
+They pretended the dolls were real.
+They made the dolls cook and clean.
+They even made the dolls go to school.
+Mia's mother made them snacks.
+They ate while they played.
+When Lily had to go home, she was *reluctant*.
+She wanted to keep playing.
+Mia promised they could play again.
+Lily went home feeling happy.
+And Mia was happy to have shared her toys.
+Жила-была маленькая девочка по имени Мия.
+У нее был чудесный кукольный домик.
+Она любила играть с ним целыми днями.
+Однажды подруга Мии Лили пришла к ней в гости.
+Лили была поражена кукольным домиком.
+Она тоже захотела поиграть с ним.
+Мия и Лили очень веселились.
+Они делали вид, что куклы настоящие.
+Они заставляли кукол готовить и убирать.
+Они даже заставляли кукол ходить в школу.
+Мама Мии приготовила им закуски.
+Они ели, пока играли.
+Когда Лили нужно было идти домой, она не хотела.
+Она хотела продолжать играть.
+Мия пообещала, что они смогут играть снова.
+Лили ушла домой счастливая.
+А Мия была счастлива, что поделилась своими игрушками.
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || Split sentences
+['There was a little girl named Mia.', 'She had a lovely dollhouse.', 'She liked to play with it all day.', "One day, Mia's friend Lily visited her.", 'Lily was *amazed* by the dollhouse.', 'She wanted to play with it too.', 'Mia and Lily had a lot of fun.', 'They pretended the dolls were real.', 'They made the dolls cook and clean.', 'They even made the dolls go to school.', "Mia's mother made them snacks.", 'They ate while they played.', 'When Lily had to go home, she was *reluctant*.', 'She wanted to keep playing.', 'Mia promised they could play again.', 'Lily went home feeling happy.', 'And Mia was happy to have shared her toys.']
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || 
+Split translate sentences
+['Жила-была маленькая девочка по имени Мия.', 'У нее был чудесный кукольный домик.', 'Она любила играть с ним целыми днями.', 'Однажды подруга Мии Лили пришла к ней в гости.', 'Лили была поражена кукольным домиком.', 'Она тоже захотела поиграть с ним.', 'Мия и Лили очень веселились.', 'Они делали вид, что куклы настоящие.', 'Они заставляли кукол готовить и убирать.', 'Они даже заставляли кукол ходить в школу.', 'Мама Мии приготовила им закуски.', 'Они ели, пока играли.', 'Когда Лили нужно было идти домой, она не хотела.', 'Она хотела продолжать играть.', 'Мия пообещала, что они смогут играть снова.', 'Лили ушла домой счастливая.', 'А Мия была счастлива, что поделилась своими игрушками.']
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || len texts = 17, 17
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || List sentences and translate:
+[('There was a little girl named Mia. She had a lovely dollhouse.', 'Жила-была маленькая девочка по имени Мия. У нее был чудесный кукольный домик.'), ("One day, Mia's friend Lily visited her. Lily was *amazed* by the dollhouse.", 'Однажды подруга Мии Лили пришла к ней в гости. Лили была поражена кукольным домиком.'), ('Mia and Lily had a lot of fun. They pretended the dolls were real.', 'Мия и Лили очень веселились. Они делали вид, что куклы настоящие.'), ("They even made the dolls go to school. Mia's mother made them snacks.", 'Они даже заставляли кукол ходить в школу. Мама Мии приготовила им закуски.'), ('When Lily had to go home, she was *reluctant*. She wanted to keep playing.', 'Когда Лили нужно было идти домой, она не хотела. Она хотела продолжать играть.'), ('Lily went home feeling happy. And Mia was happy to have shared her toys.', 'Лили ушла домой счастливая. А Мия была счастлива, что поделилась своими игрушками.')]
+2023-05-19 00:05:53 || 232540084 || 1684440349.994564 || DEBUG || current sentence
+('There was a little girl named Mia. She had a lovely dollhouse.', 'Жила-была маленькая девочка по имени Мия. У нее был чудесный кукольный домик.')
+2023-05-19 00:11:03 || 232540084 || 1684440663.622066 || DEBUG || message = {"message_id": 1693, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684440663, "text": "Start"}
+2023-05-19 00:11:06 || 232540084 || 1684440663.622066 || DEBUG || Get user = None
+2023-05-19 00:11:06 || 232540084 || 1684440663.622066 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:11:06 || 232540084 || 1684440663.622066 || DEBUG || New user = <db.models.users.Users object at 0x1150494b0>
+2023-05-19 00:11:14 || 232540084 || 1684440663.622066 || DEBUG || get callback data = level_0
+2023-05-19 00:11:14 || 232540084 || 1684440663.622066 || DEBUG || Get user = <db.models.users.Users object at 0x11521ecb0>
+2023-05-19 00:11:17 || 232540084 || 1684440677.755304 || DEBUG || message = {"message_id": 1695, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684440677, "text": "Start"}
+2023-05-19 00:11:18 || 232540084 || 1684440677.755304 || DEBUG || Get user = <db.models.users.Users object at 0x11521c760>
+2023-05-19 00:11:18 || 232540084 || 1684440677.755304 || DEBUG || check have user text today = None
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || Get new text text_id = 1154
+Sam is a boy.
+He is seven years old.
+Sam lives in Sydney.
+Sydney is a city in Australia.
+Australia is a country.
+Sam has a pet.
+His pet is a dog.
+The dog's name is Buddy.
+Buddy is a big dog.
+Sam loves Buddy very much.
+Every morning, Sam and Buddy go to the park.
+The park is near Sam's house.
+They play fetch with a ball.
+Fetch is a game where Sam throws the ball and Buddy brings it back.
+In the afternoon, Sam goes to school.
+His school is not far from the park.
+Sam's teacher is Mrs. Brown.
+She teaches them English and Maths.
+Sam likes Maths.
+After school, Sam does his homework.
+Then, he plays with Buddy again.
+On weekends, Sam and his family go to the *beach*.
+The beach is Sam's favorite place.
+He likes to build sand castles.
+At night, Sam reads a story to Buddy.
+Sam and Buddy are best friends.
+Sam loves his life in Sydney.
+Сэм - мальчик.
+Ему семь лет.
+Сэм живет в Сиднее.
+Сидней - это город в Австралии.
+Австралия - это страна.
+У Сэма есть домашнее животное.
+Его питомец - собака.
+Собаку зовут Бадди.
+Бадди - большая собака.
+Сэм очень любит Бадди.
+Каждое утро Сэм и Бадди ходят в парк.
+Парк находится рядом с домом Сэма.
+Они играют в фетч с мячом.
+Фетч - это игра, в которой Сэм бросает мяч, а Бадди приносит его обратно.
+После обеда Сэм идет в школу.
+Его школа находится недалеко от парка.
+Учительница Сэма - миссис Браун.
+Она преподает им английский язык и математику.
+Сэму нравится математика.
+После школы Сэм делает домашнее задание.
+Затем он снова играет с Бадди.
+По выходным Сэм и его семья ходят на *пляж*.
+Пляж - любимое место Сэма.
+Он любит строить замки из песка.
+Вечером Сэм читает Бадди сказки.
+Сэм и Бадди - лучшие друзья.
+Сэму нравится его жизнь в Сиднее.
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || Split sentences
+['Sam is a boy.', 'He is seven years old.', 'Sam lives in Sydney.', 'Sydney is a city in Australia.', 'Australia is a country.', 'Sam has a pet.', 'His pet is a dog.', "The dog's name is Buddy.", 'Buddy is a big dog.', 'Sam loves Buddy very much.', 'Every morning, Sam and Buddy go to the park.', "The park is near Sam's house.", 'They play fetch with a ball.', 'Fetch is a game where Sam throws the ball and Buddy brings it back.', 'In the afternoon, Sam goes to school.', 'His school is not far from the park.', "Sam's teacher is Mrs.  Brown.", 'She teaches them English and Maths.', 'Sam likes Maths.', 'After school, Sam does his homework.', 'Then, he plays with Buddy again.', 'On weekends, Sam and his family go to the *beach*.', "The beach is Sam's favorite place.", 'He likes to build sand castles.', 'At night, Sam reads a story to Buddy.', 'Sam and Buddy are best friends.', 'Sam loves his life in Sydney.']
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || 
+Split translate sentences
+['Сэм - мальчик.', 'Ему семь лет.', 'Сэм живет в Сиднее.', 'Сидней - это город в Австралии.', 'Австралия - это страна.', 'У Сэма есть домашнее животное.', 'Его питомец - собака.', 'Собаку зовут Бадди.', 'Бадди - большая собака.', 'Сэм очень любит Бадди.', 'Каждое утро Сэм и Бадди ходят в парк.', 'Парк находится рядом с домом Сэма.', 'Они играют в фетч с мячом.', 'Фетч - это игра, в которой Сэм бросает мяч, а Бадди приносит его обратно.', 'После обеда Сэм идет в школу.', 'Его школа находится недалеко от парка.', 'Учительница Сэма - миссис Браун.', 'Она преподает им английский язык и математику.', 'Сэму нравится математика.', 'После школы Сэм делает домашнее задание.', 'Затем он снова играет с Бадди.', 'По выходным Сэм и его семья ходят на *пляж*.', 'Пляж - любимое место Сэма.', 'Он любит строить замки из песка.', 'Вечером Сэм читает Бадди сказки.', 'Сэм и Бадди - лучшие друзья.', 'Сэму нравится его жизнь в Сиднее.']
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || len texts = 27, 27
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || List sentences and translate:
+[('Sam is a boy. He is seven years old.', 'Сэм - мальчик. Ему семь лет.'), ('Sydney is a city in Australia.', 'Сидней - это город в Австралии.'), ('Sam has a pet. His pet is a dog.', 'У Сэма есть домашнее животное. Его питомец - собака.'), ('Buddy is a big dog.', 'Бадди - большая собака.'), ('Every morning, Sam and Buddy go to the park.', 'Каждое утро Сэм и Бадди ходят в парк.'), ('They play fetch with a ball.', 'Они играют в фетч с мячом.'), ('In the afternoon, Sam goes to school.', 'После обеда Сэм идет в школу.'), ("Sam's teacher is Mrs.  Brown.", 'Учительница Сэма - миссис Браун.'), ('Sam likes Maths.', 'Сэму нравится математика.'), ('Then, he plays with Buddy again.', 'Затем он снова играет с Бадди.'), ("The beach is Sam's favorite place.", 'Пляж - любимое место Сэма.'), ('At night, Sam reads a story to Buddy.', 'Вечером Сэм читает Бадди сказки.'), ('Sam loves his life in Sydney.', 'Сэму нравится его жизнь в Сиднее.')]
+2023-05-19 00:11:19 || 232540084 || 1684440677.755304 || DEBUG || current sentence
+('Sam is a boy. He is seven years old.', 'Сэм - мальчик. Ему семь лет.')
+2023-05-19 00:19:14 || 232540084 || 1684440677.755304 || DEBUG || Get user = <db.models.users.Users object at 0x11521df30>
+2023-05-19 00:19:14 || 232540084 || 1684440677.755304 || DEBUG || current sentence
+('Sydney is a city in Australia.', 'Сидней - это город в Австралии.')
+2023-05-19 00:20:15 || 232540084 || 1684441215.473692 || DEBUG || message = {"message_id": 1699, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684441215, "text": "/start", "entities": [{"type": "bot_command", "offset": 0, "length": 6}]}
+2023-05-19 00:20:17 || 232540084 || 1684441215.473692 || DEBUG || Get user = None
+2023-05-19 00:20:17 || 232540084 || 1684441215.473692 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:20:18 || 232540084 || 1684441215.473692 || DEBUG || New user = <db.models.users.Users object at 0x1054314b0>
+2023-05-19 00:22:44 || 232540084 || 1684441364.154425 || DEBUG || message = {"message_id": 1701, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684441364, "text": "/start", "entities": [{"type": "bot_command", "offset": 0, "length": 6}]}
+2023-05-19 00:22:46 || 232540084 || 1684441364.154425 || DEBUG || Get user = <db.models.users.Users object at 0x107ac7910>
+2023-05-19 00:22:46 || 232540084 || 1684441364.154425 || DEBUG || check have user text today = None
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || Get new text text_id = 1161
+Mary is a young girl.
+She lives in a small town.
+The town is quiet and peaceful.
+There are many beautiful flowers in the town.
+Mary likes to walk in the park.
+One day, she found a *stray* cat in the park.
+The cat was small and thin.
+It looked very scared.
+Mary decided to help the cat.
+She took the cat home.
+Her mom agreed to keep the cat.
+They named the cat Daisy.
+Daisy quickly became part of the family.
+She would purr and play with Mary.
+Seeing Daisy happy, Mary felt *content*.
+She learned that helping others can be rewarding.
+From then on, she decided to help more stray animals.
+Мэри - молодая девушка.
+Она живет в маленьком городке.
+В городе тихо и спокойно.
+В городе много красивых цветов.
+Мэри любит гулять в парке.
+Однажды она нашла в парке *бездомную* кошку.
+Кошка была маленькая и худая.
+Она выглядела очень испуганной.
+Мэри решила помочь кошке.
+Она взяла кошку домой.
+Ее мама согласилась оставить кошку у себя.
+Они назвали кошку Дейзи.
+Дейзи быстро стала членом семьи.
+Она мурлыкала и играла с Мэри.
+Видя, что Дейзи счастлива, Мэри чувствовала себя *довольной*.
+Она поняла, что помощь другим может быть полезной.
+С тех пор она решила помогать больше бездомным животным.
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || Split sentences
+['Mary is a young girl.', 'She lives in a small town.', 'The town is quiet and peaceful.', 'There are many beautiful flowers in the town.', 'Mary likes to walk in the park.', 'One day, she found a *stray* cat in the park.', 'The cat was small and thin.', 'It looked very scared.', 'Mary decided to help the cat.', 'She took the cat home.', 'Her mom agreed to keep the cat.', 'They named the cat Daisy.', 'Daisy quickly became part of the family.', 'She would purr and play with Mary.', 'Seeing Daisy happy, Mary felt *content*.', 'She learned that helping others can be rewarding.', 'From then on, she decided to help more stray animals.']
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || 
+Split translate sentences
+['Мэри - молодая девушка.', 'Она живет в маленьком городке.', 'В городе тихо и спокойно.', 'В городе много красивых цветов.', 'Мэри любит гулять в парке.', 'Однажды она нашла в парке *бездомную* кошку.', 'Кошка была маленькая и худая.', 'Она выглядела очень испуганной.', 'Мэри решила помочь кошке.', 'Она взяла кошку домой.', 'Ее мама согласилась оставить кошку у себя.', 'Они назвали кошку Дейзи.', 'Дейзи быстро стала членом семьи.', 'Она мурлыкала и играла с Мэри.', 'Видя, что Дейзи счастлива, Мэри чувствовала себя *довольной*.', 'Она поняла, что помощь другим может быть полезной.', 'С тех пор она решила помогать больше бездомным животным.']
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || len texts = 17, 17
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || List sentences and translate:
+[('Mary is a young girl. She lives in a small town. The town is quiet and peaceful.', 'Мэри - молодая девушка. Она живет в маленьком городке. В городе тихо и спокойно.'), ('Mary likes to walk in the park. One day, she found a *stray* cat in the park.', 'Мэри любит гулять в парке. Однажды она нашла в парке *бездомную* кошку.'), ('It looked very scared. Mary decided to help the cat. She took the cat home.', 'Она выглядела очень испуганной. Мэри решила помочь кошке. Она взяла кошку домой.'), ('They named the cat Daisy. Daisy quickly became part of the family.', 'Они назвали кошку Дейзи. Дейзи быстро стала членом семьи.'), ('Seeing Daisy happy, Mary felt *content*.', 'Видя, что Дейзи счастлива, Мэри чувствовала себя *довольной*.'), ('From then on, she decided to help more stray animals.', 'С тех пор она решила помогать больше бездомным животным.')]
+2023-05-19 00:22:47 || 232540084 || 1684441364.154425 || DEBUG || current sentence
+('Mary is a young girl. She lives in a small town. The town is quiet and peaceful.', 'Мэри - молодая девушка. Она живет в маленьком городке. В городе тихо и спокойно.')
+2023-05-19 00:23:31 || 232540084 || 1684441411.399427 || DEBUG || message = {"message_id": 1705, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684441411, "text": "/start", "entities": [{"type": "bot_command", "offset": 0, "length": 6}]}
+2023-05-19 00:23:33 || 232540084 || 1684441411.399427 || DEBUG || Get user = None
+2023-05-19 00:23:33 || 232540084 || 1684441411.399427 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:23:34 || 232540084 || 1684441411.399427 || DEBUG || New user = <db.models.users.Users object at 0x1077813f0>
+2023-05-19 00:23:47 || 232540084 || 1684441411.399427 || DEBUG || get callback data = cancel
+2023-05-19 00:23:48 || 232540084 || 1684441411.399427 || DEBUG || Get user = <db.models.users.Users object at 0x10780ecb0>
+2023-05-19 00:30:15 || 232540084 || 1684441815.411914 || DEBUG || message = {"message_id": 1708, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684441815, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:30:17 || 232540084 || 1684441815.411914 || DEBUG || Get user = <db.models.users.Users object at 0x106a5f730>
+2023-05-19 00:30:20 || 232540084 || 1684441815.411914 || DEBUG || get callback data = cancel
+2023-05-19 00:30:21 || 232540084 || 1684441815.411914 || DEBUG || Get user = <db.models.users.Users object at 0x106d212d0>
+2023-05-19 00:31:19 || 232540084 || 1684441879.721288 || DEBUG || message = {"message_id": 1711, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684441879, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:31:22 || 232540084 || 1684441879.721288 || DEBUG || Get user = <db.models.users.Users object at 0x107a03730>
+2023-05-19 00:31:24 || 232540084 || 1684441879.721288 || DEBUG || get callback data = cancel
+2023-05-19 00:31:25 || 232540084 || 1684441879.721288 || DEBUG || Get user = <db.models.users.Users object at 0x10901d270>
+2023-05-19 00:33:53 || 232540084 || 1684442033.617476 || DEBUG || message = {"message_id": 1714, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442033, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:33:55 || 232540084 || 1684442033.617476 || DEBUG || Get user = <db.models.users.Users object at 0x104a07790>
+2023-05-19 00:33:59 || 232540084 || 1684442033.617476 || DEBUG || get callback data = cancel
+2023-05-19 00:34:00 || 232540084 || 1684442033.617476 || DEBUG || Get user = <db.models.users.Users object at 0x104d212a0>
+2023-05-19 00:36:12 || 232540084 || 1684442172.055338 || DEBUG || message = {"message_id": 1717, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442172, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:36:14 || 232540084 || 1684442172.055338 || DEBUG || Get user = <db.models.users.Users object at 0x104947940>
+2023-05-19 00:36:17 || 232540084 || 1684442172.055338 || DEBUG || get callback data = cancel
+2023-05-19 00:36:18 || 232540084 || 1684442172.055338 || DEBUG || Get user = <db.models.users.Users object at 0x104c21270>
+2023-05-19 00:37:00 || 232540084 || 1684442220.303706 || DEBUG || message = {"message_id": 1720, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442220, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:37:02 || 232540084 || 1684442220.303706 || DEBUG || Get user = <db.models.users.Users object at 0x10974b910>
+2023-05-19 00:37:04 || 232540084 || 1684442220.303706 || DEBUG || get callback data = cancel
+2023-05-19 00:37:04 || 232540084 || 1684442220.303706 || DEBUG || Get user = <db.models.users.Users object at 0x1097cd240>
+2023-05-19 00:37:14 || 232540084 || 1684442234.94987 || DEBUG || message = {"message_id": 1723, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442235, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:37:15 || 232540084 || 1684442234.94987 || DEBUG || Get user = <db.models.users.Users object at 0x1097cc8b0>
+2023-05-19 00:37:17 || 232540084 || 1684442234.94987 || DEBUG || get callback data = cancel
+2023-05-19 00:37:17 || 232540084 || 1684442234.94987 || DEBUG || Get user = <db.models.users.Users object at 0x1097cdc90>
+2023-05-19 00:37:28 || 232540084 || 1684442248.819486 || DEBUG || message = {"message_id": 1726, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442249, "text": "Start"}
+2023-05-19 00:37:29 || 232540084 || 1684442248.819486 || DEBUG || Get user = <db.models.users.Users object at 0x1097ce020>
+2023-05-19 00:37:29 || 232540084 || 1684442248.819486 || DEBUG || check have user text today = None
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || Get new text text_id = 1112
+Jake lives in London.
+He is a *chef* at a small restaurant.
+He loves to cook and create new dishes.
+His restaurant is near a big park.
+The park is always full of people.
+Every morning, Jake buys fresh ingredients from a *farmer's market*.
+He enjoys talking to the farmers.
+He learns a lot about their products.
+One day, a food critic comes to his restaurant.
+Jake feels a bit nervous.
+He decides to prepare his special pasta dish.
+The critic tastes the food and seems to enjoy it.
+After the meal, the critic shakes Jake's hand.
+He says, "Your pasta is excellent".
+Jake is very happy to hear this.
+The next day, the critic writes a great review.
+Jake's restaurant becomes very popular.
+He feels proud of his hard work.
+He continues to cook with love and passion.
+Джейк живет в Лондоне.
+Он работает *шеф-поваром* в небольшом ресторане.
+Он любит готовить и создавать новые блюда.
+Его ресторан находится рядом с большим парком.
+В парке всегда много людей.
+Каждое утро Джейк покупает свежие продукты на *фермерском рынке*.
+Ему нравится разговаривать с фермерами.
+Он узнает много нового об их продуктах.
+Однажды в его ресторан приходит ресторанный критик.
+Джейк немного нервничает.
+Он решает приготовить свое особое блюдо из макарон.
+Критик пробует блюдо и, похоже, оно ему нравится.
+После еды критик пожимает Джейку руку.
+Он говорит: "Ваша паста превосходна".
+Джейк очень рад это слышать.
+На следующий день критик пишет отличный отзыв.
+Ресторан Джейка становится очень популярным.
+Он чувствует гордость за свою тяжелую работу.
+Он продолжает готовить с любовью и страстью.
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || Split sentences
+['Jake lives in London.', 'He is a *chef* at a small restaurant.', 'He loves to cook and create new dishes.', 'His restaurant is near a big park.', 'The park is always full of people.', "Every morning, Jake buys fresh ingredients from a *farmer's market*.", 'He enjoys talking to the farmers.', 'He learns a lot about their products.', 'One day, a food critic comes to his restaurant.', 'Jake feels a bit nervous.', 'He decides to prepare his special pasta dish.', 'The critic tastes the food and seems to enjoy it.', "After the meal, the critic shakes Jake's hand.", 'He says, "Your pasta is excellent".', 'Jake is very happy to hear this.', 'The next day, the critic writes a great review.', "Jake's restaurant becomes very popular.", 'He feels proud of his hard work.', 'He continues to cook with love and passion.']
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || 
+Split translate sentences
+['Джейк живет в Лондоне.', 'Он работает *шеф-поваром* в небольшом ресторане.', 'Он любит готовить и создавать новые блюда.', 'Его ресторан находится рядом с большим парком.', 'В парке всегда много людей.', 'Каждое утро Джейк покупает свежие продукты на *фермерском рынке*.', 'Ему нравится разговаривать с фермерами.', 'Он узнает много нового об их продуктах.', 'Однажды в его ресторан приходит ресторанный критик.', 'Джейк немного нервничает.', 'Он решает приготовить свое особое блюдо из макарон.', 'Критик пробует блюдо и, похоже, оно ему нравится.', 'После еды критик пожимает Джейку руку.', 'Он говорит: "Ваша паста превосходна".', 'Джейк очень рад это слышать.', 'На следующий день критик пишет отличный отзыв.', 'Ресторан Джейка становится очень популярным.', 'Он чувствует гордость за свою тяжелую работу.', 'Он продолжает готовить с любовью и страстью.']
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || len texts = 19, 19
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || List sentences and translate:
+[('Jake lives in London. He is a *chef* at a small restaurant.', 'Джейк живет в Лондоне. Он работает *шеф-поваром* в небольшом ресторане.'), ('His restaurant is near a big park. The park is always full of people.', 'Его ресторан находится рядом с большим парком. В парке всегда много людей.'), ('He enjoys talking to the farmers. He learns a lot about their products.', 'Ему нравится разговаривать с фермерами. Он узнает много нового об их продуктах.'), ('Jake feels a bit nervous. He decides to prepare his special pasta dish.', 'Джейк немного нервничает. Он решает приготовить свое особое блюдо из макарон.'), ("After the meal, the critic shakes Jake's hand.", 'После еды критик пожимает Джейку руку.'), ('Jake is very happy to hear this. The next day, the critic writes a great review.', 'Джейк очень рад это слышать. На следующий день критик пишет отличный отзыв.'), ('He feels proud of his hard work. He continues to cook with love and passion.', 'Он чувствует гордость за свою тяжелую работу. Он продолжает готовить с любовью и страстью.')]
+2023-05-19 00:37:30 || 232540084 || 1684442248.819486 || DEBUG || current sentence
+('Jake lives in London. He is a *chef* at a small restaurant.', 'Джейк живет в Лондоне. Он работает *шеф-поваром* в небольшом ресторане.')
+2023-05-19 00:38:00 || 232540084 || 1684442280.662505 || DEBUG || message = {"message_id": 1728, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442280, "text": "/settings", "entities": [{"type": "bot_command", "offset": 0, "length": 9}]}
+2023-05-19 00:38:02 || 232540084 || 1684442280.662505 || DEBUG || Get user = None
+2023-05-19 00:38:02 || 232540084 || 1684442280.662505 || DEBUG || We don't have this user, create new user.
+2023-05-19 00:38:03 || 232540084 || 1684442280.662505 || DEBUG || New user = <db.models.users.Users object at 0x1050fd570>
+2023-05-19 00:38:11 || 232540084 || 1684442280.662505 || DEBUG || get callback data = cancel
+2023-05-19 00:38:12 || 232540084 || 1684442280.662505 || DEBUG || Get user = <db.models.users.Users object at 0x10541ecb0>
+2023-05-19 00:38:15 || 232540084 || 1684442295.218077 || DEBUG || message = {"message_id": 1731, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442295, "text": "Start"}
+2023-05-19 00:38:15 || 232540084 || 1684442295.218077 || DEBUG || Get user = <db.models.users.Users object at 0x10541f220>
+2023-05-19 00:38:15 || 232540084 || 1684442295.218077 || DEBUG || check have user text today = None
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || Get new text text_id = 1127
+Peter is a young boy.
+He lives in a *picturesque* village.
+Peter loves animals.
+He has a pet dog named Spot.
+One day, Spot ran away.
+Peter was very worried.
+He looked for Spot everywhere.
+He asked his friends if they had seen Spot.
+Nobody had seen him.
+Peter felt very *desperate*.
+In the evening, he heard a bark.
+It was coming from the old barn.
+Peter rushed to the barn.
+He found Spot trapped under some hay.
+Peter was *relieved*.
+He took Spot home.
+Spot was safe and sound.
+Peter promised to take better care of Spot.
+From that day, he always kept an eye on Spot.
+And Spot never ran away again.
+Питер - молодой парень.
+Он живет в живописной деревне.
+Питер любит животных.
+У него есть домашняя собака по имени Спот.
+Однажды Спот убежал.
+Питер очень переживал.
+Он искал Спота повсюду.
+Он спросил своих друзей, не видели ли они Спота.
+Никто его не видел.
+Питер чувствовал себя очень *отчаянно*.
+Вечером он услышал лай.
+Он доносился из старого сарая.
+Питер бросился к сараю.
+Он нашел Спота в ловушке под сеном.
+Питер почувствовал *облегчение*.
+Он отнес Спота домой.
+Спот был цел и невредим.
+Питер пообещал, что будет лучше заботиться о Споте.
+С того дня он всегда присматривал за Спотом.
+И Спот больше никогда не убегал.
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || Split sentences
+['Peter is a young boy.', 'He lives in a *picturesque* village.', 'Peter loves animals.', 'He has a pet dog named Spot.', 'One day, Spot ran away.', 'Peter was very worried.', 'He looked for Spot everywhere.', 'He asked his friends if they had seen Spot.', 'Nobody had seen him.', 'Peter felt very *desperate*.', 'In the evening, he heard a bark.', 'It was coming from the old barn.', 'Peter rushed to the barn.', 'He found Spot trapped under some hay.', 'Peter was *relieved*.', 'He took Spot home.', 'Spot was safe and sound.', 'Peter promised to take better care of Spot.', 'From that day, he always kept an eye on Spot.', 'And Spot never ran away again.']
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || 
+Split translate sentences
+['Питер - молодой парень.', 'Он живет в живописной деревне.', 'Питер любит животных.', 'У него есть домашняя собака по имени Спот.', 'Однажды Спот убежал.', 'Питер очень переживал.', 'Он искал Спота повсюду.', 'Он спросил своих друзей, не видели ли они Спота.', 'Никто его не видел.', 'Питер чувствовал себя очень *отчаянно*.', 'Вечером он услышал лай.', 'Он доносился из старого сарая.', 'Питер бросился к сараю.', 'Он нашел Спота в ловушке под сеном.', 'Питер почувствовал *облегчение*.', 'Он отнес Спота домой.', 'Спот был цел и невредим.', 'Питер пообещал, что будет лучше заботиться о Споте.', 'С того дня он всегда присматривал за Спотом.', 'И Спот больше никогда не убегал.']
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || len texts = 20, 20
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || List sentences and translate:
+[('Peter is a young boy. He lives in a *picturesque* village. Peter loves animals.', 'Питер - молодой парень. Он живет в живописной деревне. Питер любит животных.'), ('One day, Spot ran away. Peter was very worried. He looked for Spot everywhere.', 'Однажды Спот убежал. Питер очень переживал. Он искал Спота повсюду.'), ('Nobody had seen him. Peter felt very *desperate*.', 'Никто его не видел. Питер чувствовал себя очень *отчаянно*.'), ('It was coming from the old barn. Peter rushed to the barn.', 'Он доносился из старого сарая. Питер бросился к сараю.'), ('Peter was *relieved*. He took Spot home. Spot was safe and sound.', 'Питер почувствовал *облегчение*. Он отнес Спота домой. Спот был цел и невредим.'), ('From that day, he always kept an eye on Spot. And Spot never ran away again.', 'С того дня он всегда присматривал за Спотом. И Спот больше никогда не убегал.')]
+2023-05-19 00:38:16 || 232540084 || 1684442295.218077 || DEBUG || current sentence
+('Peter is a young boy. He lives in a *picturesque* village. Peter loves animals.', 'Питер - молодой парень. Он живет в живописной деревне. Питер любит животных.')
+2023-05-19 00:39:32 || 232540084 || 1684442372.35422 || DEBUG || message = {"message_id": 1732, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442372, "text": "Start"}
+2023-05-19 00:39:32 || 232540084 || 1684442372.35422 || DEBUG || Get user = <db.models.users.Users object at 0x10541ec80>
+2023-05-19 00:39:33 || 232540084 || 1684442372.35422 || DEBUG || check have user text today = None
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || Get new text text_id = 1160
+Tom was a curious boy.
+He loved to explore.
+His house was near a forest.
+He liked to play in the forest.
+One sunny day, Tom went into the forest.
+He was looking for *fascinating* bugs.
+Suddenly, he saw a bright light.
+He went closer to see what it was.
+He found a small, shiny stone.
+It was the most beautiful stone he'd ever seen.
+Tom decided to take the stone home.
+He showed the stone to his friends.
+They were all *amazed* by it.
+He put the stone in a special box.
+Every night, he would look at the stone before bed.
+It made him feel happy and calm.
+Tom realized that small things could bring big joy.
+Том был любопытным мальчиком.
+Он любил исследовать.
+Его дом был рядом с лесом.
+Он любил играть в лесу.
+Однажды солнечным днем Том пошел в лес.
+Он искал интересных жуков.
+Вдруг он увидел яркий свет.
+Он подошел ближе, чтобы посмотреть, что это такое.
+Он нашел маленький блестящий камень.
+Это был самый красивый камень, который он когда-либо видел.
+Том решил взять камень домой.
+Он показал камень своим друзьям.
+Они все были поражены им.
+Он положил камень в специальную коробку.
+Каждый вечер он смотрел на камень перед сном.
+Он заставлял его чувствовать себя счастливым и спокойным.
+Том понял, что маленькие вещи могут приносить большую радость.
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || Split sentences
+['Tom was a curious boy.', 'He loved to explore.', 'His house was near a forest.', 'He liked to play in the forest.', 'One sunny day, Tom went into the forest.', 'He was looking for *fascinating* bugs.', 'Suddenly, he saw a bright light.', 'He went closer to see what it was.', 'He found a small, shiny stone.', "It was the most beautiful stone he'd ever seen.", 'Tom decided to take the stone home.', 'He showed the stone to his friends.', 'They were all *amazed* by it.', 'He put the stone in a special box.', 'Every night, he would look at the stone before bed.', 'It made him feel happy and calm.', 'Tom realized that small things could bring big joy.']
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || 
+Split translate sentences
+['Том был любопытным мальчиком.', 'Он любил исследовать.', 'Его дом был рядом с лесом.', 'Он любил играть в лесу.', 'Однажды солнечным днем Том пошел в лес.', 'Он искал интересных жуков.', 'Вдруг он увидел яркий свет.', 'Он подошел ближе, чтобы посмотреть, что это такое.', 'Он нашел маленький блестящий камень.', 'Это был самый красивый камень, который он когда-либо видел.', 'Том решил взять камень домой.', 'Он показал камень своим друзьям.', 'Они все были поражены им. \nОн положил камень в специальную коробку.', 'Каждый вечер он смотрел на камень перед сном.', 'Он заставлял его чувствовать себя счастливым и спокойным.', 'Том понял, что маленькие вещи могут приносить большую радость.']
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || len texts = 17, 16
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || differen len of texts, delete texts
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || Get new text text_id = 1112
+Jake lives in London.
+He is a *chef* at a small restaurant.
+He loves to cook and create new dishes.
+His restaurant is near a big park.
+The park is always full of people.
+Every morning, Jake buys fresh ingredients from a *farmer's market*.
+He enjoys talking to the farmers.
+He learns a lot about their products.
+One day, a food critic comes to his restaurant.
+Jake feels a bit nervous.
+He decides to prepare his special pasta dish.
+The critic tastes the food and seems to enjoy it.
+After the meal, the critic shakes Jake's hand.
+He says, "Your pasta is excellent".
+Jake is very happy to hear this.
+The next day, the critic writes a great review.
+Jake's restaurant becomes very popular.
+He feels proud of his hard work.
+He continues to cook with love and passion.
+Джейк живет в Лондоне.
+Он работает *шеф-поваром* в небольшом ресторане.
+Он любит готовить и создавать новые блюда.
+Его ресторан находится рядом с большим парком.
+В парке всегда много людей.
+Каждое утро Джейк покупает свежие продукты на *фермерском рынке*.
+Ему нравится разговаривать с фермерами.
+Он узнает много нового об их продуктах.
+Однажды в его ресторан приходит ресторанный критик.
+Джейк немного нервничает.
+Он решает приготовить свое особое блюдо из макарон.
+Критик пробует блюдо и, похоже, оно ему нравится.
+После еды критик пожимает Джейку руку.
+Он говорит: "Ваша паста превосходна".
+Джейк очень рад это слышать.
+На следующий день критик пишет отличный отзыв.
+Ресторан Джейка становится очень популярным.
+Он чувствует гордость за свою тяжелую работу.
+Он продолжает готовить с любовью и страстью.
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || Split sentences
+['Jake lives in London.', 'He is a *chef* at a small restaurant.', 'He loves to cook and create new dishes.', 'His restaurant is near a big park.', 'The park is always full of people.', "Every morning, Jake buys fresh ingredients from a *farmer's market*.", 'He enjoys talking to the farmers.', 'He learns a lot about their products.', 'One day, a food critic comes to his restaurant.', 'Jake feels a bit nervous.', 'He decides to prepare his special pasta dish.', 'The critic tastes the food and seems to enjoy it.', "After the meal, the critic shakes Jake's hand.", 'He says, "Your pasta is excellent".', 'Jake is very happy to hear this.', 'The next day, the critic writes a great review.', "Jake's restaurant becomes very popular.", 'He feels proud of his hard work.', 'He continues to cook with love and passion.']
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || 
+Split translate sentences
+['Джейк живет в Лондоне.', 'Он работает *шеф-поваром* в небольшом ресторане.', 'Он любит готовить и создавать новые блюда.', 'Его ресторан находится рядом с большим парком.', 'В парке всегда много людей.', 'Каждое утро Джейк покупает свежие продукты на *фермерском рынке*.', 'Ему нравится разговаривать с фермерами.', 'Он узнает много нового об их продуктах.', 'Однажды в его ресторан приходит ресторанный критик.', 'Джейк немного нервничает.', 'Он решает приготовить свое особое блюдо из макарон.', 'Критик пробует блюдо и, похоже, оно ему нравится.', 'После еды критик пожимает Джейку руку.', 'Он говорит: "Ваша паста превосходна".', 'Джейк очень рад это слышать.', 'На следующий день критик пишет отличный отзыв.', 'Ресторан Джейка становится очень популярным.', 'Он чувствует гордость за свою тяжелую работу.', 'Он продолжает готовить с любовью и страстью.']
+2023-05-19 00:39:34 || 232540084 || 1684442372.35422 || DEBUG || len texts = 19, 19
+2023-05-19 00:39:54 || 232540084 || 1684442394.795689 || DEBUG || message = {"message_id": 1733, "from": {"id": 232540084, "is_bot": false, "first_name": "P", "username": "gdkps", "language_code": "en"}, "chat": {"id": 232540084, "first_name": "P", "username": "gdkps", "type": "private"}, "date": 1684442395, "text": "Start"}
+2023-05-19 00:39:55 || 232540084 || 1684442394.795689 || DEBUG || Get user = <db.models.users.Users object at 0x105491fc0>
+2023-05-19 00:39:55 || 232540084 || 1684442394.795689 || DEBUG || check have user text today = None
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || Get new text text_id = 1113
+Mary is a *librarian* in New York.
+She works in a large public library.
+Every day, she sees hundreds of people.
+She loves helping them find books.
+One of her tasks is to *organize* the books on the shelves.
+She also checks books in and out at the front desk.
+Once a week, she hosts a story time for children.
+She enjoys seeing their excited faces.
+One day, a man comes in looking for a rare book.
+Mary tries to find it in the library's system.
+But the book is not available.
+She decides to help the man *order* it from another library.
+The man is grateful for her help.
+He comes back weeks later with a box of chocolates for Mary.
+She feels happy and appreciated.
+Despite the challenges, Mary loves her job.
+She believes that libraries are important for communities.
+She continues to serve her community with dedication and a smile.
+Мэри - *библиотекарь* в Нью-Йорке.
+Она работает в большой публичной библиотеке.
+Каждый день к ней приходят сотни людей.
+Ей нравится помогать им находить книги.
+Одна из ее задач - *организовывать* книги на полках.
+Она также проверяет книги на входе и выходе на стойке регистрации.
+Раз в неделю она устраивает сказку для детей.
+Ей нравится видеть их радостные лица.
+Однажды в библиотеку приходит мужчина, который ищет редкую книгу.
+Мэри пытается найти ее в библиотечной системе.
+Но книги нет в наличии.
+Она решает помочь мужчине *заказать* ее в другой библиотеке.
+Мужчина благодарен ей за помощь.
+Через несколько недель он возвращается с коробкой конфет для Мэри.
+Она чувствует себя счастливой и благодарной.
+Несмотря на трудности, Мэри любит свою работу.
+Она верит, что библиотеки важны для общества.
+Она продолжает служить своему обществу с преданностью и улыбкой.
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || Split sentences
+['Mary is a *librarian* in New York.', 'She works in a large public library.', 'Every day, she sees hundreds of people.', 'She loves helping them find books.', 'One of her tasks is to *organize* the books on the shelves.', 'She also checks books in and out at the front desk.', 'Once a week, she hosts a story time for children.', 'She enjoys seeing their excited faces.', 'One day, a man comes in looking for a rare book.', "Mary tries to find it in the library's system.", 'But the book is not available.', 'She decides to help the man *order* it from another library.', 'The man is grateful for her help.', 'He comes back weeks later with a box of chocolates for Mary.', 'She feels happy and appreciated.', 'Despite the challenges, Mary loves her job.', 'She believes that libraries are important for communities.', 'She continues to serve her community with dedication and a smile.']
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || 
+Split translate sentences
+['Мэри - *библиотекарь* в Нью-Йорке.', 'Она работает в большой публичной библиотеке.', 'Каждый день к ней приходят сотни людей.', 'Ей нравится помогать им находить книги.', 'Одна из ее задач - *организовывать* книги на полках.', 'Она также проверяет книги на входе и выходе на стойке регистрации.', 'Раз в неделю она устраивает сказку для детей.', 'Ей нравится видеть их радостные лица.', 'Однажды в библиотеку приходит мужчина, который ищет редкую книгу.', 'Мэри пытается найти ее в библиотечной системе.', 'Но книги нет в наличии.', 'Она решает помочь мужчине *заказать* ее в другой библиотеке.', 'Мужчина благодарен ей за помощь.', 'Через несколько недель он возвращается с коробкой конфет для Мэри.', 'Она чувствует себя счастливой и благодарной.', 'Несмотря на трудности, Мэри любит свою работу.', 'Она верит, что библиотеки важны для общества.', 'Она продолжает служить своему обществу с преданностью и улыбкой.']
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || len texts = 18, 18
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || List sentences and translate:
+[('Mary is a *librarian* in New York. She works in a large public library.', 'Мэри - *библиотекарь* в Нью-Йорке. Она работает в большой публичной библиотеке.'), ('She loves helping them find books.', 'Ей нравится помогать им находить книги.'), ('She also checks books in and out at the front desk.', 'Она также проверяет книги на входе и выходе на стойке регистрации.'), ('She enjoys seeing their excited faces.', 'Ей нравится видеть их радостные лица.'), ("Mary tries to find it in the library's system. But the book is not available.", 'Мэри пытается найти ее в библиотечной системе. Но книги нет в наличии.'), ('The man is grateful for her help.', 'Мужчина благодарен ей за помощь.'), ('She feels happy and appreciated. Despite the challenges, Mary loves her job.', 'Она чувствует себя счастливой и благодарной. Несмотря на трудности, Мэри любит свою работу.'), ('She continues to serve her community with dedication and a smile.', 'Она продолжает служить своему обществу с преданностью и улыбкой.')]
+2023-05-19 00:39:56 || 232540084 || 1684442394.795689 || DEBUG || current sentence
+('Mary is a *librarian* in New York. She works in a large public library.', 'Мэри - *библиотекарь* в Нью-Йорке. Она работает в большой публичной библиотеке.')

@@ -32,29 +32,29 @@ class SetStateMiddleware(BaseMiddleware):
         """Set state for message."""
         self._message_text = message.text
         self._telegram_id = message.chat.id
-        await self._get_current_state()
-        await self.set_state_data(message.from_user.id)
+        await self._get_current_state(user=message.from_user.id)
+        await self.set_state_data()
 
     async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
         """Set state for callback_query."""
         self._message_text = callback_query.data
         self._telegram_id = callback_query.message.chat.id
-        await self._get_current_state()
-        await self.set_state_data(callback_query.from_user.id)
+        await self._get_current_state(user=callback_query.from_user.id)
+        await self.set_state_data()
 
-    async def set_state_data(self, user) -> None:
-
-        storage = self.dispatcher.storage
-        fsm_context = FSMContext(storage=storage, chat=self._telegram_id, user=user)
-        self._current_data = await fsm_context.get_data()
-        logger.debug(f'Current state data: {self._current_data}')
+    async def set_state_data(self) -> None:
 
         if self._telegram_user:
-            await fsm_context.set_data(data={'user': self._telegram_user})
+            await self._fsm_context.set_data(data={'user': self._telegram_user})
 
-        await fsm_context.set_state(state=self._state)
+        await self._fsm_context.set_state(state=self._state)
 
-    async def _get_current_state(self) -> None:
+    async def _get_current_state(self, user) -> None:
+        storage = self.dispatcher.storage
+        self._fsm_context = FSMContext(storage=storage, chat=self._telegram_id, user=user)
+        self._current_data = await self._fsm_context.get_data()
+        logger.debug(f'Current state data: {self._current_data}')
+
         url_get_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_id}'
 
         async with http_client() as client:
