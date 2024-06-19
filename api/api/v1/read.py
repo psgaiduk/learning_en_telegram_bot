@@ -391,6 +391,9 @@ class ReadBookService:
             word_info['correct_answers'] = words_history.get('correct_answers', 0)
             word_info['incorrect_answers'] = words_history.get('incorrect_answers', 0)
             word_info['correct_answers_in_row'] = words_history.get('correct_answers_in_row', 0)
+            word_info['increase_factor'] = words_history.get('increase_factor', 0)
+            word_info['interval_repeat'] = words_history.get('interval_repeat', 0)
+            word_info['repeat_datetime'] = words_history.get('repeat_datetime', datetime.now())
 
             if word_info and is_known_word is False:
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
