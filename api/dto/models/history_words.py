@@ -37,3 +37,6 @@ class HistoryWordModelForReadDTO(BaseModel):
     correct_answers: Optional[int]
     incorrect_answers: Optional[int]
     correct_answers_in_row: Optional[int]
+    increase_factor: Optional[float]
+    interval_repeat: Optional[int]
+    repeat_datetime: Optional[datetime]
