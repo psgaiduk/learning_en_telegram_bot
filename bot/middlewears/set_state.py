@@ -172,6 +172,7 @@ class SetStateMiddleware(BaseMiddleware):
             if response_status != HTTPStatus.OK:
                 return State.error.value
             new_sentence = response['detail']
+            logger.debug(f'new sentence = {new_sentence}')
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
             if self._state == State.check_answer_time.value:
                 return State.check_answer_time.value
