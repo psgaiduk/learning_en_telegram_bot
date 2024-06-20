@@ -1,4 +1,7 @@
+from typing import Union
+
 from aiogram.types import (
+    CallbackQuery,
     Message,
     ParseMode,
     InlineKeyboardMarkup,
@@ -64,3 +67,11 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
         parse_mode=ParseMode.HTML,
         reply_markup=inline_keyboard,
     )
+
+
+@dispatcher.message_handler(state=State.start_learn_words.value)
+@dispatcher.callback_query_handler(state=State.start_learn_words.value)
+async def handle_error_start_learn_words(message_data: Union[CallbackQuery, Message]) -> None:
+    """Handle start learn words for other data."""
+    message_text = 'Нужно нажать по кнопке I remember или I don\'t remember'
+    await bot.send_message(chat_id=message_data.from_user.id, text=message_text)
