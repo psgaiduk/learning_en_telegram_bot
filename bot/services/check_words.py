@@ -67,7 +67,6 @@ class CheckWordsService:
             url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
         )
 
-
     async def _send_message(self) -> None:
         inline_keyboard = InlineKeyboardMarkup()
         inline_keyboard.add(InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{self._first_word.word_id}'))
