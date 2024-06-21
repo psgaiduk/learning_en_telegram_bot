@@ -7,7 +7,7 @@ from unittest.mock import ANY, AsyncMock, patch
 from bot import bot
 from choices import State
 from services import CheckWordsService
-from tests.fixtures import *
+from tests.fixtures import *  # noqa: F401, F403
 
 
 class TestCheckWordsService:
@@ -22,7 +22,7 @@ class TestCheckWordsService:
     @mark.asyncio
     async def test_do_all_true(self):
         service = CheckWordsService(state=self._state, start_text_message='')
-        
+
         mock_get_user = AsyncMock(return_value=None)
         service._get_user = mock_get_user
         service._telegram_user = deepcopy(self._telegram_user)
@@ -35,7 +35,7 @@ class TestCheckWordsService:
 
         mock_send_message = AsyncMock(return_value=None)
         service._send_message = mock_send_message
-        
+
         await service.do()
 
         mock_get_user.assert_called_once()
@@ -93,7 +93,7 @@ class TestCheckWordsService:
         mock_update_user.assert_called_once()
         mock_update_sentence.assert_called_once()
         mock_send_message.assert_not_called()
-    
+
     @mark.asyncio
     async def test_get_user(self):
         service = CheckWordsService(state=self._state, start_text_message='')
