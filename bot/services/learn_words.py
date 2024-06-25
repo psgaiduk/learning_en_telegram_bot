@@ -19,7 +19,7 @@ from loguru import logger
 from bot import bot
 from choices import EnglishLevels, State
 from dto import TelegramUserDTOModel, WordDTOModel
-from functions import update_data_by_api
+from functions import send_message_learn_word, update_data_by_api
 
 
 class LearnWordsService:
@@ -45,6 +45,9 @@ class LearnWordsService:
                 chat_id=self.message.from_user.id,
                 text='Что-то пошло не так, попробуй ещё раз',
             )
+
+        if self.telegram_user.learn_words:
+            await send_message_learn_word(word=self.telegram_user.learn_words[0], telegram_id=self.telegram_user.telegram_id)
 
     async def _get_first_word(self) -> None:
         self.first_word = self.telegram_user.learn_words.pop(0)
