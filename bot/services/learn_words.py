@@ -47,7 +47,7 @@ class LearnWordsService:
             )
 
     async def _get_first_word(self) -> None:
-        self.first_word = self.telegram_user.learn_words[0]
+        self.first_word = self.telegram_user.learn_words.pop(0)
         logger.debug(f'first word = {self.first_word},{self.message}')
 
     async def _update_learn_word(self) -> None:
