@@ -40,11 +40,11 @@ class LearnWordsService:
 
         await self._get_first_word()
         is_update = await self._update_learn_word()
-
-        await bot.send_message(
-            chat_id=self.message.from_user.id,
-            text='learn words',
-        )
+        if not is_update:
+            return await bot.send_message(
+                chat_id=self.message.from_user.id,
+                text='Что-то пошло не так, попробуй ещё раз',
+            )
 
     async def _get_first_word(self) -> None:
         self.first_word = self.telegram_user.learn_words[0]
