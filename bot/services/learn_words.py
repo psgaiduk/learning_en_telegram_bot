@@ -46,8 +46,10 @@ class LearnWordsService:
                 text='Что-то пошло не так, попробуй ещё раз',
             )
 
+        await self._state.set_data(data={'user': self._telegram_user})  # Обновляем состояние без первого слова в learn_words
         if self.telegram_user.learn_words:
             await send_message_learn_word(word=self.telegram_user.learn_words[0], telegram_id=self.telegram_user.telegram_id)
+            return
 
     async def _get_first_word(self) -> None:
         self.first_word = self.telegram_user.learn_words.pop(0)
