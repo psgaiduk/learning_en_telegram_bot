@@ -7,7 +7,14 @@ from dto import WordDTOModel
 from functions.update_data_by_api import update_data_by_api
 
 
-async def update_learn_word(message: CallbackQuery, word: WordDTOModel):
+async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
+    """
+    Function for update learn word.
+
+    :params message: callback from telegram.
+    :params word: learn word.
+    :return: status update learn word.
+    """
     if 'yes' in message.data:
         word.increase_factor += 0.05
         word.interval_repeat *= 0.05
