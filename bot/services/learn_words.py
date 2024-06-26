@@ -1,25 +1,10 @@
-from datetime import datetime, timedelta
-from os import path
-from random import choices, randint
-from typing import Union
-
-from aiogram.types import (
-    CallbackQuery,
-    Message,
-    ParseMode,
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    ReplyKeyboardRemove,
-)
+from aiogram.types import CallbackQuery
 from aiogram.dispatcher.storage import FSMContext
 from loguru import logger
 
 from bot import bot
-from choices import EnglishLevels, State
 from dto import TelegramUserDTOModel, WordDTOModel
-from functions import send_message_learn_word, update_data_by_api
+from functions import send_message_learn_word, update_learn_word
 
 
 class LearnWordsService:
@@ -39,7 +24,7 @@ class LearnWordsService:
         """Start work service."""
 
         await self._get_first_word()
-        is_update = await self._update_learn_word()
+        is_update = await update_learn_word(message=self.message, word=self.first_word)
         if not is_update:
             return await bot.send_message(
                 chat_id=self.message.from_user.id,
@@ -53,36 +38,3 @@ class LearnWordsService:
     async def _get_first_word(self) -> None:
         self.first_word = self.telegram_user.learn_words.pop(0)
         logger.debug(f'first word = {self.first_word},{self.message}')
-
-    async def _update_learn_word(self) -> None:
-        if 'yes' in self.message.data:
-            self.first_word.increase_factor += 0.05
-            self.first_word.interval_repeat *= 0.05
-            if self.first_word.increase_factor > 2:
-                self.first_word.increase_factor = 2
-        else:
-            self.first_word.increase_factor -= 0.1
-            self.interval_repeat = 60
-            if self.first_word.increase_factor < 1.1:
-                self.first_word.increase_factor = 1.1
-
-        self.first_word.repeat_datetime = datetime.now() + timedelta(seconds=self.first_word.interval_repeat)
-
-        data_for_update_word = {
-            'telegram_user_id': self.message.from_user.id,
-            'word_id': self.first_word.word_id,
-            'increase_factor': self.first_word.increase_factor,
-            'interval_repeat': self.first_word.interval_repeat,
-            'repeat_datetime': self.first_word.repeat_datetime,
-        }
-
-        logger.debug(f'data_for_update_word: {data_for_update_word}')
-
-        is_update_history = await update_data_by_api(
-            telegram_id=self.message.from_user.id,
-            params_for_update=data_for_update_word,
-            url_for_update='history/words',
-        )
-
-        logger.debug(f'is_update_history: {is_update_history}')
-        return is_update_history
