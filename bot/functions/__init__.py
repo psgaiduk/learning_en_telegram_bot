@@ -5,3 +5,4 @@ from functions.save_update_word_history import save_word_history
 from functions.send_and_delete_message import delete_message, send_message_and_delete
 from functions.send_message_learn_word import send_message_learn_word
 from functions.update_data_by_api import update_data_by_api
+from functions.update_learn_word import update_learn_word
