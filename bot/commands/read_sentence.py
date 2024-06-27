@@ -12,7 +12,8 @@ from aiogram.dispatcher.storage import FSMContext
 
 from bot import bot, dispatcher
 from choices import State
-from functions import delete_message
+from dto import TelegramUserDTOModel
+from functions import delete_message, update_learn_word
 from services import ReadSentenceService
 
 
@@ -21,6 +22,22 @@ from services import ReadSentenceService
 async def handle_read_sentence(message: Union[CallbackQuery, Message], state: FSMContext) -> None:
     """Handle check words after push button read."""
     await ReadSentenceService(message=message, state=state).do()
+
+
+@dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('learn_word_'), state=State.read_book.value)
+async def handle_read_sentence_after_learn_words(message: Union[CallbackQuery, Message], state: FSMContext) -> None:
+    """Handle read sentence after push button learn words."""
+    data = await state.get_data()
+    telegram_user: TelegramUserDTOModel = data['user']
+    first_word = telegram_user.learn_words.pop(0)
+    is_update = await update_learn_word(message=message, word=first_word)
+    if is_update:
+        await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
+        return await ReadSentenceService(message=message, state=state).do()
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text='Что-то пошло не так, попробуй ещё раз',
+    )
 
 
 @dispatcher.message_handler(state=State.read_book.value)

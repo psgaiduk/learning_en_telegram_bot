@@ -15,6 +15,11 @@ from commands.check_words import (
     handle_check_word_click_known,
     handle_check_words_other_data,
 )
-from commands.read_sentence import handle_read_sentence, handle_read_sentence_other_data, handle_end_read_sentence_today
+from commands.read_sentence import (
+    handle_read_sentence,
+    handle_read_sentence_after_learn_words,
+    handle_read_sentence_other_data,
+    handle_end_read_sentence_today,
+)
 from commands.learn_words import handle_error_learn_words, handle_learn_words
 from commands.start_lean_words import handle_error_start_learn_words, handle_start_lean_words
