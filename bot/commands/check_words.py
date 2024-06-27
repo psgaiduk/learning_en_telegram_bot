@@ -7,7 +7,8 @@ from loguru import logger
 
 from bot import bot, dispatcher
 from choices import State
-from functions import delete_message, send_message_and_delete, save_word_history
+from dto import TelegramUserDTOModel
+from functions import delete_message, send_message_and_delete, save_word_history, update_learn_word
 from services import CheckWordsService
 
 
@@ -21,6 +22,23 @@ async def handle_check_words_after_read(message: Message, state: FSMContext) -> 
     await CheckWordsService(state=state, start_text_message='').do()
 
     await delete_message(message=message)
+
+
+@dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('learn_word_'), state=State.check_words.value)
+async def handle_check_words_after_learn_words(message: CallbackQuery, state: FSMContext) -> None:
+    """Handle check answer about time of learn words."""
+    data = await state.get_data()
+    telegram_user: TelegramUserDTOModel = data['user']
+    first_word = telegram_user.learn_words.pop(0)
+    is_update = await update_learn_word(message=message, word=first_word)
+    if is_update:
+        await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
+        await CheckWordsService(state=state, start_text_message='').do()
+        return await delete_message(message=message)
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text='Что-то пошло не так, попробуй ещё раз',
+    )
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('know_word_'), state=State.check_words.value)

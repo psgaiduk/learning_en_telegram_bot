@@ -6,7 +6,7 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
-from functions import delete_message, update_learn_word, update_data_by_api
+from functions import delete_message, update_data_by_api
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and '_answer_time' in c.data, state=State.check_answer_time.value)
@@ -60,22 +60,6 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext) ->
         text=''.join(message_text),
         parse_mode=ParseMode.HTML,
         reply_markup=keyboard,
-    )
-
-
-@dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('learn_word_'), state=State.check_answer_time.value)
-async def handle_check_answer_time_after_learn_words(message: CallbackQuery, state: FSMContext) -> None:
-    """Handle check answer about time of learn words."""
-    data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
-    first_word = telegram_user.learn_words.pop(0)
-    is_update = await update_learn_word(message=message, word=first_word)
-    if is_update:
-        await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
-        return await handle_check_answer_time(message=message, state=state)
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text='Что-то пошло не так, попробуй ещё раз',
     )
 
 
