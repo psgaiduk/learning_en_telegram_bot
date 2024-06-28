@@ -8,7 +8,7 @@ from loguru import logger
 
 from choices import State
 from context_managers import http_client
-from dto import TelegramUserDTOModel, NewSentenceDTOModel
+from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from functions import update_data_by_api
 from settings import settings
 
@@ -156,7 +156,7 @@ class SetStateMiddleware(BaseMiddleware):
                 return await self.work_with_read_status()
 
             logger.debug('User has words for learn, add them to user.')
-            self._telegram_user.learn_words = words_for_learn
+            self._telegram_user.learn_words = [WordDTOModel(**word) for word in words_for_learn]
             logger.debug(f'user learn_words: {self._telegram_user.learn_words}')
 
         logger.debug(f'User already learned words: {self._telegram_user.learn_words}')
