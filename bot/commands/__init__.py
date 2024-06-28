@@ -20,6 +20,7 @@ from commands.read_sentence import (
     handle_read_sentence_after_learn_words,
     handle_read_sentence_other_data,
     handle_end_read_sentence_today,
+    handle_end_read_sentence_today_after_learn_words,
 )
 from commands.learn_words import handle_error_learn_words, handle_learn_words
 from commands.start_lean_words import handle_error_start_learn_words, handle_start_lean_words

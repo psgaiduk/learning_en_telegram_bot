@@ -50,13 +50,32 @@ async def handle_read_sentence_other_data(message: Union[CallbackQuery, Message]
     await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 
+@dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('learn_word_'), state=State.read_book_end.value)
+async def handle_end_read_sentence_today_after_learn_words(message: CallbackQuery, state: FSMContext) -> None:
+    """Handle if user read all sentences today after push button learn word."""
+    data = await state.get_data()
+    telegram_user: TelegramUserDTOModel = data['user']
+    first_word = telegram_user.learn_words.pop(0)
+    is_update = await update_learn_word(message=message, word=first_word)
+    if is_update:
+        message_text = 'Вы прочитали все предложения на сегодня. Приходите завтра.'
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(KeyboardButton(text='Read'))
+
+        await bot.send_message(chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+        return await delete_message(message=message)
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text='Что-то пошло не так, попробуй ещё раз',
+    )
+
+
 @dispatcher.message_handler(state=State.read_book_end.value)
 @dispatcher.callback_query_handler(state=State.read_book_end.value)
 async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message]) -> None:
     """Handle if user read all sentences today."""
 
     message_text = 'Вы прочитали все предложения на сегодня. Приходите завтра.'
-
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text='Read'))
 
