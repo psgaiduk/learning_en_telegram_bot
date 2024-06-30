@@ -69,6 +69,9 @@ class SetStateMiddleware(BaseMiddleware):
                 current_user: TelegramUserDTOModel = self._current_data.get('user')
                 if current_user and current_user.new_sentence:
                     self._telegram_user.new_sentence = current_user.new_sentence
+                if current_user and current_user.learn_words:
+                    self._telegram_user.learn_words = current_user.learn_words
+                logger.debug(f'update telegram_user = {self._telegram_user}')
                 await self.get_real_state()
             else:
                 self._state = State.error.value
