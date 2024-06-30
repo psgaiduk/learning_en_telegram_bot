@@ -23,4 +23,4 @@ class TelegramUserDTOModel(BaseModel):
     hero_level: Optional[HeroLevelDTOModel]
 
     new_sentence: Optional[NewSentenceDTOModel]
-    learn_words: Optional[list[WordDTOModel]] = []
+    learn_words: list[WordDTOModel] = []
