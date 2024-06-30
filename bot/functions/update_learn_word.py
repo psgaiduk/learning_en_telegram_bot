@@ -33,7 +33,7 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
         'word_id': word.word_id,
         'increase_factor': word.increase_factor,
         'interval_repeat': word.interval_repeat,
-        'repeat_datetime': word.repeat_datetime,
+        'repeat_datetime': f'{word.repeat_datetime}',
     }
 
     logger.debug(f'data_for_update_word: {data_for_update_word}')
