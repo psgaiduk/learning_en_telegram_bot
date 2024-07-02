@@ -15,11 +15,12 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     :params word: learn word.
     :return: status update learn word.
     """
+    logger.debug(f'word = {word}')
     if 'yes' in message.data:
         word.increase_factor += 0.05
-        word.interval_repeat *= 0.05
         if word.increase_factor > 2:
             word.increase_factor = 2
+        word.interval_repeat *= word.increase_factor
     else:
         word.increase_factor -= 0.1
         word.interval_repeat = 60
