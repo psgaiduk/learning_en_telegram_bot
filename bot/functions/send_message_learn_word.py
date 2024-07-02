@@ -1,4 +1,8 @@
+from typing import Union
+
 from aiogram.types import (
+    CallbackQuery,
+    Message,
     ParseMode,
     InlineKeyboardMarkup,
     InlineKeyboardButton
@@ -8,18 +12,21 @@ from loguru import logger
 
 from bot import bot
 from dto import WordDTOModel
+from functions import delete_message
 
 
-async def send_message_learn_word(word: WordDTOModel, telegram_id: int) -> None:
+async def send_message_learn_word(word: WordDTOModel, telegram_id: int, message: Union[CallbackQuery, Message]) -> None:
     """
     Send message for learn word.
 
     :params word: word by WordDTOModel.
     :params telegram_id: users telegram id.
     """
+    await delete_message(message=message)
+
     message_text = (
         f'Помните перевод слова: <b><u>{word.word}</u></b>\n'
-        f'Перевод: <tg-spoiler>{word.translation}</tg-spoiler>'
+        f'Перевод: <tg-spoiler>{word.translation.get("ru")}</tg-spoiler>'
     )
     logger.debug(f'message text = {message_text}')
 

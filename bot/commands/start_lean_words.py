@@ -47,7 +47,7 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
 
         first_word = telegram_user.learn_words[0]
         logger.debug(f'Получили первое слово = {first_word}')
-        return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id)
+        return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id, message=message)
 
     message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
     await bot.send_message(
