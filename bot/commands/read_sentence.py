@@ -29,8 +29,11 @@ async def handle_read_sentence_after_learn_words(message: Union[CallbackQuery, M
     """Handle read sentence after push button learn words."""
     data = await state.get_data()
     telegram_user: TelegramUserDTOModel = data['user']
-    first_word = telegram_user.learn_words.pop(0)
-    is_update = await update_learn_word(message=message, word=first_word)
+    if telegram_user.learn_words:
+        first_word = telegram_user.learn_words.pop(0)
+        is_update = await update_learn_word(message=message, word=first_word)
+    else:
+        is_update = True
     if is_update:
         await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
         return await ReadSentenceService(message=message, state=state).do()
@@ -55,8 +58,11 @@ async def handle_end_read_sentence_today_after_learn_words(message: CallbackQuer
     """Handle if user read all sentences today after push button learn word."""
     data = await state.get_data()
     telegram_user: TelegramUserDTOModel = data['user']
-    first_word = telegram_user.learn_words.pop(0)
-    is_update = await update_learn_word(message=message, word=first_word)
+    if telegram_user.learn_words:
+        first_word = telegram_user.learn_words.pop(0)
+        is_update = await update_learn_word(message=message, word=first_word)
+    else:
+        is_update = True
     if is_update:
         message_text = 'Вы прочитали все предложения на сегодня. Приходите завтра.'
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)

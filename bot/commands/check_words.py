@@ -29,8 +29,11 @@ async def handle_check_words_after_learn_words(message: CallbackQuery, state: FS
     """Handle check answer about time of learn words."""
     data = await state.get_data()
     telegram_user: TelegramUserDTOModel = data['user']
-    first_word = telegram_user.learn_words.pop(0)
-    is_update = await update_learn_word(message=message, word=first_word)
+    if telegram_user.learn_words:
+        first_word = telegram_user.learn_words.pop(0)
+        is_update = await update_learn_word(message=message, word=first_word)
+    else:
+        is_update = True
     if is_update:
         await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
         await CheckWordsService(state=state, start_text_message='').do()
