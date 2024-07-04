@@ -23,10 +23,12 @@ async def send_message_learn_word(word: WordDTOModel, telegram_id: int, message:
     :params telegram_id: users telegram id.
     """
     await delete_message(message=message)
+    translate_word = word.translation.get("ru")
+    translate_word += (30 - len(translate_word)) * ' ' + '.'
 
     message_text = (
-        f'Помните перевод слова: <b><u>{word.word}</u></b>\n'
-        f'Перевод: <tg-spoiler>{word.translation.get("ru")}</tg-spoiler>'
+        f'Помните перевод слова: <b><u>{word.word}</u></b>\n\n'
+        f'Перевод: <tg-spoiler>{translate_word}</tg-spoiler>'
     )
     logger.debug(f'message text = {message_text}')
 
