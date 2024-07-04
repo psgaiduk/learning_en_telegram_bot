@@ -39,7 +39,7 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext) ->
 
     params_for_update_user = {
         'telegram_id': message.from_user.id,
-        'stage': State.read_book.value,
+        'stage': State.start_learn_words.value,
     }
 
     is_update = await update_data_by_api(
