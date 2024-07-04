@@ -9,7 +9,7 @@ async def save_word_history(callback_query):
     word_id = int(callback_query.data.split('_')[-1])
     if 'know_word_true' in callback_query.data:
         is_known = True
-        start_text_message = 'Отлично! Больше мы его тебе не будем показывать. Давай продолжим.\n\n'
+        start_text_message = 'Отлично! Давай продолжим.\n\n'
 
     data_for_update_word = {
         'telegram_user_id': callback_query.from_user.id,
