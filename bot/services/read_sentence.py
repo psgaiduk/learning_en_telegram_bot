@@ -177,10 +177,7 @@ class ReadSentenceService:
         )
 
     async def _send_clue(self) -> None:
-        text_clue = 'Clue'
-        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
-            text_clue = 'Подсказка'
-        clue_text = f'{text_clue}:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
+        clue_text = f'Подсказка:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=clue_text,
@@ -189,10 +186,7 @@ class ReadSentenceService:
         )
 
     async def _send_translate(self) -> None:
-        text_translate = 'Translate'
-        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
-            text_translate = 'Перевод'
-        translate_text = f'{text_translate}:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+        translate_text = f'Перевод:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=translate_text,
