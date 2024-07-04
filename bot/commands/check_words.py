@@ -62,5 +62,6 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
 @dispatcher.message_handler(state=State.check_words.value)
 async def handle_check_words_other_data(message_data: Union[CallbackQuery, Message]) -> None:
     """Handle check words for other data."""
-    message_text = 'Нужно нажать по кнопке I know или I don\'t know'
+    message_text = 'Нужно нажать по кнопке "Знаю" это слово или "Не знаю"'
+
     await bot.send_message(chat_id=message_data.from_user.id, text=message_text)
