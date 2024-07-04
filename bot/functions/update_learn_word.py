@@ -16,7 +16,10 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     :return: status update learn word.
     """
     logger.debug(f'word = {word}')
+    word.count_view += 1
     if 'yes' in message.data:
+        word.correct_answers += 1
+        word.correct_answers_in_row += 1
         word.increase_factor += 0.05
         if word.increase_factor > 2:
             word.increase_factor = 2
@@ -24,6 +27,8 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     else:
         word.increase_factor -= 0.1
         word.interval_repeat = 60
+        word.correct_answers_in_row = 0
+        word.incorrect_answers += 1
         if word.increase_factor < 1.1:
             word.increase_factor = 1.1
 
@@ -35,6 +40,9 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
         'increase_factor': word.increase_factor,
         'interval_repeat': word.interval_repeat,
         'repeat_datetime': f'{word.repeat_datetime}',
+        'count_view': word.count_view,
+        'correct_answers_in_row': word.correct_answers_in_row,
+        'incorrect_answers': word.incorrect_answers,
     }
 
     logger.debug(f'data_for_update_word: {data_for_update_word}')
