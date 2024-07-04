@@ -35,7 +35,7 @@ class ReadSentenceService:
 
     async def do(self) -> None:
 
-        if isinstance(self._message, CallbackQuery):
+        if isinstance(self._message, CallbackQuery) and 'know_word_' in self._message.data:
             await save_word_history(callback_query=self._message)
 
         await self._get_telegram_user()
@@ -74,7 +74,7 @@ class ReadSentenceService:
             self._message_text = f'{self._sentence_text}'
 
     async def _send_message_or_tenses(self) -> None:
-        if randint(1, 6) == 1:
+        if randint(1, 1) == 1:
             await self._send_tenses()
         else:
             await self._send_message()
@@ -177,7 +177,10 @@ class ReadSentenceService:
         )
 
     async def _send_clue(self) -> None:
-        clue_text = f'Clue:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
+        text_clue = 'Clue'
+        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
+            text_clue = 'Подсказка'
+        clue_text = f'{text_clue}:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=clue_text,
@@ -186,7 +189,10 @@ class ReadSentenceService:
         )
 
     async def _send_translate(self) -> None:
-        translate_text = f'Translate:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+        text_translate = 'Translate'
+        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
+            text_translate = 'Перевод'
+        translate_text = f'{text_translate}:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=translate_text,
