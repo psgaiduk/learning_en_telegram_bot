@@ -19,5 +19,5 @@ async def handle_learn_words(message: types.Message, state: FSMContext) -> None:
 @dispatcher.callback_query_handler(state=State.learn_words.value)
 async def handle_error_learn_words(message_data: Union[CallbackQuery, Message]) -> None:
     """Handle learn words for other data."""
-    message_text = 'Нужно нажать по кнопке I remember или I don\'t remember'
+    message_text = 'Нужно нажать по кнопке "Помню" или "Не помню"'
     await bot.send_message(chat_id=message_data.from_user.id, text=message_text)
