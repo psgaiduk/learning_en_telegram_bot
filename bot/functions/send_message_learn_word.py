@@ -33,8 +33,8 @@ async def send_message_learn_word(word: WordDTOModel, telegram_id: int, message:
     logger.debug(f'message text = {message_text}')
 
     inline_keyboard = InlineKeyboardMarkup()
-    inline_keyboard.add(InlineKeyboardButton(text='I remember', callback_data='learn_word_yes'))
-    inline_keyboard.add(InlineKeyboardButton(text='I don\'t remember', callback_data='learn_word_no'))
+    inline_keyboard.add(InlineKeyboardButton(text='Помню', callback_data='learn_word_yes'))
+    inline_keyboard.add(InlineKeyboardButton(text='Не помню', callback_data='learn_word_no'))
     logger.debug(f'keyboard = {inline_keyboard}')
 
     await bot.send_message(
