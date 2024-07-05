@@ -69,8 +69,8 @@ class CheckWordsService:
 
     async def _send_message(self) -> None:
         inline_keyboard = InlineKeyboardMarkup()
-        inline_keyboard.add(InlineKeyboardButton(text='I know', callback_data=f'know_word_true_{self._first_word.word_id}'))
-        inline_keyboard.add(InlineKeyboardButton(text='I don\'t know', callback_data=f'know_word_false_{self._first_word.word_id}'))
+        inline_keyboard.add(InlineKeyboardButton(text='Знаю', callback_data=f'know_word_true_{self._first_word.word_id}'))
+        inline_keyboard.add(InlineKeyboardButton(text='Не знаю', callback_data=f'know_word_false_{self._first_word.word_id}'))
 
-        text_message = f'{self._start_text_message}Слово: {self._first_word.word}\nПеревод: {self._first_word.translation["ru"]}'
+        text_message = f'{self._start_text_message}Ты знаешь это слово?\n\nСлово: {self._first_word.word}\nПеревод: {self._first_word.translation["ru"]}'
         await bot.send_message(chat_id=self._telegram_user.telegram_id, text=text_message, reply_markup=inline_keyboard)
