@@ -36,6 +36,7 @@ class ReadSentenceService:
     async def do(self) -> None:
 
         if isinstance(self._message, CallbackQuery) and 'know_word_' in self._message.data:
+            await delete_message(message=self._message)
             await save_word_history(callback_query=self._message)
 
         await self._get_telegram_user()
