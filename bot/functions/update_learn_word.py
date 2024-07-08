@@ -20,12 +20,16 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     if 'yes' in message.data:
         word.correct_answers += 1
         word.correct_answers_in_row += 1
-        word.increase_factor += 0.05
-        if word.increase_factor > 2:
-            word.increase_factor = 2
-        word.interval_repeat *= word.increase_factor
+        word.increase_factor += 1
+        if word.increase_factor > 10:
+            word.increase_factor = 10
+
+        if word.interval_repeat == 60:
+            word.interval_repeat = 3600
+        else:
+            word.interval_repeat *= word.increase_factor
     else:
-        word.increase_factor -= 0.1
+        word.increase_factor -= 2
         word.interval_repeat = 60
         word.correct_answers_in_row = 0
         word.incorrect_answers += 1
