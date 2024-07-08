@@ -1,20 +1,28 @@
+from datetime import datetime, timedelta
+
 from loguru import logger
 
 from functions.update_data_by_api import update_data_by_api
 
 
 async def save_word_history(callback_query):
-    is_known = False
     start_text_message = 'Хорошо. Повторим потом ещё раз.\n\n'
     word_id = int(callback_query.data.split('_')[-1])
+    increase_factor = 2
+    interval_repeat = 60
     if 'know_word_true' in callback_query.data:
-        is_known = True
+        interval_repeat = 3600
         start_text_message = 'Отлично! Давай продолжим.\n\n'
+
+    repeat_datetime = datetime.now() + timedelta(seconds=interval_repeat)
 
     data_for_update_word = {
         'telegram_user_id': callback_query.from_user.id,
         'word_id': word_id,
-        'is_known': is_known,
+        'is_known': True,
+        'increase_factor': increase_factor,
+        'interval_repeat': interval_repeat,
+        'repeat_datetime': f'{repeat_datetime}',
     }
 
     logger.debug(f'data_for_update_word: {data_for_update_word}')
