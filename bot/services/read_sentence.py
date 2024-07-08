@@ -55,9 +55,6 @@ class ReadSentenceService:
 
     async def _get_sentence(self) -> None:
         self._sentence_text = self._telegram_user.new_sentence.text
-        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
-            self._sentence_text = self._telegram_user.new_sentence.text_with_new_words
-
         self._sentence_translation = self._telegram_user.new_sentence.translation.get('ru')
 
     async def _create_keyboard(self) -> None:
@@ -75,7 +72,7 @@ class ReadSentenceService:
             self._message_text = f'{self._sentence_text}'
 
     async def _send_message_or_tenses(self) -> None:
-        if randint(1, 1) == 1:
+        if randint(1, 5) == 1:
             await self._send_tenses()
         else:
             await self._send_message()
@@ -178,7 +175,12 @@ class ReadSentenceService:
         )
 
     async def _send_clue(self) -> None:
-        clue_text = f'Подсказка:\n\n<tg-spoiler>{self._telegram_user.new_sentence.text_with_words}</tg-spoiler>'
+
+        clue_text = self._telegram_user.new_sentence.text_with_words
+        if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
+            clue_text = self._telegram_user.new_sentence.text_with_new_words
+
+        clue_text = f'Подсказка:\n\n<tg-spoiler>{clue_text}</tg-spoiler>'
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=clue_text,
