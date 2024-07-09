@@ -8,10 +8,10 @@ from functions.update_data_by_api import update_data_by_api
 async def save_word_history(callback_query):
     start_text_message = 'Хорошо. Повторим потом ещё раз.\n\n'
     word_id = int(callback_query.data.split('_')[-1])
-    increase_factor = 2
-    interval_repeat = 60
+    increase_factor = 2.5
+    interval_repeat = 1
     if 'know_word_true' in callback_query.data:
-        interval_repeat = 3600
+        interval_repeat = 86400
         start_text_message = 'Отлично! Давай продолжим.\n\n'
 
     repeat_datetime = datetime.now() + timedelta(seconds=interval_repeat)
