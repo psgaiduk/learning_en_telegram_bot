@@ -89,7 +89,7 @@ def create_words_in_db(english_words: set) -> None:
         translate_word = translate_words[index_word].lower()
         logger.debug(f'English word {word} - {translate_word}')
         type_word_id = TypeWordId.word.value
-        if ' ' in word:
+        if ' ' in word and not word.startswith('to '):
             type_word_id = TypeWordId.phrase_verb.value
         WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
 
