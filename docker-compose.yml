@@ -12,7 +12,7 @@ services:
     build: ./bot
     volumes:
       - ./bot:/app
-      - ./static/audio:/app/static/audio
+      - ./static:/app/static
     command: ["python", "-u", "./main.py"]
     depends_on:
       - db
@@ -23,7 +23,7 @@ services:
     build: ./admin
     volumes:
       - ./admin:/app
-      - ./static/audio:/app/static/audio
+      - ./static:/app/static
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     environment:
       - FLASK_ENV=development
