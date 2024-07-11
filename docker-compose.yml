@@ -12,7 +12,7 @@ services:
     build: ./bot
     volumes:
       - ./bot:/app
-      - shared-data:/app/static/audio
+      - ./static/audio:/app/static/audio
     command: ["python", "-u", "./main.py"]
     depends_on:
       - db
@@ -23,7 +23,7 @@ services:
     build: ./admin
     volumes:
       - ./admin:/app
-      - shared-data:/app/static/audio
+      - ./static/audio:/app/static/audio
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     environment:
       - FLASK_ENV=development
@@ -67,6 +67,3 @@ services:
       - .env
     volumes:
       - ./api:/app
-
-volumes:
-  shared-data:
