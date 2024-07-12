@@ -84,6 +84,12 @@ def create_words_in_db(english_words: set) -> None:
     words_for_translate = '; '.join(new_english_words)
     translate_words = translate_text(text_on_en=words_for_translate, language='ru').split('; ')
     logger.debug(f'Translates words {translate_words}')
+    if len(translate_words) != len(new_english_words):
+        logger.debug('New attempt for translate words')
+        translate_words = []
+        for word in words_for_translate:
+            translate_words.append(translate_text(text_on_en=word, language='ru'))
+        logger.debug(f'New translates words {translate_words}')
 
     for index_word, word in enumerate(new_english_words):
         translate_word = translate_words[index_word].lower()
