@@ -50,6 +50,7 @@ services:
     build: ./admin
     volumes:
       - ./admin:/app
+      - ./static:/app/static
     command: [ "python", "manage.py", "qcluster" ]
     depends_on:
       - db
