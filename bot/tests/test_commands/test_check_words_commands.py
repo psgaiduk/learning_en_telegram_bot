@@ -22,7 +22,7 @@ class TestCheckWordsCommand:
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await handle_check_words_other_data(mock_callback)
 
-            expected_text = 'Нужно нажать по кнопке I know или I don\'t know'
+            expected_text = 'Нужно нажать по кнопке "Знаю" это слово или "Не знаю"'
 
             mock_send_message.assert_called_once_with(chat_id=chat_id, text=expected_text)
 
@@ -37,7 +37,7 @@ class TestCheckWordsCommand:
         with patch.object(bot, 'send_message', new=AsyncMock()) as mock_send_message:
             await handle_check_words_other_data(mock_message)
 
-            expected_text = 'Нужно нажать по кнопке I know или I don\'t know'
+            expected_text = 'Нужно нажать по кнопке "Знаю" это слово или "Не знаю"'
 
             mock_send_message.assert_called_once_with(chat_id=chat_id, text=expected_text)
 
