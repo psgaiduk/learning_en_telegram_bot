@@ -77,7 +77,7 @@ class TestCheckAnswerTime:
 
         mock_update_data.assert_any_call(
             telegram_id=self._chat_id,
-            params_for_update={'telegram_id': self._chat_id, 'stage': State.read_book.value},
+            params_for_update={'telegram_id': self._chat_id, 'stage': State.start_learn_words.value},
             url_for_update=f'telegram_user/{self._chat_id}',
         )
 
