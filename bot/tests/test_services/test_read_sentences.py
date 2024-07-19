@@ -29,10 +29,12 @@ class TestReadSentenceService:
         self._message = Message(id=1, chat=self._chat_id, text="Read", from_user=self._user)
         self._service = ReadSentenceService(message=self._message, state=self._state)
 
+    @mark.parametrize("message_data", ['know_word_', 'another_data'])
     @mark.asyncio
+    @patch("services.read_sentence.delete_message")
     @patch("services.read_sentence.save_word_history")
-    async def test_do_callback(self, mock_save_word_history):
-        mock_callback = CallbackQuery(id=1, chat=self._chat_id, data="test_data", from_user=self._user)
+    async def test_do_callback(self, mock_save_word_history, mock_delete_message, message_data):
+        mock_callback = CallbackQuery(id=1, chat=self._chat_id, data=message_data, from_user=self._user)
         mock_callback.from_user = self._user
         service = ReadSentenceService(message=mock_callback, state=self._state)
 
@@ -65,7 +67,13 @@ class TestReadSentenceService:
         mock_create_message_text.assert_called_once()
         mock_send_message_or_tenses.assert_called_once()
 
-        mock_save_word_history.assert_called_once_with(callback_query=mock_callback)
+        if "know_word" in message_data:
+            mock_save_word_history.assert_called_once_with(callback_query=mock_callback)
+            mock_delete_message.assert_called_once_with(message=mock_callback)
+        else:
+            mock_delete_message.assert_not_called()
+            mock_save_word_history.assert_not_called()
+
         assert service._telegram_user.new_sentence.text == ""
 
     @mark.asyncio
