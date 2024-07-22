@@ -56,6 +56,29 @@ class TestSetStateMiddleware:
         mock_get_current_state.assert_called_once_with(user=self._chat)
         mock_set_state_data.assert_called_once()
 
+    @mark.asyncio
+    async def test_on_pre_process_callback_query(self):
+        expected_message = 'test message'
+        chat = Chat(id=self._chat)
+        user = User(id=self._chat, is_bot=False, first_name="Test User")
+        mock_callback = CallbackQuery(id=1, chat=chat, data=expected_message, from_user=user)
+        mock_callback.from_user = user
+        mock_callback.message = Message(id=1, chat=chat, text=expected_message, from_user=user)
+
+        mock_get_current_state = AsyncMock(return_value=None)
+        self._service._get_current_state = mock_get_current_state
+        mock_set_state_data = AsyncMock(return_value=None)
+        self._service.set_state_data = mock_set_state_data
+
+        await self._service.on_pre_process_callback_query(callback_query=mock_callback, data={})
+
+        assert self._service._message_text == expected_message
+        assert self._service._telegram_id == self._chat
+        mock_get_current_state.assert_called_once_with(user=self._chat)
+        mock_set_state_data.assert_called_once()
+
+
+
     # @mark.parametrize('response_status, expected_state', [
     #     (HTTPStatus.NOT_FOUND, State.registration.value),
     #     (HTTPStatus.OK, 'expected_stage_from_api'),
