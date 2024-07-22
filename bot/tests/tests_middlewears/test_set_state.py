@@ -1,6 +1,6 @@
 from pytest import mark, fixture
 
-from aiogram.types import CallbackQuery, Message, User
+from aiogram.types import CallbackQuery, Chat, Message, User
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
 from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock, patch
@@ -36,10 +36,12 @@ class TestSetStateMiddleware:
         }
         self._new_sentence = sentence_with_word
 
+    @mark.asyncio
     async def test_on_pre_process_message(self):
         expected_message = 'test message'
+        chat = Chat(id=self._chat)
         user = User(id=self._chat, is_bot=False, first_name="Test User")
-        mock_message = Message(id=1, chat=self._chat, data=expected_message, from_user=user)
+        mock_message = Message(id=1, chat=chat, text=expected_message, from_user=user)
         mock_message.from_user = user
 
         mock_get_current_state = AsyncMock(return_value=None)
@@ -47,13 +49,12 @@ class TestSetStateMiddleware:
         mock_set_state_data = AsyncMock(return_value=None)
         self._service.set_state_data = mock_set_state_data
 
-        self._service.on_pre_process_message(message=mock_get_current_state)
+        await self._service.on_pre_process_message(message=mock_message, data={})
 
         assert self._service._message_text == expected_message
         assert self._service._telegram_id == self._chat
         mock_get_current_state.assert_called_once_with(user=self._chat)
         mock_set_state_data.assert_called_once()
-
 
     # @mark.parametrize('response_status, expected_state', [
     #     (HTTPStatus.NOT_FOUND, State.registration.value),
