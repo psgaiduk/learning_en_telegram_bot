@@ -77,7 +77,22 @@ class TestSetStateMiddleware:
         mock_get_current_state.assert_called_once_with(user=self._chat)
         mock_set_state_data.assert_called_once()
 
+    @mark.asyncio
+    async def test_set_state_data_with_telegram_user(self, mocker):
 
+        telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+        state = 'state'
+        self._service._telegram_user = telegram_user
+        self._service._state = state
+
+        fsm_context_mock = mocker.Mock(spec=FSMContext)
+        fsm_context_mock.set_state = mocker.AsyncMock()
+        fsm_context_mock.set_data = mocker.AsyncMock()
+        self._service._fsm_context = fsm_context_mock
+
+        await self._service.set_state_data()
+        fsm_context_mock.set_state.assert_called_once_with(state=state)
+        fsm_context_mock.set_data.assert_called_once_with(data={'user': telegram_user})
 
     # @mark.parametrize('response_status, expected_state', [
     #     (HTTPStatus.NOT_FOUND, State.registration.value),
