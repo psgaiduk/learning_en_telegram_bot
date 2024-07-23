@@ -32,15 +32,21 @@ class SetStateMiddleware(BaseMiddleware):
         """Set state for message."""
         self._message_text = message.text
         self._telegram_id = message.chat.id
-        await self._get_current_state(user=message.from_user.id)
+        await self.get_fsm_context()
+        await self._get_current_state()
         await self.set_state_data()
 
     async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict) -> None:
         """Set state for callback_query."""
         self._message_text = callback_query.data
         self._telegram_id = callback_query.message.chat.id
-        await self._get_current_state(user=callback_query.from_user.id)
+        await self.get_fsm_context()
+        await self._get_current_state()
         await self.set_state_data()
+
+    async def get_fsm_context(self) -> None:
+        storage = self.dispatcher.storage
+        self._fsm_context = FSMContext(storage=storage, chat=self._telegram_id, user=self._telegram_id)
 
     async def set_state_data(self) -> None:
 
@@ -49,12 +55,7 @@ class SetStateMiddleware(BaseMiddleware):
 
         await self._fsm_context.set_state(state=self._state)
 
-    async def _get_current_state(self, user) -> None:
-        storage = self.dispatcher.storage
-        self._fsm_context = FSMContext(storage=storage, chat=self._telegram_id, user=user)
-        self._current_data = await self._fsm_context.get_data()
-        logger.debug(f'Current state data: {self._current_data}')
-
+    async def _get_current_state(self) -> None:
         url_get_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_id}'
 
         async with http_client() as client:
@@ -62,19 +63,27 @@ class SetStateMiddleware(BaseMiddleware):
             if response_status == HTTPStatus.NOT_FOUND:
                 self._state = State.registration.value
             elif response_status == HTTPStatus.OK:
-                response_data = response['detail']
-                self._state = response_data['stage']
-                self._telegram_user = TelegramUserDTOModel(**response_data)
-                logger.debug(f'current data: {self._current_data}, telegram_user = {self._telegram_user}')
-                current_user: TelegramUserDTOModel = self._current_data.get('user')
-                if current_user and current_user.new_sentence:
-                    self._telegram_user.new_sentence = current_user.new_sentence
-                if current_user and current_user.learn_words:
-                    self._telegram_user.learn_words = current_user.learn_words
-                logger.debug(f'update telegram_user = {self._telegram_user}')
+                await self.get_telegram_user(response=response)
+                await self.update_telegram_user()
                 await self.get_real_state()
             else:
                 self._state = State.error.value
+
+    async def get_telegram_user(self, response: dict) -> None:
+        response_data = response['detail']
+        self._state = response_data['stage']
+        self._telegram_user = TelegramUserDTOModel(**response_data)
+        logger.debug(f'telegram_user = {self._telegram_user}')
+
+    async def update_telegram_user(self) -> None:
+        self._current_data = await self._fsm_context.get_data()
+        logger.debug(f'Current state data: {self._current_data}')
+        current_user: TelegramUserDTOModel = self._current_data.get('user')
+        if current_user and current_user.new_sentence:
+            self._telegram_user.new_sentence = current_user.new_sentence
+        if current_user and current_user.learn_words:
+            self._telegram_user.learn_words = current_user.learn_words
+        logger.debug(f'update telegram_user = {self._telegram_user}')
 
     async def get_real_state(self) -> None:
         """Get real state."""
