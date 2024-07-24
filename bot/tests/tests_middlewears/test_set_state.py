@@ -118,43 +118,42 @@ class TestSetStateMiddleware:
         fsm_context_mock.set_state.assert_called_once_with(state=state)
         fsm_context_mock.set_data.assert_not_called()
 
-    # @mark.parametrize('response_status, expected_state', [
-    #     (HTTPStatus.NOT_FOUND, State.registration.value),
-    #     (HTTPStatus.OK, 'expected_stage_from_api'),
-    #     (HTTPStatus.BAD_REQUEST, State.error.value),
-    # ])
-    # @mark.asyncio
-    # async def test_set_state_data(self, mocker, response_status, expected_state):
-    #     response_data = self._response_data
-    #     response_data['detail']['stage'] = expected_state
+    @mark.parametrize('response_status, expected_state', [
+        (HTTPStatus.NOT_FOUND, State.registration.value),
+        (HTTPStatus.OK, 'expected_stage_from_api'),
+        (HTTPStatus.BAD_REQUEST, State.error.value),
+    ])
+    @mark.asyncio
+    async def test_get_current_state(self, mocker, response_status, expected_state):
+        response_data = self._response_data
+        response_data['detail']['stage'] = expected_state
 
-    #     self._storage_mock.check_address.return_value = (self._chat, self._user)
+        self._service._state = ''
+        self._service._telegram_id = self._chat
+        mock_get_telegram_user = AsyncMock(return_value=None)
+        self._service.get_telegram_user = mock_get_telegram_user
+        mock_update_telegram_user = AsyncMock(return_value=None)
+        self._service.update_telegram_user = mock_update_telegram_user
+        mock_get_real_state = AsyncMock(return_value=None)
+        self._service.get_real_state = mock_get_real_state
 
-    #     fsm_context_mock = mocker.Mock(spec=FSMContext)
-    #     fsm_context_mock.set_state = mocker.AsyncMock()
-    #     fsm_context_mock.get_data = AsyncMock(return_value={'user': TelegramUserDTOModel(**response_data['detail'])})
-    #     mocker.patch('middlewears.set_state.FSMContext', return_value=fsm_context_mock)
+        with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
+            await self._service._get_current_state()
 
-    #     mock_get_real_state = AsyncMock(return_value=expected_state)
-    #     self._service.get_real_state = mock_get_real_state
+        mocked_get.assert_called_once_with(
+            url=f'{settings.api_url}/v1/telegram_user/{self._chat}',
+            headers=settings.api_headers,
+        )
 
-    #     with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
-    #         await self._service.set_state_data(user=self._chat, telegram_id=self._chat)
-
-    #     mocked_get.assert_called_once_with(
-    #         url=f'{settings.api_url}/v1/telegram_user/{self._chat}',
-    #         headers=settings.api_headers,
-    #     )
-
-    #     fsm_context_mock.set_state.assert_called_once_with(state=expected_state)
-
-    #     if response_status == HTTPStatus.OK:
-    #         assert self._service._telegram_user == TelegramUserDTOModel(**response_data['detail'])
-    #         expected_data = {'user': TelegramUserDTOModel(**response_data['detail'])}
-    #         fsm_context_mock.set_data.assert_called_once_with(data=expected_data)
-    #     else:
-    #         fsm_context_mock.set_data.assert_not_called()
-    #         assert self._service._telegram_user is None
+        if response_status == HTTPStatus.OK:
+            mock_get_real_state.assert_called_once()
+            mock_get_telegram_user.assert_called_once_with(response=response_data)
+            mock_update_telegram_user.assert_called_once()
+        else:
+            mock_get_real_state.assert_not_called()
+            mock_get_telegram_user.assert_not_called()
+            mock_update_telegram_user.assert_not_called()
+            assert self._service._state == expected_state
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
