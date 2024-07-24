@@ -124,7 +124,7 @@ class TestSetStateMiddleware:
         (HTTPStatus.BAD_REQUEST, State.error.value),
     ])
     @mark.asyncio
-    async def test_get_current_state(self, mocker, response_status, expected_state):
+    async def test_get_current_state(self, response_status, expected_state):
         response_data = self._response_data
         response_data['detail']['stage'] = expected_state
 
@@ -154,6 +154,17 @@ class TestSetStateMiddleware:
             mock_get_telegram_user.assert_not_called()
             mock_update_telegram_user.assert_not_called()
             assert self._service._state == expected_state
+
+    @mark.parametrize('expected_stage', ['first', 'second'])
+    @mark.asyncio
+    async def test_get_telegram_user(self, expected_stage):
+        response = self._response_data
+        response['detail']['stage'] = expected_stage
+
+        await self._service.get_telegram_user(response=response)
+
+        assert isinstance(self._service._telegram_user, TelegramUserDTOModel)
+        assert self._service._telegram_user.stage == expected_stage
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
