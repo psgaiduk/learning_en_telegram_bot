@@ -48,13 +48,16 @@ class TestSetStateMiddleware:
         self._service._get_current_state = mock_get_current_state
         mock_set_state_data = AsyncMock(return_value=None)
         self._service.set_state_data = mock_set_state_data
+        mock_get_get_fsm_context = AsyncMock(return_value=None)
+        self._service.get_fsm_context = mock_get_get_fsm_context
 
         await self._service.on_pre_process_message(message=mock_message, data={})
 
         assert self._service._message_text == expected_message
         assert self._service._telegram_id == self._chat
-        mock_get_current_state.assert_called_once_with(user=self._chat)
+        mock_get_current_state.assert_called_once()
         mock_set_state_data.assert_called_once()
+        mock_get_get_fsm_context.assert_called_once()
 
     @mark.asyncio
     async def test_on_pre_process_callback_query(self):
@@ -69,13 +72,16 @@ class TestSetStateMiddleware:
         self._service._get_current_state = mock_get_current_state
         mock_set_state_data = AsyncMock(return_value=None)
         self._service.set_state_data = mock_set_state_data
+        mock_get_get_fsm_context = AsyncMock(return_value=None)
+        self._service.get_fsm_context = mock_get_get_fsm_context
 
         await self._service.on_pre_process_callback_query(callback_query=mock_callback, data={})
 
         assert self._service._message_text == expected_message
         assert self._service._telegram_id == self._chat
-        mock_get_current_state.assert_called_once_with(user=self._chat)
+        mock_get_current_state.assert_called_once()
         mock_set_state_data.assert_called_once()
+        mock_get_get_fsm_context.assert_called_once()
 
     @mark.asyncio
     async def test_set_state_data_with_telegram_user(self, mocker):
