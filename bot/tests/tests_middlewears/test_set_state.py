@@ -6,7 +6,7 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock, patch
 
 from choices import State
-from dto import TelegramUserDTOModel, NewSentenceDTOModel
+from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
 from middlewears import SetStateMiddleware
 from settings import settings
 from tests.fixtures import *
@@ -165,6 +165,30 @@ class TestSetStateMiddleware:
 
         assert isinstance(self._service._telegram_user, TelegramUserDTOModel)
         assert self._service._telegram_user.stage == expected_stage
+
+    @mark.parametrize('is_new_sentence, is_learn_words', [(False, False), (True, False), (False, True), (True, True)])
+    @mark.asyncio
+    async def test_update_telegram_user(self, mocker, sentence_with_word, is_new_sentence, is_learn_words):
+        telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        if is_new_sentence:
+            telegram_user.new_sentence = sentence_with_word
+        if is_learn_words:
+            telegram_user.learn_words = sentence_with_word.words
+
+        assert self._service._telegram_user.new_sentence is None
+        assert self._service._telegram_user.learn_words == []
+
+        fsm_context_mock = mocker.Mock(spec=FSMContext)
+        fsm_context_mock.get_data = mocker.AsyncMock(return_value={'user': telegram_user})
+        self._service._fsm_context = fsm_context_mock
+
+        await self._service.update_telegram_user()
+
+        assert self._service._telegram_user.new_sentence == telegram_user.new_sentence
+        assert self._service._telegram_user.learn_words == telegram_user.learn_words
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
