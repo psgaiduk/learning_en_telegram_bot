@@ -1,5 +1,7 @@
 from pytest import mark, fixture
 
+from datetime import datetime
+
 from aiogram.types import CallbackQuery, Chat, Message, User
 from aiogram.dispatcher.storage import BaseStorage, FSMContext
 from http import HTTPStatus
@@ -273,6 +275,48 @@ class TestSetStateMiddleware:
         mock_work_with_message_text.assert_not_called()
         mock_work_with_read_status.assert_not_called()
         mock_work_with_start_learn_words_status.assert_called_once()
+
+    @mark.parametrize('message_text, state, count_words', [
+        ('some text', State.learn_words.value, 3),
+        ('random text', State.learn_words.value, 2),
+        ('just text', State.learn_words.value, 1),
+        ('just text', State.learn_words.value, 0),
+    ])
+    @mark.asyncio
+    async def test_get_real_state_learn_words(self, message_text, state, count_words):
+        self._service._state = state
+        self._service._message_text = message_text
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+        word_dto = WordDTOModel(
+            word_id=1,
+            word='test',
+            type_word_id=1,
+            is_known=True,
+            count_view=0,
+            correct_answers=0,
+            incorrect_answers=0,
+            correct_answers_in_row=0,
+            increase_factor=0,
+            interval_repeat=0,
+            repeat_datetime=datetime.now()
+        )
+        self._service._telegram_user.learn_words = [word_dto for _ in range(count_words)]
+
+        mock_work_with_message_text = AsyncMock(return_value=state)
+        self._service._work_with_message_text = mock_work_with_message_text
+        mock_work_with_start_learn_words_status = AsyncMock(return_value=state)
+        self._service._work_with_start_learn_words_status = mock_work_with_start_learn_words_status
+        mock_work_with_read_status = AsyncMock(return_value=state)
+        self._service.work_with_read_status = mock_work_with_read_status
+
+        await self._service.get_real_state()
+
+        mock_work_with_message_text.assert_not_called()
+        mock_work_with_start_learn_words_status.assert_not_called()
+        if count_words < 2:
+            mock_work_with_read_status.assert_called_once()
+        else:
+            mock_work_with_read_status.assert_not_called()
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
