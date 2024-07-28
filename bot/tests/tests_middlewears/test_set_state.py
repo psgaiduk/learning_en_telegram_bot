@@ -250,57 +250,29 @@ class TestSetStateMiddleware:
         mock_work_with_read_status.assert_not_called()
         mock_work_with_start_learn_words_status.assert_not_called()
 
-    # @mark.parametrize('message_text, state, expected_state, words', [
-    #     ('/profile', State.grammar.value, State.grammar.value, []),
-    #     ('/profile', State.read_book.value, State.update_profile.value, []),
-    #     ('/profile', State.wait_name.value, State.update_profile.value, []),
-    #     ('/profile', State.wait_en_level.value, State.update_profile.value, []),
-    #     ('/records', State.grammar.value, State.grammar.value, []),
-    #     ('/records', State.update_profile.value, State.update_profile.value, []),
-    #     ('/records', State.read_book.value, State.records.value, []),
-    #     ('/achievements', State.grammar.value, State.grammar.value, []),
-    #     ('/achievements', State.update_profile.value, State.update_profile.value, []),
-    #     ('/achievements', State.read_book.value, State.achievements.value, []),
-    #     ('just text', State.update_profile.value, State.update_profile.value, []),
-    #     ('just text', State.read_book.value, State.read_book.value, []),
-    #     ('just text', State.start_learn_words.value, State.start_learn_words.value, []),
-    #     # ('just text', State.learn_words.value, State.learn_words.value, ['word1', 'word2']),
-    #     # ('just text', State.learn_words.value, State.read_book.value, ['word1']),
-    # ])
-    # @patch('middlewears.set_state.update_data_by_api', new_callable=AsyncMock)
-    # @mark.asyncio
-    # async def test_get_real_state_regular_work(self, mock_update_user, message_text, state, expected_state, words):
-    #     self._service._state = state
-    #     self._service._message_text = message_text
-    #     self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
-    #     self._service._telegram_user.stage = state
-    #     mock_update_user.side_effect = [None]
-    #     if expected_state == State.error.value:
-    #         mock_update_user.side_effect = [False]
+    @mark.parametrize('message_text, state', [
+        ('some text', State.start_learn_words.value),
+        ('random text', State.start_learn_words.value),
+        ('just text', State.start_learn_words.value),
+    ])
+    @mark.asyncio
+    async def test_get_real_state_start_learn_words(self, message_text, state):
+        self._service._state = state
+        self._service._message_text = message_text
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
 
-    #     mock_work_with_read_status = AsyncMock(return_value=State.read_book.value)
+        mock_work_with_message_text = AsyncMock(return_value=state)
+        self._service._work_with_message_text = mock_work_with_message_text
+        mock_work_with_start_learn_words_status = AsyncMock(return_value=state)
+        self._service._work_with_start_learn_words_status = mock_work_with_start_learn_words_status
+        mock_work_with_read_status = AsyncMock(return_value=state)
+        self._service.work_with_read_status = mock_work_with_read_status
 
-    #     if expected_state in {State.read_book.value, State.check_answer_time.value}:
-    #         self._service.work_with_read_status = mock_work_with_read_status
-    #         mock_work_with_read_status.assert_called_once()
-    #     else:
-    #         mock_work_with_read_status.assert_not_called()
+        await self._service.get_real_state()
 
-    #     assert await self._service.get_real_state() == expected_state
-        
-    #     if message_text == '/profile' and state == State.read_book.value:
-    #         expected_data_for_update_user = {
-    #             'telegram_id': self._service._telegram_user.telegram_id,
-    #             'previous_stage': self._service._telegram_user.stage,
-    #         }
-
-    #         mock_update_user.assert_awaited_once_with(
-    #             telegram_id=self._service._telegram_user.telegram_id,
-    #             params_for_update=expected_data_for_update_user,
-    #             url_for_update=f'telegram_user/{self._service._telegram_user.telegram_id}',
-    #         )
-    #     else:
-    #         mock_update_user.assert_not_called()
+        mock_work_with_message_text.assert_not_called()
+        mock_work_with_read_status.assert_not_called()
+        mock_work_with_start_learn_words_status.assert_called_once()
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
