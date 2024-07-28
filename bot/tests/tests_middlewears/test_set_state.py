@@ -318,6 +318,29 @@ class TestSetStateMiddleware:
         else:
             mock_work_with_read_status.assert_not_called()
 
+    @mark.parametrize('message_text, state', [
+        ('some text', State.read_book.value),
+        ('random text', State.check_answer_time.value),
+    ])
+    @mark.asyncio
+    async def test_get_real_state_work_with_read_status(self, message_text, state):
+        self._service._state = state
+        self._service._message_text = message_text
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        mock_work_with_message_text = AsyncMock(return_value=state)
+        self._service._work_with_message_text = mock_work_with_message_text
+        mock_work_with_start_learn_words_status = AsyncMock(return_value=state)
+        self._service._work_with_start_learn_words_status = mock_work_with_start_learn_words_status
+        mock_work_with_read_status = AsyncMock(return_value=state)
+        self._service.work_with_read_status = mock_work_with_read_status
+
+        await self._service.get_real_state()
+
+        mock_work_with_message_text.assert_not_called()
+        mock_work_with_start_learn_words_status.assert_not_called()
+        mock_work_with_read_status.assert_called_once()
+
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
     #     state = State.read_book.value
