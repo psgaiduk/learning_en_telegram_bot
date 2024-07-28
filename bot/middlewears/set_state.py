@@ -100,8 +100,6 @@ class SetStateMiddleware(BaseMiddleware):
         elif self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
             self._telegram_user.new_sentence = None
             self._state = State.read_book.value
-            self._state = await self.work_with_read_status()
-            return
 
         if self._state in {State.read_book.value, State.check_answer_time.value}:
             self._state = await self.work_with_read_status()
