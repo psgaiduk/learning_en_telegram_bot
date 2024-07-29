@@ -340,7 +340,7 @@ class TestSetStateMiddleware:
         mock_work_with_message_text.assert_not_called()
         mock_work_with_start_learn_words_status.assert_not_called()
         mock_work_with_read_status.assert_called_once()
-        
+
     @mark.parametrize('message_text, state, expected_state, is_update', [
         ('/profile', State.read_book.value, State.update_profile.value, True),
         ('/profile', State.check_answer_time.value, State.update_profile.value, True),
@@ -358,6 +358,25 @@ class TestSetStateMiddleware:
 
         await self._service._work_with_message_text()
         mock_update_state.assert_called_once()
+        assert self._service._state == expected_state
+
+    @mark.parametrize('message_text, state, expected_state', [
+        ('/records', State.read_book.value, State.records.value),
+        ('/records', State.check_answer_time.value, State.records.value),
+        ('/achievements', State.check_answer_time.value, State.achievements.value),
+        ('/achievements', State.read_book.value, State.achievements.value),
+    ])
+    @mark.asyncio
+    async def test_work_with_message_text_other(self, message_text, state, expected_state):
+        self._service._state = state
+        self._service._message_text = message_text
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        mock_update_state = AsyncMock(return_value=True)
+        self._service._update_state = mock_update_state
+
+        await self._service._work_with_message_text()
+        mock_update_state.assert_not_called()
         assert self._service._state == expected_state
 
     # @mark.asyncio
