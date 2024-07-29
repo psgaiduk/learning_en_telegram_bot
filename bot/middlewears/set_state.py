@@ -131,6 +131,7 @@ class SetStateMiddleware(BaseMiddleware):
                 url_for_update=f'telegram_user/{self._telegram_user.telegram_id}',
             )
             return is_update
+        return True
 
     async def work_with_read_status(self) -> None:
         """Work with read status."""
