@@ -379,6 +379,34 @@ class TestSetStateMiddleware:
         mock_update_state.assert_not_called()
         assert self._service._state == expected_state
 
+    @mark.parametrize('state, expected_is_update', [
+        (State.read_book.value, True),
+        (State.check_answer_time.value, True),
+        (State.learn_words.value, True),
+        (State.start_learn_words.value, True),
+        (State.check_answer_time.value, False),
+        (State.read_book.value, False),
+    ])
+    @patch("middlewears.set_state.update_data_by_api")
+    @mark.asyncio
+    async def test_update_state(self, mock_update_data_by_api, state, expected_is_update):
+        mock_update_data_by_api.return_value = expected_is_update
+        self._service._state = state
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+        self._service._telegram_user.stage = state
+
+        is_update = await self._service._update_state()
+
+        if state in {State.read_book.value, State.check_answer_time.value}:
+            mock_update_data_by_api.assert_called_once_with(
+                telegram_id=self._service._telegram_user.telegram_id,
+                params_for_update={"telegram_id": self._service._telegram_user.telegram_id, "previous_stage": state},
+                url_for_update=f"telegram_user/{self._service._telegram_user.telegram_id}",
+            )
+        else:
+            mock_update_data_by_api.assert_not_called()
+            
+        assert is_update == expected_is_update
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
     #     state = State.read_book.value
