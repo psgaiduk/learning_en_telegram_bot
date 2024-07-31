@@ -405,8 +405,29 @@ class TestSetStateMiddleware:
             )
         else:
             mock_update_data_by_api.assert_not_called()
-            
+
         assert is_update == expected_is_update
+
+    @mark.asyncio
+    async def test_work_with_read_status_check_answer_time(self, sentence_with_word):
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
+
+        self._service._state = State.check_answer_time.value
+
+        # Проверяем без предложения
+        mock_get_new_sentence = AsyncMock(return_value='state')
+        self._service._get_new_sentence = mock_get_new_sentence
+        return_value = await self._service.work_with_read_status()
+        mock_get_new_sentence.assert_called_once()
+        assert return_value == 'state'
+        # Проверяем с предложением
+        mock_get_new_sentence = AsyncMock(return_value='state')
+        self._service._get_new_sentence = mock_get_new_sentence
+        self._service._telegram_user.new_sentence = sentence_with_word
+        return_value = await self._service.work_with_read_status()
+        mock_get_new_sentence.assert_not_called()
+        assert return_value == State.check_answer_time.value
+
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
     #     state = State.read_book.value
