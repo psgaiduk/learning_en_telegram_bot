@@ -409,7 +409,7 @@ class TestSetStateMiddleware:
         assert is_update == expected_is_update
 
     @mark.asyncio
-    async def test_work_with_read_status_check_answer_time(self, sentence_with_word):
+    async def test_work_with_read_status(self, sentence_with_word):
         self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
 
         self._service._state = State.check_answer_time.value
@@ -427,6 +427,30 @@ class TestSetStateMiddleware:
         return_value = await self._service.work_with_read_status()
         mock_get_new_sentence.assert_not_called()
         assert return_value == State.check_answer_time.value
+        # Проверяем для другого state и со словами
+        self._service._state = State.read_book.value
+        assert self._service._telegram_user.new_sentence.words
+        self._service._get_new_sentence = mock_get_new_sentence
+        self._service._telegram_user.new_sentence = sentence_with_word
+        return_value = await self._service.work_with_read_status()
+        mock_get_new_sentence.assert_not_called()
+        assert return_value == State.check_words.value
+        # Проверяем для предложения без слов, но с текстом
+        self._service._state = State.read_book.value
+        self._service._telegram_user.new_sentence.words = []
+        self._service._get_new_sentence = mock_get_new_sentence
+        self._service._telegram_user.new_sentence = sentence_with_word
+        return_value = await self._service.work_with_read_status()
+        mock_get_new_sentence.assert_not_called()
+        assert return_value == State.read_book.value
+        # Проверяем для предложения без слов, и без текста
+        self._service._state = State.read_book.value
+        self._service._telegram_user.new_sentence.text = ''
+        self._service._get_new_sentence = mock_get_new_sentence
+        self._service._telegram_user.new_sentence = sentence_with_word
+        return_value = await self._service.work_with_read_status()
+        mock_get_new_sentence.assert_called_once()
+        assert return_value == 'state'
 
     # @mark.asyncio
     # async def test_get_real_test_read_book(self):
