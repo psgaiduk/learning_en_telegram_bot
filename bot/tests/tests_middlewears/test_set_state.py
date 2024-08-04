@@ -1,4 +1,4 @@
-from pytest import mark, fixture
+from pytest import mark
 
 from datetime import datetime
 
@@ -8,7 +8,7 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, Mock, patch
 
 from choices import State
-from dto import TelegramUserDTOModel, NewSentenceDTOModel, WordDTOModel
+from dto import TelegramUserDTOModel, WordDTOModel
 from middlewears import SetStateMiddleware
 from settings import settings
 from tests.fixtures import *
@@ -482,48 +482,6 @@ class TestSetStateMiddleware:
         mock_get_new_sentence.assert_called_once()
         assert return_value == "state"
 
-    # @mark.asyncio
-    # async def test_get_real_test_read_book(self):
-    #     state = State.read_book.value
-    #     self._service._state = state
-    #     self._service._message_text = 'text'
-    #     self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
-
-    #     mock_work_with_read_status = AsyncMock(return_value=state)
-    #     self._service.work_with_read_status = mock_work_with_read_status
-
-    #     assert await self._service.get_real_state() == state
-    #     mock_work_with_read_status.assert_called_once()
-
-    # @mark.parametrize('response_status, words, expected_state', [
-    #     (HTTPStatus.OK, [], State.read_book.value),
-    #     (HTTPStatus.OK, ['word'], State.check_words.value),
-    #     (HTTPStatus.BAD_REQUEST, ['word'], State.error.value),
-    #     (HTTPStatus.PARTIAL_CONTENT, ['word'], State.read_book_end.value),
-    # ])
-    # @mark.asyncio
-    # async def test_work_with_read_status(self, sentence_with_word, response_status, words, expected_state):
-    #     self._new_sentence = sentence_with_word
-    #     response_data = {'detail': self._new_sentence.dict()}
-    #     self._service._telegram_user = TelegramUserDTOModel(**self._response_data['detail'])
-    #     self._service._telegram_user.stage = 'READ_BOOK'
-    #     if not words:
-    #         response_data['detail']['words'] = []
-
-    #     with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
-    #         updated_state = await self._service.work_with_read_status()
-
-    #     mocked_get.assert_called_once_with(
-    #         url=f'{settings.api_url}/v1/read/{self._chat}/',
-    #         headers=settings.api_headers,
-    #     )
-
-    #     assert updated_state == expected_state
-    #     if response_status == HTTPStatus.OK:
-    #         assert self._service._telegram_user.new_sentence == NewSentenceDTOModel(**response_data['detail'])
-    #     else:
-    #         assert self._service._telegram_user.new_sentence is None
-
     @mark.parametrize(
         "response_status, count_words",
         [
@@ -572,3 +530,33 @@ class TestSetStateMiddleware:
         else:
             assert self._service._telegram_user.learn_words == []
             assert state == State.error.value
+
+    @mark.parametrize(
+        "response_status, stage, expected_stage, is_words",
+        [
+            (HTTPStatus.PARTIAL_CONTENT, State.check_answer_time.value, State.check_answer_time.value, True),
+            (HTTPStatus.PARTIAL_CONTENT, State.read_book.value, State.read_book_end.value, True),
+            (HTTPStatus.BAD_REQUEST, State.read_book.value, State.error.value, True),
+            (HTTPStatus.OK, State.read_book.value, State.check_words.value, True),
+            (HTTPStatus.OK, State.check_answer_time.value, State.check_answer_time.value, True),
+            (HTTPStatus.OK, State.read_book.value, State.read_book.value, False),
+        ],
+    )
+    @mark.asyncio
+    async def test_get_new_sentence(self, sentence_with_word, response_status, stage, expected_stage, is_words):
+        self._service._telegram_user = TelegramUserDTOModel(**self._response_data["detail"])
+        self._service._state = stage
+
+        sentence = sentence_with_word.dict()
+        if is_words is False:
+            sentence['words'] = []
+        response_data = {'detail': sentence}
+        with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
+            state = await self._service._get_new_sentence()
+
+        mocked_get.assert_called_once_with(
+            url=f"{settings.api_url}/v1/read/{self._chat}/",
+            headers=settings.api_headers,
+        )
+
+        assert state == expected_stage
