@@ -180,7 +180,7 @@ class SetStateMiddleware(BaseMiddleware):
             if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
                 return State.read_book_end.value
 
-            if response_status != HTTPStatus.OK:
+            if response_status != HTTPStatus.OK and response_status != HTTPStatus.PARTIAL_CONTENT:
                 return State.error.value
             new_sentence = response['detail']
             logger.debug(f'new sentence = {new_sentence}')
