@@ -41,17 +41,22 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f'English sentence {english_sentence}')
     russian_sentence = sentence_data[1].strip()
     logger.debug(f'Russian sentence {russian_sentence}')
-    english_words = sentence_data[2].replace('.', '').split('; ')
-    english_words = set([word.strip().lower() for word in english_words])
-    logger.debug(f'Words {english_words}')
+    english_words_with_transcription = sentence_data[2].replace('.', '').split('; ')
+    english_words_with_transcription = set([word.strip().lower() for word in english_words_with_transcription])
+    logger.debug(f'Words with transcriptions {english_words_with_transcription}')
+    english_words = {}
+    for entry in english_words_with_transcription:
+        english, transcription = entry.split(' || ')
+        english_words[english.strip()] = transcription.strip()
+    logger.debug(f'Dict words with transcriptions: {english_words}')
     sentence_tenses: list = sentence_data[3].strip().split(', ')
     logger.debug(f'Sentence times {sentence_tenses}')
 
     AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
 
-    create_words_in_db(english_words_with_transcriptions=english_words)
+    create_words_in_db(english_words=english_words)
 
-    words = WordsModel.objects.filter(Q(word__in=english_words))
+    words = WordsModel.objects.filter(Q(word__in=english_words.keys()))
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
 
     book_sentence, created = BooksSentencesModel.objects.update_or_create(
@@ -67,19 +72,13 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     book_sentence.tenses.set(tenses)
 
 
-def create_words_in_db(english_words_with_transcriptions: set) -> None:
+def create_words_in_db(english_words: dict) -> None:
     """
     Create words in database.
 
     :param english_words: list of words
     """
-    logger.debug(f'English words {english_words_with_transcriptions}')
-    english_words = {}
-
-    for entry in english_words_with_transcriptions:
-        english, transcription = entry.split(' || ')
-        english_words[english.strip()] = transcription.strip()
-
+    logger.debug(f'English words {english_words}')
     words_in_database = WordsModel.objects.filter(word__in=english_words.keys())
     logger.debug(f'Words in database {words_in_database}')
     new_english_words = set(english_words.keys()) - set(words_in_database.values_list('word', flat=True))
