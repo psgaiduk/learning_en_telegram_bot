@@ -49,7 +49,7 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
 
     AISDK().create_audio_file(sentence=english_sentence, file_name=f'{instance.book_id} - {index}')
 
-    create_words_in_db(english_words=english_words)
+    create_words_in_db(english_words_with_transcriptions=english_words)
 
     words = WordsModel.objects.filter(Q(word__in=english_words))
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
@@ -67,16 +67,22 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     book_sentence.tenses.set(tenses)
 
 
-def create_words_in_db(english_words: set) -> None:
+def create_words_in_db(english_words_with_transcriptions: set) -> None:
     """
     Create words in database.
 
     :param english_words: list of words
     """
-    logger.debug(f'English words {english_words}')
-    words_in_database = WordsModel.objects.filter(word__in=english_words)
+    logger.debug(f'English words {english_words_with_transcriptions}')
+    english_words = {}
+
+    for entry in english_words_with_transcriptions:
+        english, transcription = entry.split(' || ')
+        english_words[english.strip()] = transcription.strip()
+
+    words_in_database = WordsModel.objects.filter(word__in=english_words.keys())
     logger.debug(f'Words in database {words_in_database}')
-    new_english_words = english_words - set(words_in_database.values_list('word', flat=True))
+    new_english_words = set(english_words.keys()) - set(words_in_database.values_list('word', flat=True))
     logger.debug(f'Words for translate {new_english_words}')
     if not new_english_words:
         return None
@@ -97,6 +103,11 @@ def create_words_in_db(english_words: set) -> None:
         type_word_id = TypeWordId.word.value
         if ' ' in word and not word.startswith('to '):
             type_word_id = TypeWordId.phrase_verb.value
-        WordsModel.objects.create(word=word, translation={'ru': translate_word}, type_word_id=type_word_id)
+        WordsModel.objects.create(
+            word=word,
+            translation={'ru': translate_word},
+            type_word_id=type_word_id,
+            transcription=english_words[word],
+        )
 
     return None
