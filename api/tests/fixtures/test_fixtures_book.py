@@ -121,9 +121,24 @@ def words_mock(level_en_mock, type_words_mock, book_mock, book_sentences_mock):
                 for sentence in book.books_sentences:
 
                     words_data = [
-                        {'type_word_id': 1, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
-                        {'type_word_id': 2, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
-                        {'type_word_id': 3, 'word': fake.word(), 'translation': {'ru': fake_ru.word()}},
+                        {
+                            'type_word_id': 1,
+                            'word': fake.word(),
+                            'translation': {'ru': fake_ru.word()},
+                            'transcription': 'test',
+                        },
+                        {
+                            'type_word_id': 2,
+                            'word': fake.word(),
+                            'translation': {'ru': fake_ru.word()},
+                            'transcription': 'test',
+                        },
+                        {
+                            'type_word_id': 3,
+                            'word': fake.word(),
+                            'translation': {'ru': fake_ru.word()},
+                            'transcription': 'test',
+                        },
                     ]
 
                     for word_data in words_data:
