@@ -10,6 +10,7 @@ class WordDTOModel(BaseModel):
     word_id: int
     word: str
     type_word_id: int
+    transcription: str
     translation: Optional[dict[str, str]]
     is_known: bool
     count_view: int

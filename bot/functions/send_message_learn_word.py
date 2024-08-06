@@ -27,7 +27,7 @@ async def send_message_learn_word(word: WordDTOModel, telegram_id: int, message:
     translate_word += (60 - len(translate_word)) * ' ' + '.'
 
     message_text = (
-        f'Помните перевод слова: <b><u>{word.word}</u></b>\n\n'
+        f'Помните перевод слова: <b><u>{word.word}</u></b> - {word.transcription}\n\n'
         f'Перевод: <tg-spoiler>\n{translate_word}</tg-spoiler>'
     )
     logger.debug(f'message text = {message_text}')

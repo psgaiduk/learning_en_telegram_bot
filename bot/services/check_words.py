@@ -78,6 +78,7 @@ class CheckWordsService:
 
         text_message = (
             f"{self._start_text_message}\nТы знаешь это слово?\n\n"
-            f'Слово: {self._first_word.word}\nПеревод: {self._first_word.translation["ru"]}'
+            f"Слово: {self._first_word.word} - {self._first_word.transcription}\n"
+            f'Перевод: {self._first_word.translation["ru"]}'
         )
         await bot.send_message(chat_id=self._telegram_user.telegram_id, text=text_message, reply_markup=inline_keyboard)
