@@ -384,6 +384,7 @@ class ReadBookService:
             word_info['telegram_user_id'] = self._telegram_id
             word_info['word_id'] = word.word_id
             word_info['word'] = word.word
+            word_info['transcription'] = word.transcription
             word_info['type_word_id'] = word.type_word_id
             word_info['translation'] = word.translation
             word_info['is_known'] = is_known_word

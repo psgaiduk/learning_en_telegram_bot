@@ -8,3 +8,4 @@ class WordsModelDTO(BaseModel):
     type_word_id: int
     word: str
     translation: dict
+    transcription: str
