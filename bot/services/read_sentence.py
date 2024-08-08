@@ -62,7 +62,7 @@ class ReadSentenceService:
         self._keyboard.add(KeyboardButton(text='Read'))
 
     async def _create_file_path(self) -> None:
-        file_name = f'{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order}'
+        file_name = f'{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order - 1}'
         self._file_path = f'static/audio/{file_name}.mp3'
 
     async def _create_message_text(self) -> None:
