@@ -121,12 +121,13 @@ class ReadSentenceService:
         await self._send_translate()
 
     async def _send_text_with_tenses(self) -> None:
-        await bot.send_message(
-            chat_id=self._telegram_user.telegram_id,
-            text=self._message_text,
-            parse_mode=ParseMode.HTML,
-            reply_markup=ReplyKeyboardRemove(),
-        )
+        if self._message_text:
+            await bot.send_message(
+                chat_id=self._telegram_user.telegram_id,
+                text=self._message_text,
+                parse_mode=ParseMode.HTML,
+                reply_markup=ReplyKeyboardRemove(),
+            )
         await self._send_clue()
         await self._send_translate()
         message_text = 'К какому времени относится предложение?'
