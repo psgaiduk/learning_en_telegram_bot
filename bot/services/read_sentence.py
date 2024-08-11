@@ -35,7 +35,7 @@ class ReadSentenceService:
 
     async def do(self) -> None:
 
-        if isinstance(self._message, CallbackQuery) and 'know_word_' in self._message.data:
+        if isinstance(self._message, CallbackQuery) and "know_word_" in self._message.data:
             await delete_message(message=self._message)
             await save_word_history(callback_query=self._message)
 
@@ -45,31 +45,32 @@ class ReadSentenceService:
         await self._create_file_path()
         await self._create_message_text()
         await self._send_message_or_tenses()
+        await self._send_separator()
 
-        self._telegram_user.new_sentence.text = ''
-        await self._state.set_data(data={'user': self._telegram_user})
+        self._telegram_user.new_sentence.text = ""
+        await self._state.set_data(data={"user": self._telegram_user})
 
     async def _get_telegram_user(self) -> None:
         data = await self._state.get_data()
-        self._telegram_user = data['user']
+        self._telegram_user = data["user"]
 
     async def _get_sentence(self) -> None:
         self._sentence_text = self._telegram_user.new_sentence.text
-        self._sentence_translation = self._telegram_user.new_sentence.translation.get('ru')
+        self._sentence_translation = self._telegram_user.new_sentence.translation.get("ru")
 
     async def _create_keyboard(self) -> None:
         self._keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        self._keyboard.add(KeyboardButton(text='Read'))
+        self._keyboard.add(KeyboardButton(text="Read"))
 
     async def _create_file_path(self) -> None:
-        file_name = f'{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order - 1}'
-        self._file_path = f'static/audio/{file_name}.mp3'
+        file_name = f"{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order - 1}"
+        self._file_path = f"static/audio/{file_name}.mp3"
 
     async def _create_message_text(self) -> None:
         if randint(1, 3) == 1 and path.isfile(self._file_path):
             await self._send_audio_message()
         else:
-            self._message_text = f'{self._sentence_text}'
+            self._message_text = f"{self._sentence_text}"
 
     async def _send_message_or_tenses(self) -> None:
         if randint(1, 5) == 1:
@@ -78,9 +79,9 @@ class ReadSentenceService:
             await self._send_message()
 
     async def _send_audio_message(self) -> None:
-        with open(self._file_path, 'rb') as audio:
-            self._message_text = ''
-            sentence_text = f'Text:\n\n<tg-spoiler>{self._sentence_text}</tg-spoiler>'
+        with open(self._file_path, "rb") as audio:
+            self._message_text = ""
+            sentence_text = f"Text:\n\n<tg-spoiler>{self._sentence_text}</tg-spoiler>"
 
             await bot.send_audio(
                 chat_id=self._telegram_user.telegram_id,
@@ -130,9 +131,9 @@ class ReadSentenceService:
             )
         await self._send_clue()
         await self._send_translate()
-        message_text = 'К какому времени относится предложение?'
+        message_text = "К какому времени относится предложение?"
         right_answer = self._telegram_user.new_sentence.sentence_times
-        count_times_in_sentence = right_answer.count(',') + 1
+        count_times_in_sentence = right_answer.count(",") + 1
         all_english_times = get_combinations(count_times_in_sentence)
         all_answers = [right_answer]
         other_answers = choices(all_english_times, k=3)
@@ -141,7 +142,7 @@ class ReadSentenceService:
         sorted(all_answers, key=lambda x: randint(1, 100))
         keyboard = InlineKeyboardMarkup()
         for answer in all_answers:
-            callback_data = 'wrong_answer_time' if answer != right_answer else 'right_answer_time'
+            callback_data = "wrong_answer_time" if answer != right_answer else "right_answer_time"
             keyboard.add(InlineKeyboardButton(text=answer, callback_data=callback_data))
 
         await bot.send_message(
@@ -153,26 +154,26 @@ class ReadSentenceService:
 
     async def _update_stage_user(self, stage: str) -> bool:
         params_for_update_user = {
-            'telegram_id': self._message.from_user.id,
-            'stage': stage,
+            "telegram_id": self._message.from_user.id,
+            "stage": stage,
         }
 
         return await update_data_by_api(
             telegram_id=self._message.from_user.id,
             params_for_update=params_for_update_user,
-            url_for_update=f'telegram_user/{self._message.from_user.id}',
+            url_for_update=f"telegram_user/{self._message.from_user.id}",
         )
 
     async def _update_history_sentence(self) -> bool:
         data_for_update_history_sentence = {
-            'id': self._telegram_user.new_sentence.history_sentence_id,
-            'is_read': True,
+            "id": self._telegram_user.new_sentence.history_sentence_id,
+            "is_read": True,
         }
 
         return await update_data_by_api(
             telegram_id=self._telegram_user.telegram_id,
             params_for_update=data_for_update_history_sentence,
-            url_for_update=f'history/sentences/{self._telegram_user.new_sentence.history_sentence_id}',
+            url_for_update=f"history/sentences/{self._telegram_user.new_sentence.history_sentence_id}",
         )
 
     async def _send_clue(self) -> None:
@@ -181,7 +182,7 @@ class ReadSentenceService:
         if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
             clue_text = self._telegram_user.new_sentence.text_with_new_words
 
-        clue_text = f'Подсказка:\n\n<tg-spoiler>{clue_text}</tg-spoiler>'
+        clue_text = f"Подсказка:\n\n<tg-spoiler>{clue_text}</tg-spoiler>"
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=clue_text,
@@ -190,10 +191,17 @@ class ReadSentenceService:
         )
 
     async def _send_translate(self) -> None:
-        translate_text = f'Перевод:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>'
+        translate_text = f"Перевод:\n\n<tg-spoiler>{self._sentence_translation}</tg-spoiler>"
         await bot.send_message(
             chat_id=self._telegram_user.telegram_id,
             text=translate_text,
             parse_mode=ParseMode.HTML,
             reply_markup=self._keyboard,
+        )
+
+    async def _send_separator(self) -> None:
+        await bot.send_message(
+            chat_id=self._telegram_user.telegram_id,
+            text="=" * 30,
+            parse_mode=ParseMode.HTML,
         )

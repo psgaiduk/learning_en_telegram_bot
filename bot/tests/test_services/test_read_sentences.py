@@ -29,7 +29,7 @@ class TestReadSentenceService:
         self._message = Message(id=1, chat=self._chat_id, text="Read", from_user=self._user)
         self._service = ReadSentenceService(message=self._message, state=self._state)
 
-    @mark.parametrize("message_data", ['know_word_', 'another_data'])
+    @mark.parametrize("message_data", ["know_word_", "another_data"])
     @mark.asyncio
     @patch("services.read_sentence.delete_message")
     @patch("services.read_sentence.save_word_history")
@@ -57,6 +57,9 @@ class TestReadSentenceService:
         mock_send_message_or_tenses = AsyncMock(return_value=None)
         service._send_message_or_tenses = mock_send_message_or_tenses
 
+        mock_send_separator = AsyncMock(return_value=None)
+        service._send_separator = mock_send_separator
+
         assert service._telegram_user.new_sentence.text != ""
         await service.do()
 
@@ -66,6 +69,7 @@ class TestReadSentenceService:
         mock_create_path_file.assert_called_once()
         mock_create_message_text.assert_called_once()
         mock_send_message_or_tenses.assert_called_once()
+        mock_send_separator.assert_called_once()
 
         if "know_word" in message_data:
             mock_save_word_history.assert_called_once_with(callback_query=mock_callback)
@@ -98,6 +102,9 @@ class TestReadSentenceService:
         mock_send_message_or_tenses = AsyncMock(return_value=None)
         self._service._send_message_or_tenses = mock_send_message_or_tenses
 
+        mock_send_separator = AsyncMock(return_value=None)
+        self._service._send_separator = mock_send_separator
+
         assert self._service._telegram_user.new_sentence.text != ""
         await self._service.do()
 
@@ -107,6 +114,7 @@ class TestReadSentenceService:
         mock_create_path_file.assert_called_once()
         mock_create_message_text.assert_called_once()
         mock_send_message_or_tenses.assert_called_once()
+        mock_send_separator.assert_called_once()
 
         mock_save_word_history.assert_not_called()
         assert self._service._telegram_user.new_sentence.text == ""
@@ -385,4 +393,15 @@ class TestReadSentenceService:
             text=f"Перевод:\n\n<tg-spoiler>{translation}</tg-spoiler>",
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard,
+        )
+
+    @patch("services.read_sentence.bot", new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_send_separator(self, mock_bot):
+        self._service._telegram_user = self._telegram_user
+        await self._service._send_separator()
+        mock_bot.send_message.assert_called_once_with(
+            chat_id=self._telegram_user.telegram_id,
+            text="=" * 30,
+            parse_mode=ParseMode.HTML,
         )
