@@ -142,7 +142,7 @@ class TestReadSentenceService:
     async def test_create_file_path(self):
         self._service._telegram_user = self._telegram_user
         await self._service._create_file_path()
-        file_name = f"{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order}"
+        file_name = f"{self._telegram_user.new_sentence.book_id} - {self._telegram_user.new_sentence.order - 1}"
         expected_file_path = f"static/audio/{file_name}.mp3"
         assert self._service._file_path == expected_file_path
 
