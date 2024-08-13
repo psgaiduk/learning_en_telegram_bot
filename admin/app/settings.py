@@ -33,7 +33,7 @@ SECRET_KEY = settings.django_secret_key
 
 DEBUG = settings.debug
 
-ALLOWED_HOSTS = ['145.14.157.244', 'localhost', '6934c9e43d76']
+ALLOWED_HOSTS = ['145.14.157.244', 'localhost', 'srv439225.hstgr.cloud']
 
 
 # Application definition
