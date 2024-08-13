@@ -56,52 +56,68 @@ class SetStateMiddleware(BaseMiddleware):
         await self._fsm_context.set_state(state=self._state)
 
     async def _get_current_state(self) -> None:
+        logger.debug("Get current state")
         url_get_user = f'{settings.api_url}/v1/telegram_user/{self._telegram_id}'
 
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_user, headers=settings.api_headers)
             if response_status == HTTPStatus.NOT_FOUND:
+                logger.debug("It is new user, start registration")
                 self._state = State.registration.value
             elif response_status == HTTPStatus.OK:
+                logger.debug("it is current user")
                 await self.get_telegram_user(response=response)
                 await self.update_telegram_user()
                 await self.get_real_state()
             else:
+                logger.debug("Get error from api")
                 self._state = State.error.value
 
     async def get_telegram_user(self, response: dict) -> None:
+        logger.debug("Get telegram user")
         response_data = response['detail']
         self._state = response_data['stage']
         self._telegram_user = TelegramUserDTOModel(**response_data)
         logger.debug(f'telegram_user = {self._telegram_user}')
 
     async def update_telegram_user(self) -> None:
+        logger.debug("update telegram user")
         self._current_data = await self._fsm_context.get_data()
         logger.debug(f'Current state data: {self._current_data}')
         current_user: TelegramUserDTOModel = self._current_data.get('user')
         if current_user and current_user.new_sentence:
+            logger.debug("We have current user and he has sentence insert new_sentence for him")
             self._telegram_user.new_sentence = current_user.new_sentence
+            logger.debug(f"new_sentence = {self._telegram_user.new_sentence}")
         if current_user and current_user.learn_words:
+            logger.debug("We have current user and he has learn words insert learn words for him")
             self._telegram_user.learn_words = current_user.learn_words
-        logger.debug(f'update telegram_user = {self._telegram_user}')
+            logger.debug(f"learn_words = {self._telegram_user.learn_words}")
+        logger.debug(f'Final update telegram_user = {self._telegram_user}')
 
     async def get_real_state(self) -> None:
         """Get real state."""
         if self._state in {State.grammar.value, State.update_profile.value}:
+            logger.debug("It is grammar or update profile. End work.")
             return
 
         if self._message_text in {'/profile', '/records', '/achievements'}:
+            logger.debug("It is one of commands. '/profile', '/records', '/achievements'")
             return await self._work_with_message_text()
 
         if self._state == State.start_learn_words.value:
+            logger.debug("It is start learn words")
             self._state = await self._work_with_start_learn_words_status()
             return
 
         elif self._state == State.learn_words.value and len(self._telegram_user.learn_words) < 2:
+            logger.debug("It is learn words and words 1 or less.")
             self._telegram_user.new_sentence = None
             self._state = State.read_book.value
+            logger.debug("update sentence on '' and state for read book")
 
         if self._state in {State.read_book.value, State.check_answer_time.value}:
+            logger.debug("It is read book or check answer time")
             self._state = await self.work_with_read_status()
 
         return
@@ -135,16 +151,21 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def work_with_read_status(self) -> None:
         """Work with read status."""
-        logger.debug(f'work_with_read_status: {self._state}')
+        logger.debug(f'Start work_with_read_status: {self._state}')
 
         if self._telegram_user.new_sentence:
+            logger.debug("user has sentence")
             if self._state == State.check_answer_time.value:
+                logger.debug("It is check answer time return this state")
                 return State.check_answer_time.value
             if self._telegram_user.new_sentence.words:
+                logger.debug("User has words in sentence return check words")
                 return State.check_words.value
             if self._telegram_user.new_sentence.text:
+                logger.debug("User has text return read book")
                 return State.read_book.value
 
+        logger.debug("User does not have sentence")
         return await self._get_new_sentence()
 
     async def _work_with_start_learn_words_status(self) -> str:
@@ -174,19 +195,26 @@ class SetStateMiddleware(BaseMiddleware):
         return State.start_learn_words.value
 
     async def _get_new_sentence(self) -> str:
+        logger.debug("Get new sentence by api")
         url_get_new_sentence = f'{settings.api_url}/v1/read/{self._telegram_user.telegram_id}/'
         async with http_client() as client:
             response, response_status = await client.get(url=url_get_new_sentence, headers=settings.api_headers)
             if response_status == HTTPStatus.PARTIAL_CONTENT and self._state != State.check_answer_time.value:
+                logger.debug("It is last sentence for today.")
                 return State.read_book_end.value
 
             if response_status != HTTPStatus.OK and response_status != HTTPStatus.PARTIAL_CONTENT:
+                logger.debug("It is error with api return error")
                 return State.error.value
             new_sentence = response['detail']
             logger.debug(f'new sentence = {new_sentence}')
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
+            logger.debug(f"update sentence for telegram user {self._telegram_user.new_sentence}")
             if self._state == State.check_answer_time.value:
+                logger.debug(f"check answer time.")
                 return State.check_answer_time.value
             if new_sentence['words']:
+                logger.debug("sentence have words return check words")
                 return State.check_words.value
+            logger.debug("return read book")
             return State.read_book.value
