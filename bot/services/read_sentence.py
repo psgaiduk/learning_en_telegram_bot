@@ -178,9 +178,9 @@ class ReadSentenceService:
 
     async def _send_clue(self) -> None:
 
-        clue_text = self._telegram_user.new_sentence.text_with_words
+        clue_text = self._telegram_user.new_sentence.text_with_new_words
         if self._telegram_user.level_en.order < EnglishLevels.C1.level_order:
-            clue_text = self._telegram_user.new_sentence.text_with_new_words
+            clue_text = self._telegram_user.new_sentence.text_with_words
 
         clue_text = f"Подсказка:\n\n<tg-spoiler>{clue_text}</tg-spoiler>"
         await bot.send_message(

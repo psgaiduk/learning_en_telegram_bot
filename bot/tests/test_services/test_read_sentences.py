@@ -369,9 +369,9 @@ class TestReadSentenceService:
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(text="Test"))
         self._service._keyboard = keyboard
         await self._service._send_clue()
-        expected_clue_text = self._telegram_user.new_sentence.text_with_words
+        expected_clue_text = self._telegram_user.new_sentence.text_with_new_words
         if level.level_order < EnglishLevels.C1.level_order:
-            expected_clue_text = self._telegram_user.new_sentence.text_with_new_words
+            expected_clue_text = self._telegram_user.new_sentence.text_with_words
         mock_bot.send_message.assert_called_once_with(
             chat_id=self._telegram_user.telegram_id,
             text=f"Подсказка:\n\n<tg-spoiler>{expected_clue_text}</tg-spoiler>",
