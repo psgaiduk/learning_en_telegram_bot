@@ -2,8 +2,8 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
-from sqlalchemy import and_, func, not_
-from sqlalchemy.orm import Session, aliased, joinedload
+from sqlalchemy import func, not_, select
+from sqlalchemy.orm import Session, aliased, joinedload, contains_eager
 
 from database import get_db
 from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
@@ -288,20 +288,23 @@ class ReadBookService:
 
     async def _get_sentence_dto(self):
 
+        subquery = (
+            select(sentence_word_association.c.wordsmodel_id)
+            .where(sentence_word_association.c.bookssentencesmodel_id == self._need_sentence.sentence_id)
+        )
+
         words_with_history = (
             self._db.query(Words)
-            .join(sentence_word_association, sentence_word_association.c.wordsmodel_id == Words.word_id)
             .outerjoin(
                 UsersWordsHistory,
-                and_(
-                    UsersWordsHistory.word_id == Words.word_id,
-                    UsersWordsHistory.telegram_user_id == self._telegram_id
-                )
+                UsersWordsHistory.telegram_user_id == self._telegram_id
             )
-            .options(joinedload(Words.users_words_history))
-            .filter(sentence_word_association.c.bookssentencesmodel_id == self._need_sentence.sentence_id)
-            .all()
+            .filter(Words.word_id.in_(subquery))
+            .options(contains_eager(Words.users_words_history))
         )
+        
+        logger.debug(f'query = {str(words_with_history)}')
+        words_with_history = words_with_history.all()
 
         self._need_sentence.words = words_with_history
 
@@ -310,9 +313,11 @@ class ReadBookService:
         sentence_for_read = {}
 
         if sentence_info['order'] == 1:
+            logger.debug(f'it is first sentence in book add title')
             sentence_text = f'{self._title_book}\n\n{sentence_info["text"]}'
         else:
             sentence_text = sentence_info['text']
+        logger.debug(f'sentence text = {sentence_text}')
 
         sentence_for_read['sentence_id'] = sentence_info['sentence_id']
         sentence_for_read['book_id'] = sentence_info['book_id']
@@ -334,12 +339,15 @@ class ReadBookService:
 
         text_with_words = replace_with_translation(text=sentence_info['text'], words=words_for_sentence['all'])
         text_with_new_words = replace_with_translation(text=sentence_text, words=words_for_sentence['new'])
+        logger.debug(f'text with words = {text_with_words}')
+        logger.debug(f'text with new words = {text_with_new_words}')
 
         sentence_for_read['text_with_words'] = text_with_words
         sentence_for_read['text_with_new_words'] = text_with_new_words
         sentence_for_read['words'] = words_for_learn
 
         if self._is_new_sentence:
+            logger.debug('it is new sentence save history in db')
             new_history_sentence = UsersBooksSentencesHistory(
                 telegram_user_id=self._telegram_id,
                 sentence_id=sentence_info['sentence_id'],
@@ -353,32 +361,39 @@ class ReadBookService:
         self._db.commit()
 
         sentence = SentenceModelForReadDTO(**sentence_for_read)
+        logger.debug(f'create sentence = {sentence}')
 
+        return 'ok'
         return sentence
 
     async def _get_words_for_learn(self, words: list) -> tuple[list, dict]:
         """Get words for learn."""
-
+        logger.debug('start add words for learn')
         check_words = []
 
         if self._is_new_sentence is False:
+            logger.debug('it is old sentence')
             check_words = self._need_sentence.check_words or [0]
+        logger.debug(f'check words = {check_words}')
 
         words_for_learn = []
         words_for_sentence = {'all': [], 'new': []}
         for word in words:
+            logger.debug(f'add word {word}')
             word_info = {}
             words_history = {}
             if word.users_words_history:
                 words_history = word.users_words_history[0].__dict__
-
+                logger.debug(f'word has history = {words_history}')
             is_known_word = words_history.get('is_known', False)
 
             words_for_sentence['all'].append(word)
             if is_known_word is False:
+                logger.debug('user does not know this word add word')
                 words_for_sentence['new'].append(word)
 
             if check_words and word.word_id not in check_words:
+                logger.debug('this word not in check_words skip it')
                 continue
 
             word_info['telegram_user_id'] = self._telegram_id
@@ -397,9 +412,11 @@ class ReadBookService:
             word_info['repeat_datetime'] = words_history.get('repeat_datetime', datetime.now())
 
             if word_info and is_known_word is False:
+                logger.debug('user does not know this word add to words for learn')
                 words_for_learn.append(HistoryWordModelForReadDTO(**word_info).dict())
 
                 if not words_history:
+                    logger.debug('user does not have history for this word add it in db')
                     new_word = UsersWordsHistory(
                         telegram_user_id=word_info['telegram_user_id'],
                         word_id=word_info['word_id'],
@@ -411,8 +428,8 @@ class ReadBookService:
                         repeat_datetime=datetime.utcnow(),
                     )
                     self._db.add(new_word)
-
             if is_known_word is True:
                 continue
-
+        logger.debug(f'words for learn = {words_for_learn}')
+        logger.debug(f'words for sentence = {words_for_sentence}')
         return words_for_learn, words_for_sentence
