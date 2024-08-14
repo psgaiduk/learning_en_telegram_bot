@@ -363,7 +363,6 @@ class ReadBookService:
         sentence = SentenceModelForReadDTO(**sentence_for_read)
         logger.debug(f'create sentence = {sentence}')
 
-        return 'ok'
         return sentence
 
     async def _get_words_for_learn(self, words: list) -> tuple[list, dict]:
