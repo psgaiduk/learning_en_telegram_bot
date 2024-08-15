@@ -220,7 +220,9 @@ class ReadBookService:
 
         logger.debug(f'Get old random book {selected_book.__dict__}')
 
-        self._title_book += f'Закончились доступные книги на этом уровне. Повторим ранее прочитанную книгу\n'
+        self._title_book = (
+            f'Закончились доступные книги на этом уровне. Повторим ранее прочитанную книгу\n{self._title_book}\n'
+        )
 
         logger.debug(f'title book: {self._title_book}')
         return selected_book
@@ -311,17 +313,10 @@ class ReadBookService:
         sentence_info = self._need_sentence.__dict__
         logger.debug(f'sentence_info: {sentence_info}')
         sentence_for_read = {}
-
-        if sentence_info['order'] == 1:
-            logger.debug(f'it is first sentence in book add title')
-            sentence_text = f'{self._title_book}\n\n{sentence_info["text"]}'
-        else:
-            sentence_text = sentence_info['text']
-        logger.debug(f'sentence text = {sentence_text}')
+        sentence_text = sentence_info["text"]
 
         sentence_for_read['sentence_id'] = sentence_info['sentence_id']
         sentence_for_read['book_id'] = sentence_info['book_id']
-        sentence_for_read['text'] = sentence_text
         sentence_for_read['translation'] = sentence_info['translation']
         sentence_for_read['order'] = sentence_info['order']
         sentence_for_read['sentence_times'] = []
@@ -341,6 +336,14 @@ class ReadBookService:
         text_with_new_words = replace_with_translation(text=sentence_text, words=words_for_sentence['new'])
         logger.debug(f'text with words = {text_with_words}')
         logger.debug(f'text with new words = {text_with_new_words}')
+        
+        if sentence_info['order'] == 1:
+            logger.debug(f'it is first sentence in book add title')
+            sentence_text = f'{self._title_book}\n\n{sentence_info["text"]}'
+        else:
+            sentence_text = sentence_info['text']
+        logger.debug(f'sentence text = {sentence_text}')
+        sentence_for_read['text'] = sentence_text
 
         sentence_for_read['text_with_words'] = text_with_words
         sentence_for_read['text_with_new_words'] = text_with_new_words
