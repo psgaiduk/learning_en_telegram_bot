@@ -44,8 +44,8 @@ class ReadSentenceService:
         await self._create_keyboard()
         await self._create_file_path()
         await self._create_message_text()
-        await self._send_message_or_tenses()
         await self._send_separator()
+        await self._send_message_or_tenses()
 
         self._telegram_user.new_sentence.text = ""
         await self._state.set_data(data={"user": self._telegram_user})
