@@ -154,15 +154,14 @@ class TestReadSentenceService:
         expected_file_path = f"static/audio/{file_name}.mp3"
         assert self._service._file_path == expected_file_path
 
-    @mark.parametrize("number, is_exist_file", [[1, True], [2, True], [1, False], [3, False]])
+    @mark.parametrize("is_exist_file", [True, False])
     @patch("services.read_sentence.randint")
     @patch("services.read_sentence.path.isfile")
     @mark.asyncio
-    async def test_create_message_text(self, mock_path, mock_randint, number, is_exist_file):
+    async def test_create_message_text(self, mock_path, mock_randint, is_exist_file):
         mock_send_audio_message = AsyncMock(return_value=None)
         self._service._send_audio_message = mock_send_audio_message
 
-        mock_randint.return_value = number
         mock_path.return_value = is_exist_file
         self._service._telegram_user = self._telegram_user
         self._service._file_path = "test_file"
@@ -172,7 +171,7 @@ class TestReadSentenceService:
         self._service._sentence_translation = translate_text
         await self._service._create_message_text()
 
-        if is_exist_file and number == 1:
+        if is_exist_file:
             self._service._send_audio_message.assert_called_once()
         else:
             self._service._send_audio_message.assert_not_called()

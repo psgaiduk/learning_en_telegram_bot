@@ -43,8 +43,8 @@ class ReadSentenceService:
         await self._get_sentence()
         await self._create_keyboard()
         await self._create_file_path()
-        await self._create_message_text()
         await self._send_separator()
+        await self._create_message_text()
         await self._send_message_or_tenses()
 
         self._telegram_user.new_sentence.text = ""
@@ -67,7 +67,7 @@ class ReadSentenceService:
         self._file_path = f"static/audio/{file_name}.mp3"
 
     async def _create_message_text(self) -> None:
-        if randint(1, 3) == 1 and path.isfile(self._file_path):
+        if path.isfile(self._file_path):
             await self._send_audio_message()
         else:
             self._message_text = f"{self._sentence_text}"
