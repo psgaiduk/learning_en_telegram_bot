@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
-from sqlalchemy import Boolean, and_, func, select
+from sqlalchemy import Boolean, and_, func, or_, select
 from sqlalchemy.orm import Session, contains_eager, joinedload, subqueryload
 
 from database import get_db
@@ -60,8 +60,8 @@ class ReadBookService:
 
         self._telegram_id = telegram_id
         self._db = db
-        self._is_new_sentence = True
         self._title_book = ""
+        self._history_sentence = None
 
     async def work(self) -> SentenceModelForReadDTO:
         """Start work."""
@@ -80,8 +80,13 @@ class ReadBookService:
             )
             .filter(UsersBooksHistory.telegram_user_id == self._telegram_id)
             .filter(UsersBooksHistory.end_read == None)
-            .filter(UsersBooksSentencesHistory.created_at == None)
-            .order_by(BooksSentences.order)
+            .filter(
+                or_(
+                    UsersBooksSentencesHistory.created_at == None,
+                    UsersBooksSentencesHistory.is_read == False,
+                ),
+            )
+            .order_by(UsersBooksSentencesHistory.is_read, BooksSentences.order)
             .options(subqueryload(BooksSentences.tenses))
         )
         logger.debug(f"query get sentence for started book = {need_sentence}")
@@ -146,6 +151,14 @@ class ReadBookService:
                 book_id=self._need_sentence.book_id,
             )
             self._db.add(new_history_book)
+
+        if self._need_sentence.users_books_sentences_history:
+            self._history_sentence = sorted(
+                self._need_sentence.users_books_sentences_history,
+                key=lambda x: x.created_at,
+                reverse=True
+            )[0]
+            logger.debug(f"history sentence = {self._history_sentence}")
 
         return await self._get_sentence_dto()
 
@@ -235,7 +248,7 @@ class ReadBookService:
         sentence_for_read["text_with_new_words"] = text_with_new_words
         sentence_for_read["words"] = words_for_learn
 
-        if self._is_new_sentence:
+        if not self._history_sentence:
             logger.debug("it is new sentence save history in db")
             new_history_sentence = UsersBooksSentencesHistory(
                 telegram_user_id=self._telegram_id,
@@ -246,7 +259,7 @@ class ReadBookService:
             self._db.flush()
             sentence_for_read["history_sentence_id"] = new_history_sentence.id
         else:
-            sentence_for_read["history_sentence_id"] = self._need_sentence.history_sentence_id
+            sentence_for_read["history_sentence_id"] = self._history_sentence.id
         self._db.commit()
 
         sentence = SentenceModelForReadDTO(**sentence_for_read)
@@ -259,9 +272,9 @@ class ReadBookService:
         logger.debug("start add words for learn")
         check_words = []
 
-        if self._is_new_sentence is False:
+        if self._history_sentence:
             logger.debug("it is old sentence")
-            check_words = self._need_sentence.check_words or [0]
+            check_words = self._history_sentence.check_words or [0]
         logger.debug(f"check words = {check_words}")
 
         words_for_learn = []
