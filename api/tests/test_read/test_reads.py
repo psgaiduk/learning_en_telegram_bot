@@ -183,18 +183,19 @@ class TestReadApi:
                 start_read=datetime.utcnow(),
             )
             db.add(history_book)
-            last_sentence = (
+            sentences = (
                 db.query(BooksSentences)
                 .filter(BooksSentences.book_id == old_book_id)
-                .order_by(BooksSentences.order.desc())
-                .first()
+                .all()
             )
-            history_book_sentence = UsersBooksSentencesHistory(
-                telegram_user_id=telegram_id,
-                sentence_id=last_sentence.sentence_id,
-                is_read=True,
-            )
-            db.add(history_book_sentence)
+            for sentence in sentences:
+                history_book_sentence = UsersBooksSentencesHistory(
+                    telegram_user_id=telegram_id,
+                    sentence_id=sentence.sentence_id,
+                    is_read=True,
+                    created_at=datetime.utcnow(),
+                )
+                db.add(history_book_sentence)
             db.commit()
 
         url = f'{self._url}/{telegram_id}/'
@@ -340,6 +341,7 @@ class TestReadApi:
         assert response.status_code == expected_status
 
     def test_get_same_sentence_if_not_read_sentence(self):
+        
         with db_session() as db:
             telegram_user = db.query(Users).order_by(Users.telegram_id.desc()).first()
             telegram_id = telegram_user.telegram_id
@@ -390,8 +392,10 @@ class TestReadApi:
                     UsersBooksSentencesHistory.telegram_user_id == telegram_id,
                     UsersBooksSentencesHistory.sentence_id == response['sentence_id'],
                 )
-                .first()
             )
+            for a in users_history_book_sentence.all():
+                print('dksfjkds', a.sentence_id, a.is_read, a.id)
+            users_history_book_sentence = users_history_book_sentence.first()
             assert users_history_book_sentence is not None
             assert users_history_book_sentence.is_read is False
             assert users_history_book_sentence.sentence_id == response['sentence_id']
