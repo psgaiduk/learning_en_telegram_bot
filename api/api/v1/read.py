@@ -94,6 +94,16 @@ class ReadBookService:
         logger.debug(f"need sentence from started book = {self._need_sentence}")
 
         if not self._need_sentence:
+            books_to_update = (
+                self._db.query(UsersBooksHistory)
+                .filter(
+                    UsersBooksHistory.telegram_user_id == self._telegram_id,
+                    UsersBooksHistory.end_read.is_(None),
+                ).all()
+            )
+            for book in books_to_update:
+                book.end_read = datetime.utcnow()
+
             subquery1 = (
                 self._db.query(
                     BooksModel.book_id.label("book_id"),
