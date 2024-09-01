@@ -175,8 +175,6 @@ class ReadBookService:
                 .add_columns(union_subquery.c.title, union_subquery.c.author, union_subquery.c.repeat)
             )
 
-            print(need_sentence.statement)
-
             logger.debug(f"query get sentence = {need_sentence}")
             need_sentence = need_sentence.first()
             logger.debug(f"get started book = {need_sentence}")
@@ -199,9 +197,13 @@ class ReadBookService:
             self._db.add(new_history_book)
 
         if self._need_sentence.users_books_sentences_history:
-            self._history_sentence = sorted(
-                self._need_sentence.users_books_sentences_history, key=lambda x: x.created_at, reverse=True
-            )[0]
+            not_read_sentences = [
+                sentence
+                for sentence in self._need_sentence.users_books_sentences_history
+                if sentence.is_read is False
+            ]
+            if not_read_sentences:
+                self._history_sentence = sorted(not_read_sentences, key=lambda x: x.created_at, reverse=True)[0]
             logger.debug(f"history sentence = {self._history_sentence}")
 
         return await self._get_sentence_dto()
