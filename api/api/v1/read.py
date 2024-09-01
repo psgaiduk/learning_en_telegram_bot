@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
-from sqlalchemy import Boolean, and_, func, or_, select
+from sqlalchemy import Boolean, Integer, and_, func, or_, select, union_all
 from sqlalchemy.orm import Session, contains_eager, joinedload, subqueryload
 
 from database import get_db
@@ -79,11 +79,11 @@ class ReadBookService:
                 ),
             )
             .filter(UsersBooksHistory.telegram_user_id == self._telegram_id)
-            .filter(UsersBooksHistory.end_read == None)
+            .filter(UsersBooksHistory.end_read.is_(None))
             .filter(
                 or_(
-                    UsersBooksSentencesHistory.created_at == None,
-                    UsersBooksSentencesHistory.is_read == False,
+                    UsersBooksSentencesHistory.created_at.is_(None),
+                    UsersBooksSentencesHistory.is_read.is_(False),
                 ),
             )
             .order_by(UsersBooksSentencesHistory.is_read, BooksSentences.order)
@@ -99,47 +99,83 @@ class ReadBookService:
                 .filter(
                     UsersBooksHistory.telegram_user_id == self._telegram_id,
                     UsersBooksHistory.end_read.is_(None),
-                ).all()
+                )
+                .all()
             )
             for book in books_to_update:
                 book.end_read = datetime.utcnow()
+                self._db.commit()
 
-            subquery1 = (
+            last_read_book_subquery = (
+                self._db.query(UsersBooksHistory.book_id.label("book_id"))
+                .filter(
+                    UsersBooksHistory.telegram_user_id == self._telegram_id,
+                    UsersBooksHistory.end_read.isnot(None),
+                )
+                .order_by(UsersBooksHistory.end_read.desc())
+                .limit(1)
+                .subquery()
+            )
+
+            next_part_book_subquery = (
                 self._db.query(
                     BooksModel.book_id.label("book_id"),
                     BooksModel.title.label("title"),
                     BooksModel.author.label("author"),
                     func.cast(False, Boolean).label("repeat"),
+                    func.cast(1, Integer).label("order_book"),
+                )
+                .filter(BooksModel.previous_book_id == last_read_book_subquery.c.book_id)
+                .limit(1)
+            )
+
+            random_new_book_subquery = (
+                self._db.query(
+                    BooksModel.book_id.label("book_id"),
+                    BooksModel.title.label("title"),
+                    BooksModel.author.label("author"),
+                    func.cast(False, Boolean).label("repeat"),
+                    func.cast(2, Integer).label("order_book"),
                 )
                 .outerjoin(
                     UsersBooksHistory,
                     (UsersBooksHistory.book_id == BooksModel.book_id)
                     & (UsersBooksHistory.telegram_user_id == self._telegram_id),
                 )
-                .filter(UsersBooksHistory.start_read.is_(None))
+                .filter(UsersBooksHistory.start_read.is_(None), BooksModel.previous_book_id.is_(None))
+                .order_by(func.random())
                 .limit(1)
             )
 
-            subquery2 = (
+            random_repeat_book_subquery = (
                 self._db.query(
                     BooksModel.book_id.label("book_id"),
                     BooksModel.title.label("title"),
                     BooksModel.author.label("author"),
                     func.cast(True, Boolean).label("repeat"),
+                    func.cast(3, Integer).label("order_book"),
                 )
+                .filter(BooksModel.previous_book_id.is_(None))
                 .order_by(func.random())
                 .limit(1)
             )
 
-            union_subquery = subquery1.union_all(subquery2).limit(1).subquery()
+            union_subquery = (
+                union_all(random_new_book_subquery, random_repeat_book_subquery, next_part_book_subquery)
+                .order_by("order_book")
+                .limit(1)
+            ).subquery()
 
             need_sentence = (
                 self._db.query(BooksSentences)
                 .join(union_subquery, BooksSentences.book_id == union_subquery.c.book_id)
                 .filter(BooksSentences.order == 1)
+                .order_by(union_subquery.c.order_book)
                 .options(subqueryload(BooksSentences.tenses))
                 .add_columns(union_subquery.c.title, union_subquery.c.author, union_subquery.c.repeat)
             )
+
+            print(need_sentence.statement)
 
             logger.debug(f"query get sentence = {need_sentence}")
             need_sentence = need_sentence.first()
@@ -164,9 +200,7 @@ class ReadBookService:
 
         if self._need_sentence.users_books_sentences_history:
             self._history_sentence = sorted(
-                self._need_sentence.users_books_sentences_history,
-                key=lambda x: x.created_at,
-                reverse=True
+                self._need_sentence.users_books_sentences_history, key=lambda x: x.created_at, reverse=True
             )[0]
             logger.debug(f"history sentence = {self._history_sentence}")
 
@@ -183,11 +217,11 @@ class ReadBookService:
         logger.debug(f"User: {self._user}")
 
         if not self._user:
-            logger.debug(f"User not found")
+            logger.debug("User not found")
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
     async def _check_count_read_sentences_today(self):
-        logger.debug(f"Check count read sentences")
+        logger.debug("Check count read sentences")
         count_read_sentences = (
             self._db.query(func.count(UsersBooksSentencesHistory.sentence_id))
             .filter(
