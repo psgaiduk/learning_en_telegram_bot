@@ -21,6 +21,7 @@ class SentenceModelForReadDTO(BaseModel):
     sentence_id: int
     order: int
     book_id: int
+    book_title: str
     text: str
     text_with_words: str
     text_with_new_words: str
