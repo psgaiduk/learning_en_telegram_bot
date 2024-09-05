@@ -221,6 +221,8 @@ class TestReadSentenceService:
             caption=expected_text,
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard,
+            title=f"#{self._telegram_user.new_sentence.order}",
+            performer=self._telegram_user.new_sentence.book_title,
         )
 
     @mark.parametrize("is_update", [True, False])

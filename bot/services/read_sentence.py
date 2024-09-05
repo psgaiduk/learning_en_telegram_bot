@@ -82,13 +82,14 @@ class ReadSentenceService:
         with open(self._file_path, "rb") as audio:
             self._message_text = ""
             sentence_text = f"Text:\n\n<tg-spoiler>{self._sentence_text}</tg-spoiler>"
-
             await bot.send_audio(
                 chat_id=self._telegram_user.telegram_id,
                 audio=audio,
                 caption=sentence_text,
                 parse_mode=ParseMode.HTML,
                 reply_markup=self._keyboard,
+                title=f"#{self._telegram_user.new_sentence.order}",
+                performer=self._telegram_user.new_sentence.book_title,
             )
 
     async def _send_tenses(self) -> None:
