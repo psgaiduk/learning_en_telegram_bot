@@ -58,6 +58,7 @@ class TestReadApi:
             assert len(response['words']) <= 5
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response['sentence_id']).first()
             assert sentence.order == 1
+            assert book.title == response['book_title']
 
     def test_get_first_sentence_for_next_read_book(self):
         with db_session() as db:

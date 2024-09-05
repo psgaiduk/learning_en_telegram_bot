@@ -262,6 +262,7 @@ class ReadBookService:
         sentence_for_read["words"] = words_with_history
         sentence_for_read["sentence_id"] = self._need_sentence.sentence_id
         sentence_for_read["book_id"] = self._need_sentence.book_id
+        sentence_for_read["book_title"] = self._need_sentence.book.title
         sentence_for_read["translation"] = self._need_sentence.translation
         sentence_for_read["order"] = self._need_sentence.order
         sentence_for_read["sentence_times"] = []
@@ -283,7 +284,7 @@ class ReadBookService:
         logger.debug(f"text with new words = {text_with_new_words}")
 
         if self._need_sentence.order == 1:
-            logger.debug(f"it is first sentence in book add title")
+            logger.debug("it is first sentence in book add title")
             sentence_text = f"{self._title_book}\n\n{sentence_text}"
         else:
             sentence_text = sentence_text
