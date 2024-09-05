@@ -8,3 +8,4 @@ static/
 .env
 .env.prod
 .env.test
+.DS_store
