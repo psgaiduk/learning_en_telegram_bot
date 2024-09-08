@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from sqlalchemy import Boolean, Integer, and_, func, or_, select, union_all
-from sqlalchemy.orm import Session, contains_eager, joinedload, subqueryload
+from sqlalchemy.orm import Session, joinedload, subqueryload
 
 from database import get_db
 from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
@@ -198,9 +198,7 @@ class ReadBookService:
 
         if self._need_sentence.users_books_sentences_history:
             not_read_sentences = [
-                sentence
-                for sentence in self._need_sentence.users_books_sentences_history
-                if sentence.is_read is False
+                sentence for sentence in self._need_sentence.users_books_sentences_history if sentence.is_read is False
             ]
             if not_read_sentences:
                 self._history_sentence = sorted(not_read_sentences, key=lambda x: x.created_at, reverse=True)[0]
@@ -243,15 +241,26 @@ class ReadBookService:
             )
 
     async def _get_sentence_dto(self):
-        subquery = select(sentence_word_association.c.wordsmodel_id).where(
-            sentence_word_association.c.bookssentencesmodel_id == self._need_sentence.sentence_id
-        )
+
+        subquery_books_sentences_words = (
+            select(sentence_word_association.c.wordsmodel_id).where(
+                sentence_word_association.c.bookssentencesmodel_id == self._need_sentence.sentence_id
+            )
+        ).subquery()
+
+        subquery_uwh = (
+            select(UsersWordsHistory).where(
+                and_(
+                    UsersWordsHistory.telegram_user_id == self._telegram_id,
+                    UsersWordsHistory.word_id.in_(subquery_books_sentences_words),
+                )
+            )
+        ).subquery()
 
         words_with_history = (
             self._db.query(Words)
-            .outerjoin(UsersWordsHistory, UsersWordsHistory.telegram_user_id == self._telegram_id)
-            .filter(Words.word_id.in_(subquery))
-            .options(contains_eager(Words.users_words_history))
+            .outerjoin(subquery_uwh, subquery_uwh.c.word_id == Words.word_id)
+            .filter(Words.word_id.in_(subquery_books_sentences_words))
         )
 
         logger.debug(f"query = {str(words_with_history)}")
