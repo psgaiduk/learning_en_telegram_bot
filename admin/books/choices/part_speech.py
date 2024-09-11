@@ -13,3 +13,4 @@ class PartOfSpeechChoice(AdminChoiceEnum):
     conjunction = ("c", "Союз")
     particle = ("part", "Частица")
     interjection = ("i", "Междометие")
+    numeral = ("num", "Числительное")
