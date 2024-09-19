@@ -3,9 +3,8 @@ from django_q.tasks import Chain
 from loguru import logger
 
 from ai_app import AISDK
-from books.choices import TypeWordId
-from books.models import BooksModel, BooksSentencesModel, TensesModel, WordsModel
-from nlp_translate import translate_text
+from books.models import BooksModel, BooksSentencesModel, TensesModel
+from books.services import CreateWordsForSentenceService
 
 
 def create_book_task(book_id: int) -> None:
@@ -41,24 +40,16 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f"English sentence {english_sentence}")
     russian_sentence = sentence_data[1].strip()
     logger.debug(f"Russian sentence {russian_sentence}")
-    english_words_with_transcription = sentence_data[2].replace(".", "").split("; ")
-    english_words_with_transcription = set([word.strip().lower() for word in english_words_with_transcription])
+    english_words_with_transcription = sentence_data[2]
     logger.debug(f"Words with transcriptions {english_words_with_transcription}")
-    english_words = {}
-    for entry in english_words_with_transcription:
-        english, transcription = entry.split(" || ")
-        english_words[english.strip()] = transcription.strip()
-    logger.debug(f"Dict words with transcriptions: {english_words}")
+    words_ids = CreateWordsForSentenceService(raw_words=english_words_with_transcription).work()
+    logger.debug(f"Words ids: {words_ids}")
     sentence_tenses: list = sentence_data[3].strip().split(", ")
     logger.debug(f"Sentence times {sentence_tenses}")
 
     AISDK().create_audio_file(
         sentence=english_sentence, file_name=f"{instance.book_id} - {index}", level_order=instance.level_en.order
     )
-
-    create_words_in_db(english_words=english_words)
-
-    words = WordsModel.objects.filter(Q(word__in=english_words.keys()))
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
 
     book_sentence, created = BooksSentencesModel.objects.update_or_create(
@@ -70,45 +61,5 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
         },
     )
 
-    book_sentence.words.set(words)
+    book_sentence.words.set(words_ids)
     book_sentence.tenses.set(tenses)
-
-
-def create_words_in_db(english_words: dict) -> None:
-    """
-    Create words in database.
-
-    :param english_words: list of words
-    """
-    logger.debug(f"English words {english_words}")
-    words_in_database = WordsModel.objects.filter(word__in=english_words.keys())
-    logger.debug(f"Words in database {words_in_database}")
-    new_english_words = set(english_words.keys()) - set(words_in_database.values_list("word", flat=True))
-    logger.debug(f"Words for translate {new_english_words}")
-    if not new_english_words:
-        return None
-
-    words_for_translate = "; ".join(new_english_words)
-    translate_words = translate_text(text_on_en=words_for_translate, language="ru").split("; ")
-    logger.debug(f"Translates words {translate_words}")
-    if len(translate_words) != len(new_english_words):
-        logger.debug("New attempt for translate words")
-        translate_words = []
-        for word in words_for_translate:
-            translate_words.append(translate_text(text_on_en=word, language="ru"))
-        logger.debug(f"New translates words {translate_words}")
-
-    for index_word, word in enumerate(new_english_words):
-        translate_word = translate_words[index_word].lower()
-        logger.debug(f"English word {word} - {translate_word}")
-        type_word_id = TypeWordId.word.value
-        if " " in word and not word.startswith("to "):
-            type_word_id = TypeWordId.phrase_verb.value
-        WordsModel.objects.create(
-            word=word,
-            translation={"ru": translate_word},
-            type_word_id=type_word_id,
-            transcription=english_words[word],
-        )
-
-    return None
