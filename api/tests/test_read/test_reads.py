@@ -63,6 +63,42 @@ class TestReadApi:
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
             assert book.title == response["book_title"]
+            
+            """
+            { 'translation': {'ru': 'некоторый'}, 'is_known': False, 'count_view': 0, 'correct_answers': 0, 'incorrect_answers': 0, 'correct_answers_in_row': 0, 'increase_factor': 0.0, 'interval_repeat': 0, 'repeat_datetime': '2024-09-22T06:04:50.390282'}
+            """
+            
+            for word in response["words"]:
+                assert "type_word_id" in word
+                assert isinstance(word["type_word_id"], int)
+                assert 0 < word["type_word_id"] < 4
+                assert "word_id" in word
+                assert isinstance(word["word_id"], int)
+                assert "word" in word
+                assert isinstance(word["word"], str)
+                assert "transcription" in word
+                assert isinstance(word["transcription"], str)
+                assert "part_of_speech" in word
+                assert isinstance(word["part_of_speech"], str)
+                assert "translation" in word
+                assert isinstance(word["translation"], dict)
+                assert "ru" in word["translation"]
+                assert "is_known" in word
+                assert isinstance(word["is_known"], bool)
+                assert "count_view" in word
+                assert isinstance(word["count_view"], int)
+                assert "correct_answers" in word
+                assert isinstance(word["correct_answers"], int)
+                assert "incorrect_answers" in word
+                assert isinstance(word["incorrect_answers"], int)
+                assert "correct_answers_in_row" in word
+                assert isinstance(word["correct_answers_in_row"], int)
+                assert "increase_factor" in word
+                assert isinstance(word["increase_factor"], float)
+                assert "interval_repeat" in word
+                assert isinstance(word["interval_repeat"], int)
+                assert "repeat_datetime" in word
+                assert isinstance(word["repeat_datetime"], str)
 
     def test_get_first_sentence_for_not_read_earl_with_read_words(self):
         with db_session() as db:

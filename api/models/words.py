@@ -15,6 +15,7 @@ class Words(Base):
     word = Column(String(128))
     translation = Column(JSON)
     transcription = Column(String(128))
+    part_of_speech = Column(String(64))
 
     type_word = relationship('TypeWords', back_populates='words', uselist=False)
     sentences = relationship('BooksSentences', secondary=sentence_word_association, back_populates='words')

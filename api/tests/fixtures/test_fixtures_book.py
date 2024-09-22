@@ -125,18 +125,21 @@ def words_mock(level_en_mock, type_words_mock, book_mock, book_sentences_mock):
                             'type_word_id': 1,
                             'word': fake.word(),
                             'translation': {'ru': fake_ru.word()},
+                            'part_of_speech': 'n',
                             'transcription': 'test',
                         },
                         {
                             'type_word_id': 2,
                             'word': fake.word(),
                             'translation': {'ru': fake_ru.word()},
+                            'part_of_speech': 'n',
                             'transcription': 'test',
                         },
                         {
                             'type_word_id': 3,
                             'word': fake.word(),
                             'translation': {'ru': fake_ru.word()},
+                            'part_of_speech': 'n',
                             'transcription': 'test',
                         },
                     ]

@@ -9,3 +9,4 @@ class WordsModelDTO(BaseModel):
     word: str
     translation: dict
     transcription: str
+    part_of_speech: str

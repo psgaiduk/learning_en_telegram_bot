@@ -13,6 +13,7 @@ class HistoryWordModelDTO(BaseModel):
     word_id: int
     word: str
     transcription: Optional[str]
+    part_of_speech: Optional[str]
     is_known: Optional[bool]
     count_view: Optional[int]
     correct_answers: Optional[int]
@@ -33,6 +34,7 @@ class HistoryWordModelForReadDTO(BaseModel):
     word_id: int
     word: str
     transcription: Optional[str]
+    part_of_speech: str
     translation: Optional[dict]
     is_known: Optional[bool]
     count_view: Optional[int]
