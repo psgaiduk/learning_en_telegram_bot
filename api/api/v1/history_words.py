@@ -225,5 +225,6 @@ async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
     words_history['word'] = word_info['word']
     words_history['translation'] = word_info['translation']
     words_history['transcription'] = word_info['transcription']
+    words_history['part_of_speech'] = word_info['part_of_speech']
 
     return HistoryWordModelDTO(**words_history)

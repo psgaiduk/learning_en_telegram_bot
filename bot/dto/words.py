@@ -11,6 +11,7 @@ class WordDTOModel(BaseModel):
     word: str
     type_word_id: int
     transcription: str
+    part_of_speech: str
     translation: Optional[dict[str, str]]
     is_known: bool
     count_view: int
