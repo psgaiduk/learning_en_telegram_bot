@@ -28,5 +28,17 @@ services:
     volumes:
       - ./api:/app
 
+  admin_panel_test:
+    build: ./admin
+    command: ["pytest", "-v", "./tests"]  # Запуск тестов для admin_panel
+    ports:
+      - 8003:80
+    depends_on:
+      - db_test
+    env_file:
+      - .env.test
+    volumes:
+      - ./admin:/app
+
 volumes:
   dbdata:
