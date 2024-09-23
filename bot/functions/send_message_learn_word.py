@@ -11,6 +11,7 @@ from aiogram.types import (
 from loguru import logger
 
 from bot import bot
+from choices import PartOfSpeechChoice
 from dto import WordDTOModel
 from functions import delete_message
 
@@ -25,9 +26,10 @@ async def send_message_learn_word(word: WordDTOModel, telegram_id: int, message:
     await delete_message(message=message)
     translate_word = word.translation.get("ru")
     translate_word += (60 - len(translate_word)) * ' ' + '.'
+    part_of_speech = PartOfSpeechChoice[word.part_of_speech].value
 
     message_text = (
-        f'Помните перевод слова: <b><u>{word.word}</u></b> - {word.transcription}\n\n'
+        f'Помните перевод слова:\n<b><u>{word.word}</u></b> ({part_of_speech}) - {word.transcription}\n\n'
         f'Перевод: <tg-spoiler>\n{translate_word}</tg-spoiler>'
     )
     logger.debug(f'message text = {message_text}')
