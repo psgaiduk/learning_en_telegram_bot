@@ -105,7 +105,7 @@ class SetStateMiddleware(BaseMiddleware):
             logger.debug("It is one of commands. '/profile', '/records', '/achievements'")
             return await self._work_with_message_text()
 
-        if self._state == State.start_learn_words.value:
+        if self._state == State.start_learn_words.value or self._message_text == "learn_words_again":
             logger.debug("It is start learn words")
             self._state = await self._work_with_start_learn_words_status()
             return

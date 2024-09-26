@@ -270,6 +270,8 @@ class TestSetStateMiddleware:
             ("some text", State.start_learn_words.value),
             ("random text", State.start_learn_words.value),
             ("just text", State.start_learn_words.value),
+            ("learn_words_again", State.read_book.value),
+            ("learn_words_again", State.read_book_end.value),
         ],
     )
     @mark.asyncio
