@@ -15,29 +15,35 @@ from choices import State
 from functions import send_message_learn_word, update_data_by_api
 
 
-@dispatcher.message_handler(Text(equals='Read'), state=State.start_learn_words.value)
+@dispatcher.callback_query_handler(
+    lambda c: c.data and c.data.startswith("learn_words_again"), state=State.start_learn_words.value
+)
+@dispatcher.message_handler(Text(equals="Read"), state=State.start_learn_words.value)
 async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
     """Handle start learn words after push button read."""
 
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
-    logger.debug(f'get telegram user = {telegram_user}')
+    telegram_user: TelegramUserDTOModel = data["user"]
+    logger.debug(f"get telegram user = {telegram_user}")
 
     params_for_update_user = {
-        'telegram_id': message.from_user.id,
-        'stage': State.learn_words.value,
+        "telegram_id": message.from_user.id,
+        "stage": State.learn_words.value,
     }
-    logger.debug(f'params for update user = {params_for_update_user}')
+    logger.debug(f"params for update user = {params_for_update_user}")
 
     is_update = await update_data_by_api(
         telegram_id=message.from_user.id,
         params_for_update=params_for_update_user,
-        url_for_update=f'telegram_user/{message.from_user.id}',
+        url_for_update=f"telegram_user/{message.from_user.id}",
     )
-    logger.debug(f'update user = {is_update}')
+    logger.debug(f"update user = {is_update}")
     if is_update:
-        logger.debug('Всё хорошо, можно отправлять сообщения')
-        message_start_learn_word = 'Прежде чем продолжить повторим слова.'
+        logger.debug("Всё хорошо, можно отправлять сообщения")
+        if isinstance(message, Message):
+            message_start_learn_word = "Прежде чем продолжить повторим слова."
+        else:
+            message_start_learn_word = "Повторим слова"
 
         await bot.send_message(
             chat_id=telegram_user.telegram_id,
@@ -46,10 +52,10 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
         )
 
         first_word = telegram_user.learn_words[0]
-        logger.debug(f'Получили первое слово = {first_word}')
+        logger.debug(f"Получили первое слово = {first_word}")
         return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id, message=message)
 
-    message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+    message_text = "🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже."
     await bot.send_message(
         chat_id=telegram_user.telegram_id,
         text=message_text,
