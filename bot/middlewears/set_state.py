@@ -50,10 +50,16 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def set_state_data(self) -> None:
 
+        data = await self._fsm_context.get_data()
+        logger.debug(f'context data = {data}')
+
         if self._telegram_user:
-            await self._fsm_context.set_data(data={'user': self._telegram_user})
+            await self._fsm_context.update_data(telegram_user=self._telegram_user)
 
         await self._fsm_context.set_state(state=self._state)
+
+        data = await self._fsm_context.get_data()
+        logger.debug(f'context data updated = {data}')
 
     async def _get_current_state(self) -> None:
         logger.debug("Get current state")
