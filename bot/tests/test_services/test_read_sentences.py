@@ -122,7 +122,7 @@ class TestReadSentenceService:
     @mark.asyncio
     async def test_get_user(self):
 
-        self._state.get_data = AsyncMock(return_value={"user": self._telegram_user})
+        self._state.get_data = AsyncMock(return_value={"telegram_user": self._telegram_user})
 
         await self._service._get_telegram_user()
 

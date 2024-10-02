@@ -34,7 +34,7 @@ class TestWaitEnLevelService:
             level_en=None,
             hero_level=None,
         )
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitEnLevelService(callback_query=self._callback, state=self._state)
 

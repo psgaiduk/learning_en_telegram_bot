@@ -29,7 +29,7 @@ class TestWaitNameService:
             level_en=None,
             hero_level=None,
         )
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitNameService(message=self._message, state=self._state)
 
@@ -68,7 +68,7 @@ class TestWaitNameService:
             hero_level=hero_level,
         )
 
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitNameService(message=self._message, state=self._state)
         self._service._telegram_user = telegram_user_model
@@ -133,7 +133,7 @@ class TestWaitNameService:
             hero_level=hero_level,
         )
 
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitNameService(message=self._message, state=self._state)
         self._service._telegram_user = telegram_user_model
@@ -186,7 +186,7 @@ class TestWaitNameService:
             hero_level=hero_level,
         )
 
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitNameService(message=self._message, state=self._state)
         self._service._telegram_user = telegram_user_model
@@ -240,7 +240,7 @@ class TestWaitNameService:
             hero_level=hero_level,
         )
 
-        self._state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
         self._service = WaitNameService(message=self._message, state=self._state)
         self._service._telegram_user = telegram_user_model
