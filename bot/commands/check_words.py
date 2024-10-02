@@ -17,18 +17,18 @@ async def handle_check_words_after_read(message: Message, state: FSMContext) -> 
     """Handle check words after push button read."""
 
     start_text_message = 'Прежде чем начать изучать предложение, давай посмотрим слова, которые нам встретятся в этом предложении.\n\n'
-    await send_message_and_delete(chat_id=message.from_user.id, message_text=start_text_message, reply_markup=ReplyKeyboardRemove())
+    await send_message_and_delete(chat_id=message.from_user.id, message_text=start_text_message, state=state, reply_markup=ReplyKeyboardRemove())
 
     await CheckWordsService(state=state, start_text_message='').do()
 
-    await delete_message(message=message)
+    await delete_message(message=message, state=state)
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('learn_word_'), state=State.check_words.value)
 async def handle_check_words_after_learn_words(message: CallbackQuery, state: FSMContext) -> None:
     """Handle check answer about time of learn words."""
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
+    telegram_user: TelegramUserDTOModel = data['telegram_user']
     if telegram_user.learn_words:
         first_word = telegram_user.learn_words.pop(0)
         is_update = await update_learn_word(message=message, word=first_word)
@@ -37,7 +37,7 @@ async def handle_check_words_after_learn_words(message: CallbackQuery, state: FS
     if is_update:
         await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
         await CheckWordsService(state=state, start_text_message='').do()
-        return await delete_message(message=message)
+        return await delete_message(message=message, state=state)
     await bot.send_message(
         chat_id=message.from_user.id,
         text='Что-то пошло не так, попробуй ещё раз',
@@ -53,7 +53,7 @@ async def handle_check_word_click_known(callback_query: CallbackQuery, state: FS
     if is_update_history is False:
         return
 
-    await delete_message(message=callback_query)
+    await delete_message(message=callback_query, state=state)
 
     await CheckWordsService(state=state, start_text_message=start_text_message).do()
 

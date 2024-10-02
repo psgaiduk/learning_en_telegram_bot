@@ -71,7 +71,7 @@ async def handle_update_profile_en_level(callback_query: CallbackQuery, state: F
         return
 
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
+    telegram_user: TelegramUserDTOModel = data['telegram_user']
 
     inline_kb = await create_keyboard_for_en_levels(hero_level=telegram_user.hero_level.order)
 
@@ -84,7 +84,7 @@ async def handle_update_profile_close(callback_query: CallbackQuery, state: FSMC
     """Handle update profile close."""
 
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
+    telegram_user: TelegramUserDTOModel = data['telegram_user']
 
     params_for_update_user = {
         'telegram_id': callback_query.from_user.id,

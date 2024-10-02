@@ -14,7 +14,7 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext) ->
     """Handle check answer about time of read sentence."""
     message_text = []
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data['user']
+    telegram_user: TelegramUserDTOModel = data['telegram_user']
 
     data_for_update_history_sentence = {
         'id': telegram_user.new_sentence.history_sentence_id,
@@ -51,7 +51,7 @@ async def handle_check_answer_time(message: CallbackQuery, state: FSMContext) ->
     if is_update is False:
         return
 
-    await delete_message(message=message)
+    await delete_message(message=message, state=state)
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text='Read'))
