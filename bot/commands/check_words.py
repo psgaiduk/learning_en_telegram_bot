@@ -35,7 +35,7 @@ async def handle_check_words_after_learn_words(message: CallbackQuery, state: FS
     else:
         is_update = True
     if is_update:
-        await state.set_data(data={'user': telegram_user})  # Обновляем состояние без первого слова в learn_words
+        await state.update_data(telegram_user=telegram_user)  # Обновляем состояние без первого слова в learn_words
         await CheckWordsService(state=state, start_text_message='').do()
         return await delete_message(message=message, state=state)
     await bot.send_message(
