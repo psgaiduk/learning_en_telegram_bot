@@ -31,6 +31,19 @@ class TestSendDeleteMessageFunction:
 
         assert mock_bot.delete_message.call_count == 1
 
+    @mark.parametrize("state_data", [{"messages_for_delete": [10, 11]}, {"messages_for_delete": [2]}, {}])
+    @patch("functions.send_and_delete_message.bot", new_callable=AsyncMock)
+    @mark.asyncio
+    async def test_delete_message_with_messages_id(self, mock_bot, state_data):
+        state = AsyncMock()
+        expected_count_calls = len(state_data.get("messages_for_delete", [])) + 1
+        message = AsyncMock(message_id=1)
+        message.from_user = AsyncMock(id=1)
+        state.get_data.return_value = state_data
+        await delete_message(message=message, state=state)
+
+        assert mock_bot.delete_message.call_count == expected_count_calls
+
     @patch("functions.send_and_delete_message.bot", new_callable=AsyncMock)
     @patch("functions.send_and_delete_message.delete_message")
     @mark.asyncio
