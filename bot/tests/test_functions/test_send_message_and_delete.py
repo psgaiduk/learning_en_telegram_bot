@@ -18,6 +18,8 @@ class TestSendDeleteMessageFunction:
         state = AsyncMock()
         message = AsyncMock(message_id=1)
         message.from_user = AsyncMock(id=1)
+        state_data = {}
+        state.get_data.return_value = state_data
         mock_bot.delete_message.side_effect = error
         if is_delete is False:
             try:
