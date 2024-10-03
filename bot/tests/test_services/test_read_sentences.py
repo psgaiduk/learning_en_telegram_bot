@@ -73,7 +73,7 @@ class TestReadSentenceService:
 
         if "know_word" in message_data:
             mock_save_word_history.assert_called_once_with(callback_query=mock_callback)
-            mock_delete_message.assert_called_once_with(message=mock_callback)
+            mock_delete_message.assert_called_once_with(message=mock_callback, state=self._state)
         else:
             mock_delete_message.assert_not_called()
             mock_save_word_history.assert_not_called()
