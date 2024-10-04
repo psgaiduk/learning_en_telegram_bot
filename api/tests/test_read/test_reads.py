@@ -5,13 +5,26 @@ from fastapi import status
 from pytest import mark
 
 from main import app
-from models import BooksModel, Users, UsersBooksHistory, UsersBooksSentencesHistory, BooksSentences, UsersWordsHistory
+from models import (
+    BooksModel,
+    Users,
+    UsersBooksHistory,
+    UsersBooksSentencesHistory,
+    BooksSentences,
+    UsersWordsHistory,
+)
 from settings import settings
 from tests.fixtures import *
 from tests.connect_db import db_session
 
 
-@mark.usefixtures("create_test_database", "telegram_users_mock", "book_mock", "book_sentences_mock", "words_mock")
+@mark.usefixtures(
+    "create_test_database",
+    "telegram_users_mock",
+    "book_mock",
+    "book_sentences_mock",
+    "words_mock",
+)
 class TestReadApi:
 
     def setup_method(self):
@@ -63,11 +76,11 @@ class TestReadApi:
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
             assert book.title == response["book_title"]
-            
+
             """
             { 'translation': {'ru': 'некоторый'}, 'is_known': False, 'count_view': 0, 'correct_answers': 0, 'incorrect_answers': 0, 'correct_answers_in_row': 0, 'increase_factor': 0.0, 'interval_repeat': 0, 'repeat_datetime': '2024-09-22T06:04:50.390282'}
             """
-            
+
             for word in response["words"]:
                 assert "type_word_id" in word
                 assert isinstance(word["type_word_id"], int)

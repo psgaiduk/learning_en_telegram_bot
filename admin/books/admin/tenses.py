@@ -7,4 +7,4 @@ from books.models import TensesModel
 class TensesAdmin(admin.ModelAdmin):
     """Tenses admin."""
 
-    list_display = ('__str__', )
+    list_display = ("__str__",)

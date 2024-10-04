@@ -138,7 +138,12 @@ class TestCreateWordsForSentenceService:
 
     @mark.django_db
     def test_get_words_for_same_word_with_many_translates(self):
-        word = WordFromSentenceDTO(word="word", translate="слово, словечко", part_of_speech="n", transcription="word")
+        word = WordFromSentenceDTO(
+            word="word",
+            translate="слово, словечко",
+            part_of_speech="n",
+            transcription="word",
+        )
         word_1 = WordFromSentenceDTO(word="word", translate="слово", part_of_speech="n", transcription="word")
         self.service.words = [word_1]
         WordsModel.objects.create(

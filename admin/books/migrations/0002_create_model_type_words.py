@@ -6,7 +6,7 @@ from books.choices import TypeWord
 
 
 def add_typewords(apps, schema_editor):
-    TypeWordsModel = apps.get_model('books', 'TypeWordsModel')
+    TypeWordsModel = apps.get_model("books", "TypeWordsModel")
     for choice in TypeWord.choices():
         TypeWordsModel.objects.create(title=choice[0])
 
@@ -14,20 +14,31 @@ def add_typewords(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0001_create_books'),
+        ("books", "0001_create_books"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='TypeWordsModel',
+            name="TypeWordsModel",
             fields=[
-                ('type_word_id', models.AutoField(choices=[('word', 'Word'), ('phrase_verb', 'Phrase verb'), ('idiomatic_expression', 'Idiomatic expression')], primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=128)),
+                (
+                    "type_word_id",
+                    models.AutoField(
+                        choices=[
+                            ("word", "Word"),
+                            ("phrase_verb", "Phrase verb"),
+                            ("idiomatic_expression", "Idiomatic expression"),
+                        ],
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("title", models.CharField(max_length=128)),
             ],
             options={
-                'verbose_name': 'Type of word',
-                'verbose_name_plural': 'Types of words',
-                'db_table': 'type_words',
+                "verbose_name": "Type of word",
+                "verbose_name_plural": "Types of words",
+                "db_table": "type_words",
             },
         ),
         migrations.RunPython(add_typewords),

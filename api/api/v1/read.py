@@ -142,7 +142,10 @@ class ReadBookService:
                     (UsersBooksHistory.book_id == BooksModel.book_id)
                     & (UsersBooksHistory.telegram_user_id == self._telegram_id),
                 )
-                .filter(UsersBooksHistory.start_read.is_(None), BooksModel.previous_book_id.is_(None))
+                .filter(
+                    UsersBooksHistory.start_read.is_(None),
+                    BooksModel.previous_book_id.is_(None),
+                )
                 .order_by(func.random())
                 .limit(1)
             )
@@ -161,7 +164,11 @@ class ReadBookService:
             )
 
             union_subquery = (
-                union_all(random_new_book_subquery, random_repeat_book_subquery, next_part_book_subquery)
+                union_all(
+                    random_new_book_subquery,
+                    random_repeat_book_subquery,
+                    next_part_book_subquery,
+                )
                 .order_by("order_book")
                 .limit(1)
             ).subquery()
@@ -172,7 +179,11 @@ class ReadBookService:
                 .filter(BooksSentences.order == 1)
                 .order_by(union_subquery.c.order_book)
                 .options(subqueryload(BooksSentences.tenses))
-                .add_columns(union_subquery.c.title, union_subquery.c.author, union_subquery.c.repeat)
+                .add_columns(
+                    union_subquery.c.title,
+                    union_subquery.c.author,
+                    union_subquery.c.repeat,
+                )
             )
 
             logger.debug(f"query get sentence = {need_sentence}")

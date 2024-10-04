@@ -7,4 +7,4 @@ from books.models import TypeWordsModel
 class TypeWordsAdmin(admin.ModelAdmin):
     """TypeWords admin."""
 
-    list_display = ('__str__', )
+    list_display = ("__str__",)

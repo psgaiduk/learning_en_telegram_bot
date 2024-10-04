@@ -7,13 +7,13 @@ from telegram_users.choices import LevelEn, Language
 
 
 def add_english_levels(apps, schema_editor):
-    LevelENModel = apps.get_model('telegram_users', 'LevelsEnModel')
+    LevelENModel = apps.get_model("telegram_users", "LevelsEnModel")
     for index, choice in enumerate(LevelEn.choices()):
         LevelENModel.objects.create(title=choice[0], order=index + 1)
 
 
 def add_languages(apps, schema_editor):
-    LanguagesModel = apps.get_model('telegram_users', 'MainLanguagesModel')
+    LanguagesModel = apps.get_model("telegram_users", "MainLanguagesModel")
     for choice in Language.choices():
         LanguagesModel.objects.create(title=choice[0])
 
@@ -22,69 +22,133 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='HeroLevelsModel',
+            name="HeroLevelsModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=64)),
-                ('need_experience', models.BigIntegerField()),
-                ('count_sentences', models.IntegerField()),
-                ('count_games', models.IntegerField()),
-                ('order', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=64)),
+                ("need_experience", models.BigIntegerField()),
+                ("count_sentences", models.IntegerField()),
+                ("count_games", models.IntegerField()),
+                ("order", models.IntegerField()),
             ],
             options={
-                'verbose_name': 'Hero level',
-                'verbose_name_plural': 'Hero levels',
-                'db_table': 'hero_levels',
-                'ordering': ['order'],
+                "verbose_name": "Hero level",
+                "verbose_name_plural": "Hero levels",
+                "db_table": "hero_levels",
+                "ordering": ["order"],
             },
         ),
         migrations.CreateModel(
-            name='LevelsEnModel',
+            name="LevelsEnModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(choices=[('A1', 'beginner'), ('A2', 'elementary'), ('B1', 'pre-intermediate'), ('B2', 'intermediate'), ('C1', 'upper-intermediate'), ('C2', 'advanced')], max_length=64)),
-                ('order', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(
+                        choices=[
+                            ("A1", "beginner"),
+                            ("A2", "elementary"),
+                            ("B1", "pre-intermediate"),
+                            ("B2", "intermediate"),
+                            ("C1", "upper-intermediate"),
+                            ("C2", "advanced"),
+                        ],
+                        max_length=64,
+                    ),
+                ),
+                ("order", models.IntegerField()),
             ],
             options={
-                'verbose_name': 'English level',
-                'verbose_name_plural': 'English levels',
-                'db_table': 'levels_en',
-                'ordering': ['order'],
+                "verbose_name": "English level",
+                "verbose_name_plural": "English levels",
+                "db_table": "levels_en",
+                "ordering": ["order"],
             },
         ),
         migrations.CreateModel(
-            name='MainLanguagesModel',
+            name="MainLanguagesModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(choices=[('ru', 'Русский язык')], max_length=64)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(choices=[("ru", "Русский язык")], max_length=64),
+                ),
             ],
             options={
-                'verbose_name': 'Main language',
-                'verbose_name_plural': 'Main languages',
-                'db_table': 'main_languages',
+                "verbose_name": "Main language",
+                "verbose_name_plural": "Main languages",
+                "db_table": "main_languages",
             },
         ),
         migrations.CreateModel(
-            name='TelegramUsersModel',
+            name="TelegramUsersModel",
             fields=[
-                ('telegram_id', models.BigIntegerField(primary_key=True, serialize=False)),
-                ('user_name', models.CharField(blank=True, max_length=64, null=True)),
-                ('experience', models.BigIntegerField(default=0)),
-                ('previous_stage', models.CharField(blank=True, max_length=64, null=True)),
-                ('stage', models.CharField(blank=True, max_length=64, null=True)),
-                ('hero_level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.herolevelsmodel')),
-                ('level_en', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='telegram_users.levelsenmodel')),
-                ('main_language', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.mainlanguagesmodel')),
+                (
+                    "telegram_id",
+                    models.BigIntegerField(primary_key=True, serialize=False),
+                ),
+                ("user_name", models.CharField(blank=True, max_length=64, null=True)),
+                ("experience", models.BigIntegerField(default=0)),
+                (
+                    "previous_stage",
+                    models.CharField(blank=True, max_length=64, null=True),
+                ),
+                ("stage", models.CharField(blank=True, max_length=64, null=True)),
+                (
+                    "hero_level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.herolevelsmodel",
+                    ),
+                ),
+                (
+                    "level_en",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="telegram_users.levelsenmodel",
+                    ),
+                ),
+                (
+                    "main_language",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.mainlanguagesmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Telegram user',
-                'verbose_name_plural': 'Telegram users',
-                'db_table': 'telegram_users',
+                "verbose_name": "Telegram user",
+                "verbose_name_plural": "Telegram users",
+                "db_table": "telegram_users",
             },
         ),
         migrations.RunPython(add_english_levels),

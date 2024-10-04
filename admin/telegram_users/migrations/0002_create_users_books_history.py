@@ -7,29 +7,49 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0005_create_books_sentences'),
-        ('telegram_users', '0001_create_telegram_users_models'),
+        ("books", "0005_create_books_sentences"),
+        ("telegram_users", "0001_create_telegram_users_models"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='mainlanguagesmodel',
-            name='title',
-            field=models.CharField(choices=[('ru', 'Русский язык')], max_length=64),
+            model_name="mainlanguagesmodel",
+            name="title",
+            field=models.CharField(choices=[("ru", "Русский язык")], max_length=64),
         ),
         migrations.CreateModel(
-            name='UsersBooksHistoryModel',
+            name="UsersBooksHistoryModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_read', models.DateTimeField(auto_now_add=True)),
-                ('end_read', models.DateTimeField(default=None, null=True)),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='books.booksmodel')),
-                ('telegram_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.telegramusersmodel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_read", models.DateTimeField(auto_now_add=True)),
+                ("end_read", models.DateTimeField(default=None, null=True)),
+                (
+                    "book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="books.booksmodel",
+                    ),
+                ),
+                (
+                    "telegram_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.telegramusersmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': "User's book history",
-                'verbose_name_plural': "Users' book history",
-                'db_table': 'users_books_history',
+                "verbose_name": "User's book history",
+                "verbose_name_plural": "Users' book history",
+                "db_table": "users_books_history",
             },
         ),
     ]

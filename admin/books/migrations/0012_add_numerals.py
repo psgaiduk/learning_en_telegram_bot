@@ -6,13 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0011_add_part_of_speech'),
+        ("books", "0011_add_part_of_speech"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='wordsmodel',
-            name='part_of_speech',
-            field=models.CharField(choices=[('n', 'Существительное'), ('adj', 'Прилагательное'), ('v', 'Глагол'), ('adv', 'Наречие'), ('pre', 'Предлог'), ('pro', 'Местоимение'), ('c', 'Союз'), ('part', 'Частица'), ('i', 'Междометие'), ('num', 'Числительное')], max_length=64),
+            model_name="wordsmodel",
+            name="part_of_speech",
+            field=models.CharField(
+                choices=[
+                    ("n", "Существительное"),
+                    ("adj", "Прилагательное"),
+                    ("v", "Глагол"),
+                    ("adv", "Наречие"),
+                    ("pre", "Предлог"),
+                    ("pro", "Местоимение"),
+                    ("c", "Союз"),
+                    ("part", "Частица"),
+                    ("i", "Междометие"),
+                    ("num", "Числительное"),
+                ],
+                max_length=64,
+            ),
         ),
     ]

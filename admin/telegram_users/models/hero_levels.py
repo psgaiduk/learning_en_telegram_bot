@@ -9,10 +9,10 @@ class HeroLevelsModel(Model):
     order = IntegerField()
 
     def __str__(self) -> str:
-        return f'{self.title}'
+        return f"{self.title}"
 
     class Meta:
-        verbose_name = 'Hero level'
-        verbose_name_plural = 'Hero levels'
-        db_table = 'hero_levels'
-        ordering = ['order']
+        verbose_name = "Hero level"
+        verbose_name_plural = "Hero levels"
+        db_table = "hero_levels"
+        ordering = ["order"]

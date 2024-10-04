@@ -7,22 +7,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0003_alter_typewordsmodel_title_and_more'),
+        ("books", "0003_alter_typewordsmodel_title_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='WordsModel',
+            name="WordsModel",
             fields=[
-                ('word_id', models.AutoField(primary_key=True, serialize=False)),
-                ('word', models.CharField(max_length=128)),
-                ('translation', models.JSONField(blank=True, null=True)),
-                ('type_word', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='books.typewordsmodel')),
+                ("word_id", models.AutoField(primary_key=True, serialize=False)),
+                ("word", models.CharField(max_length=128)),
+                ("translation", models.JSONField(blank=True, null=True)),
+                (
+                    "type_word",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="books.typewordsmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Word',
-                'verbose_name_plural': 'Words',
-                'db_table': 'words',
+                "verbose_name": "Word",
+                "verbose_name_plural": "Words",
+                "db_table": "words",
             },
         ),
     ]

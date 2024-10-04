@@ -11,9 +11,9 @@ class TelegramSDK:
     def __init__(self) -> None:
         """Init."""
 
-        self._url = f'https://api.telegram.org/bot{settings.telegram_token}'
+        self._url = f"https://api.telegram.org/bot{settings.telegram_token}"
 
-    def send_video_link(self, telegram_id: int, video_link: str, text_message: str = '') -> None:
+    def send_video_link(self, telegram_id: int, video_link: str, text_message: str = "") -> None:
         """
         Sends video.
 
@@ -21,22 +21,22 @@ class TelegramSDK:
         :param video_link: link to video.
         :param text_message: Optional, text to send.
         """
-        url = self._url + '/sendVideo'
+        url = self._url + "/sendVideo"
 
         params_for_send_video = {
-            'chat_id': telegram_id,
-            'video': video_link,
-            'caption': text_message,
+            "chat_id": telegram_id,
+            "video": video_link,
+            "caption": text_message,
         }
 
         response = get(url, params=params_for_send_video)
 
     def send_video_file(self) -> None:
         """sends video file."""
-        url = self._url + '/sendVideo'
-        with open('video.mov', 'rb') as f:
+        url = self._url + "/sendVideo"
+        with open("video.mov", "rb") as f:
             # Отправка POST запроса на сервер Telegram
-            response = post(url, data={'chat_id': 232540084}, files={'video': f})
+            response = post(url, data={"chat_id": 232540084}, files={"video": f})
             print(response.json())
 
     def send_message(self, telegram_id: int, message: str) -> None:
@@ -46,16 +46,15 @@ class TelegramSDK:
         :param telegram_id: Telegram id.
         :param message: message to send.
         """
-        url = self._url + '/sendMessage'
+        url = self._url + "/sendMessage"
         params_for_send_message = {
-            'chat_id': telegram_id,
-            'text': message,
+            "chat_id": telegram_id,
+            "text": message,
         }
         response = get(url, params=params_for_send_message)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     tsdk = TelegramSDK()
     # tsdk.send_video_file()
 
@@ -65,8 +64,4 @@ if __name__ == '__main__':
     #     text_message=text,
     # )
 
-    tsdk.send_message(
-        telegram_id=232540084,
-        message='text'
-    )
-
+    tsdk.send_message(telegram_id=232540084, message="text")

@@ -7,6 +7,6 @@ from books.models import BooksModel
 class BooksAdmin(admin.ModelAdmin):
     """Books admin."""
 
-    list_display = ('__str__', 'level_en', 'author')
-    list_filter = ('level_en__title', 'author')
-    search_fields = ('author', 'title')
+    list_display = ("__str__", "level_en", "author")
+    list_filter = ("level_en__title", "author")
+    search_fields = ("author", "title")

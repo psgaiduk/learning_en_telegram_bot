@@ -38,7 +38,7 @@ class WaitNameService:
 
     async def _get_user(self) -> None:
         data = await self._state.get_data()
-        self._telegram_user = data['telegram_user']
+        self._telegram_user = data["telegram_user"]
 
     async def _get_message_text(self) -> None:
         if self._telegram_user.previous_stage == State.new_client.value:
@@ -49,23 +49,23 @@ class WaitNameService:
     async def _update_name_for_new_client(self) -> None:
 
         data_for_update_user = {
-            'telegram_id': self._telegram_user.telegram_id,
-            'user_name': self._new_name,
-            'stage': State.wait_en_level.value,
+            "telegram_id": self._telegram_user.telegram_id,
+            "user_name": self._new_name,
+            "stage": State.wait_en_level.value,
         }
 
         is_update_user = await update_data_by_api(
             telegram_id=self._chat_id,
             params_for_update=data_for_update_user,
-            url_for_update=f'telegram_user/{self._chat_id}',
+            url_for_update=f"telegram_user/{self._chat_id}",
         )
         if is_update_user is False:
             return
-        
+
         message_text = (
-            f'Имя профиля изменено на {self._new_name}.\n'
-            f'Выберите уровень знаний английского языка. Сейчас вам доступен только первый уровень, '
-            f'но потом откроются новые уровни знаний.'
+            f"Имя профиля изменено на {self._new_name}.\n"
+            f"Выберите уровень знаний английского языка. Сейчас вам доступен только первый уровень, "
+            f"но потом откроются новые уровни знаний."
         )
 
         inline_kb = await create_keyboard_for_en_levels(hero_level=self._telegram_user.hero_level.order)
@@ -75,19 +75,19 @@ class WaitNameService:
     async def _update_name_for_old_client(self) -> None:
 
         data_for_update_user = {
-            'telegram_id': self._telegram_user.telegram_id,
-            'user_name': self._new_name,
-            'stage': State.update_profile.value,
+            "telegram_id": self._telegram_user.telegram_id,
+            "user_name": self._new_name,
+            "stage": State.update_profile.value,
         }
 
         is_update_user = await update_data_by_api(
             telegram_id=self._chat_id,
             params_for_update=data_for_update_user,
-            url_for_update=f'telegram_user/{self._chat_id}',
+            url_for_update=f"telegram_user/{self._chat_id}",
         )
         if is_update_user is False:
             return
 
-        start_message_text = '🤖 Имя обновлено.\n'
+        start_message_text = "🤖 Имя обновлено.\n"
 
         await UpdateProfileService(chat_id=self._chat_id, start_message_text=start_message_text).do()

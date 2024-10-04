@@ -25,9 +25,12 @@ async def send_message_end_read_today_func(message: Union[CallbackQuery, Message
 
     messages_for_delete = []
     send_message = await bot.send_message(
-        chat_id=message.from_user.id, text=message_text, parse_mode=ParseMode.HTML, reply_markup=keyboard
+        chat_id=message.from_user.id,
+        text=message_text,
+        parse_mode=ParseMode.HTML,
+        reply_markup=keyboard,
     )
-    logger.debug(f'send message = {send_message.__dict__}')
+    logger.debug(f"send message = {send_message.__dict__}")
     messages_for_delete.append(send_message.message_id)
 
     message_with_grammar = "Но можно продолжить повторение слов"

@@ -10,14 +10,14 @@ from tests.connect_db import db_session
 from tests.fixtures import *
 
 
-@mark.usefixtures('create_test_database', 'telegram_users_mock')
+@mark.usefixtures("create_test_database", "telegram_users_mock")
 class TestCreateReferralAPI:
 
     @classmethod
     def setup_class(cls):
-        cls._headers = {'X-API-Key': settings.api_key}
+        cls._headers = {"X-API-Key": settings.api_key}
         cls._client = TestClient(app)
-        cls._url = '/api/v1/referrals/'
+        cls._url = "/api/v1/referrals/"
 
     def test_create_referral_user(self):
         with db_session() as db:
@@ -27,37 +27,48 @@ class TestCreateReferralAPI:
             third_telegram_user = telegram_users[2]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_201_CREATED
         response = response.json()
-        assert response['detail']['telegram_id'] == first_telegram_user.telegram_id
-        assert len(response['detail']['friends']) == 1
-        assert response['detail']['friends'] == [second_telegram_user.telegram_id]
+        assert response["detail"]["telegram_id"] == first_telegram_user.telegram_id
+        assert len(response["detail"]["friends"]) == 1
+        assert response["detail"]["friends"] == [second_telegram_user.telegram_id]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': third_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": third_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_201_CREATED
         response = response.json()
-        assert response['detail']['telegram_id'] == first_telegram_user.telegram_id
-        assert len(response['detail']['friends']) == 2
-        assert response['detail']['friends'] == [second_telegram_user.telegram_id, third_telegram_user.telegram_id]
+        assert response["detail"]["telegram_id"] == first_telegram_user.telegram_id
+        assert len(response["detail"]["friends"]) == 2
+        assert response["detail"]["friends"] == [
+            second_telegram_user.telegram_id,
+            third_telegram_user.telegram_id,
+        ]
 
         with db_session() as db:
             assert db.query(UsersReferrals).count() == 2
-            assert db.query(UsersReferrals).filter(
-                UsersReferrals.friend_telegram_id == second_telegram_user.telegram_id).first()
-            assert db.query(UsersReferrals).filter(
-                UsersReferrals.friend_telegram_id == third_telegram_user.telegram_id).first()
-            assert db.query(UsersReferrals).filter(
-                UsersReferrals.telegram_id == first_telegram_user.telegram_id).count() == 2
+            assert (
+                db.query(UsersReferrals)
+                .filter(UsersReferrals.friend_telegram_id == second_telegram_user.telegram_id)
+                .first()
+            )
+            assert (
+                db.query(UsersReferrals)
+                .filter(UsersReferrals.friend_telegram_id == third_telegram_user.telegram_id)
+                .first()
+            )
+            assert (
+                db.query(UsersReferrals).filter(UsersReferrals.telegram_id == first_telegram_user.telegram_id).count()
+                == 2
+            )
 
     def test_not_create_again_referral_user(self):
         with db_session() as db:
@@ -67,28 +78,28 @@ class TestCreateReferralAPI:
             third_telegram_user = telegram_users[2]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_201_CREATED
         response = response.json()
-        assert response['detail']['telegram_id'] == first_telegram_user.telegram_id
-        assert len(response['detail']['friends']) == 1
-        assert response['detail']['friends'] == [second_telegram_user.telegram_id]
+        assert response["detail"]["telegram_id"] == first_telegram_user.telegram_id
+        assert len(response["detail"]["friends"]) == 1
+        assert response["detail"]["friends"] == [second_telegram_user.telegram_id]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         data_for_create_referral = {
-            'telegram_user_id': third_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": third_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
@@ -101,16 +112,16 @@ class TestCreateReferralAPI:
             wrong_telegram_id = first_telegram_user.telegram_id + 1
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': wrong_telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": wrong_telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
         data_for_create_referral = {
-            'telegram_user_id': wrong_telegram_id,
-            'friend_telegram_id': first_telegram_user.telegram_id,
+            "telegram_user_id": wrong_telegram_id,
+            "friend_telegram_id": first_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, headers=self._headers, json=data_for_create_referral)
@@ -123,8 +134,8 @@ class TestCreateReferralAPI:
             second_telegram_user = telegram_users[1]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
         response = self._client.post(url=self._url, json=data_for_create_referral)
@@ -137,9 +148,9 @@ class TestCreateReferralAPI:
             second_telegram_user = telegram_users[1]
 
         data_for_create_referral = {
-            'telegram_user_id': first_telegram_user.telegram_id,
-            'friend_telegram_id': second_telegram_user.telegram_id,
+            "telegram_user_id": first_telegram_user.telegram_id,
+            "friend_telegram_id": second_telegram_user.telegram_id,
         }
 
-        response = self._client.post(url=self._url, json=data_for_create_referral, headers={'X-API-Key': 'test'})
+        response = self._client.post(url=self._url, json=data_for_create_referral, headers={"X-API-Key": "test"})
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

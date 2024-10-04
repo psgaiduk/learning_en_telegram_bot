@@ -6,14 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0010_add_transcription_field'),
+        ("books", "0010_add_transcription_field"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='wordsmodel',
-            name='part_of_speech',
-            field=models.CharField(choices=[('n', 'Существительное'), ('adj', 'Прилагательное'), ('v', 'Глагол'), ('adv', 'Наречие'), ('pre', 'Предлог'), ('pro', 'Местоимение'), ('c', 'Союз'), ('part', 'Частица'), ('i', 'Междометие')], default='n', max_length=64),
+            model_name="wordsmodel",
+            name="part_of_speech",
+            field=models.CharField(
+                choices=[
+                    ("n", "Существительное"),
+                    ("adj", "Прилагательное"),
+                    ("v", "Глагол"),
+                    ("adv", "Наречие"),
+                    ("pre", "Предлог"),
+                    ("pro", "Местоимение"),
+                    ("c", "Союз"),
+                    ("part", "Частица"),
+                    ("i", "Междометие"),
+                ],
+                default="n",
+                max_length=64,
+            ),
             preserve_default=False,
         ),
     ]

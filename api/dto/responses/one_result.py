@@ -1,7 +1,7 @@
 from pydantic.generics import GenericModel
 from typing import TypeVar, Generic
 
-DataT = TypeVar('DataT')
+DataT = TypeVar("DataT")
 
 
 class OneResponseDTO(GenericModel, Generic[DataT]):

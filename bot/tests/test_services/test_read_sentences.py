@@ -245,12 +245,25 @@ class TestReadSentenceService:
 
     @mark.parametrize(
         "is_update_history, is_update_stage, message_text",
-        [[True, True, "Text"], [True, True, ""], [True, False, ""], [False, True, ""], [False, False, ""]],
+        [
+            [True, True, "Text"],
+            [True, True, ""],
+            [True, False, ""],
+            [False, True, ""],
+            [False, False, ""],
+        ],
     )
     @patch("services.read_sentence.bot", new_callable=AsyncMock)
     @patch("services.read_sentence.delete_message")
     @mark.asyncio
-    async def test_send_message(self, mock_delete_message, mock_bot, is_update_history, is_update_stage, message_text):
+    async def test_send_message(
+        self,
+        mock_delete_message,
+        mock_bot,
+        is_update_history,
+        is_update_stage,
+        message_text,
+    ):
         mock_update_history_sentence = AsyncMock(return_value=is_update_history)
         self._service._update_history_sentence = mock_update_history_sentence
         mock_update_stage_user = AsyncMock(return_value=is_update_stage)
@@ -290,7 +303,10 @@ class TestReadSentenceService:
             mock_send_translate.assert_not_called()
 
     @patch("services.read_sentence.bot.send_message", new_callable=AsyncMock)
-    @patch("services.read_sentence.get_combinations", return_value=["Test1", "Test2", "Test3", "Test4", "Test5"])
+    @patch(
+        "services.read_sentence.get_combinations",
+        return_value=["Test1", "Test2", "Test3", "Test4", "Test5"],
+    )
     @mark.asyncio
     async def test_send_text_with_tenses(self, mock_get_combinations, mock_bot):
         self._service._telegram_user = self._telegram_user
@@ -324,7 +340,10 @@ class TestReadSentenceService:
         assert len([key for key in keyboard if key[0].callback_data == "wrong_answer_time"]) == 3
         assert all([len(key) == 1 for key in keyboard]) is True
 
-    @mark.parametrize("stage", [State.check_answer_time.value, State.learn_words.value, State.read_book.value])
+    @mark.parametrize(
+        "stage",
+        [State.check_answer_time.value, State.learn_words.value, State.read_book.value],
+    )
     @patch("services.read_sentence.update_data_by_api")
     @mark.asyncio
     async def test_update_stage_user(self, mock_update_data_by_api, stage: str):
@@ -335,7 +354,10 @@ class TestReadSentenceService:
 
         mock_update_data_by_api.assert_called_once_with(
             telegram_id=self._telegram_user.telegram_id,
-            params_for_update={"telegram_id": self._telegram_user.telegram_id, "stage": stage},
+            params_for_update={
+                "telegram_id": self._telegram_user.telegram_id,
+                "stage": stage,
+            },
             url_for_update=f"telegram_user/{self._telegram_user.telegram_id}",
         )
 
@@ -359,7 +381,14 @@ class TestReadSentenceService:
 
     @mark.parametrize(
         "level",
-        [EnglishLevels.A1, EnglishLevels.A2, EnglishLevels.B1, EnglishLevels.B2, EnglishLevels.C1, EnglishLevels.C2],
+        [
+            EnglishLevels.A1,
+            EnglishLevels.A2,
+            EnglishLevels.B1,
+            EnglishLevels.B2,
+            EnglishLevels.C1,
+            EnglishLevels.C2,
+        ],
     )
     @patch("services.read_sentence.bot", new_callable=AsyncMock)
     @mark.asyncio

@@ -15,11 +15,11 @@ from models import Users, UsersWordsHistory, Words
 
 
 @version_1_history_router.post(
-    path='/words/',
+    path="/words/",
     response_model=OneResponseDTO[HistoryWordModelDTO],
     responses={
-        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or word not found.'},
-        status.HTTP_400_BAD_REQUEST: {'description': 'User already know word.'},
+        status.HTTP_404_NOT_FOUND: {"description": "Telegram user or word not found."},
+        status.HTTP_400_BAD_REQUEST: {"description": "User already know word."},
     },
     status_code=status.HTTP_201_CREATED,
 )
@@ -31,19 +31,23 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordDTO, db:
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
     if not telegram_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
     word = db.query(Words).filter(Words.word_id == word_id).first()
     if not word:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Word not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found.")
 
-    old_history_word = db.query(UsersWordsHistory).filter(
-        UsersWordsHistory.telegram_user_id == telegram_id,
-        UsersWordsHistory.word_id == word_id,
-    ).first()
+    old_history_word = (
+        db.query(UsersWordsHistory)
+        .filter(
+            UsersWordsHistory.telegram_user_id == telegram_id,
+            UsersWordsHistory.word_id == word_id,
+        )
+        .first()
+    )
 
     if old_history_word:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User already know word.')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already know word.")
 
     new_history_word = UsersWordsHistory(
         telegram_user_id=telegram_id,
@@ -55,7 +59,9 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordDTO, db:
     history_word = (
         db.query(UsersWordsHistory)
         .options(joinedload(UsersWordsHistory.word))
-        .filter(UsersWordsHistory.id == new_history_word.id).first())
+        .filter(UsersWordsHistory.id == new_history_word.id)
+        .first()
+    )
 
     history_word_dto = await get_words_history_dto(history_word.__dict__)
 
@@ -63,35 +69,45 @@ async def create_history_word_for_telegram_id(request: CreateHistoryWordDTO, db:
 
 
 @version_1_history_router.get(
-    path='/words/{telegram_id}/',
+    path="/words/{telegram_id}/",
     response_model=PaginatedResponseDTO[HistoryWordModelDTO],
     responses={
-        status.HTTP_404_NOT_FOUND: {'description': 'User not found.'},
+        status.HTTP_404_NOT_FOUND: {"description": "User not found."},
     },
     status_code=status.HTTP_200_OK,
 )
 async def get_words_history_by_telegram_id(
-        telegram_id: int,
-        request: GetHistoryWordsDTO = Depends(),
-        db: Session = Depends(get_db),
+    telegram_id: int,
+    request: GetHistoryWordsDTO = Depends(),
+    db: Session = Depends(get_db),
 ):
     """Get history book by history book id."""
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
     if not telegram_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
     if request.page < 1:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Page must be greater than zero.')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Page must be greater than zero.",
+        )
     if request.limit < 1:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Limit must be greater than zero.')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Limit must be greater than zero.",
+        )
     if request.limit > 200:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Limit must be less than 200.')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Limit must be less than 200.",
+        )
 
     query = (
         db.query(UsersWordsHistory)
         .options(joinedload(UsersWordsHistory.word))
-        .filter(UsersWordsHistory.telegram_user_id == telegram_id))
+        .filter(UsersWordsHistory.telegram_user_id == telegram_id)
+    )
 
     if request.word_id:
         query = query.filter(UsersWordsHistory.word_id == request.word_id)
@@ -104,10 +120,10 @@ async def get_words_history_by_telegram_id(
 
     if request.count_view_lte:
         query = query.filter(UsersWordsHistory.count_view <= request.count_view_lte)
-        
+
     if request.correct_answers_gte:
         query = query.filter(UsersWordsHistory.correct_answers >= request.correct_answers_gte)
-        
+
     if request.correct_answers_lte:
         query = query.filter(UsersWordsHistory.correct_answers <= request.correct_answers_lte)
 
@@ -141,11 +157,11 @@ async def get_words_history_by_telegram_id(
 
 
 @version_1_history_router.patch(
-    path='/words/',
+    path="/words/",
     response_model=OneResponseDTO[HistoryWordModelDTO],
     responses={
-        status.HTTP_404_NOT_FOUND: {'description': 'Telegram user or word not found.'},
-        status.HTTP_400_BAD_REQUEST: {'description': 'User early not see this word.'},
+        status.HTTP_404_NOT_FOUND: {"description": "Telegram user or word not found."},
+        status.HTTP_400_BAD_REQUEST: {"description": "User early not see this word."},
     },
     status_code=status.HTTP_200_OK,
 )
@@ -156,19 +172,26 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
     if not telegram_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
     word = db.query(Words).filter(Words.word_id == word_id).first()
     if not word:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Word not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found.")
 
-    history_word = db.query(UsersWordsHistory).filter(
-        UsersWordsHistory.telegram_user_id == telegram_id,
-        UsersWordsHistory.word_id == word_id,
-    ).first()
+    history_word = (
+        db.query(UsersWordsHistory)
+        .filter(
+            UsersWordsHistory.telegram_user_id == telegram_id,
+            UsersWordsHistory.word_id == word_id,
+        )
+        .first()
+    )
 
     if not history_word:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='User early not see this word.')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User early not see this word.",
+        )
 
     history_word = patch_data(object_from_db=history_word, request=request)
     history_word.updated_at = datetime.utcnow()
@@ -177,7 +200,12 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
     history_word = (
         db.query(UsersWordsHistory)
         .options(joinedload(UsersWordsHistory.word))
-        .filter(UsersWordsHistory.word_id == word_id, UsersWordsHistory.telegram_user_id == telegram_id).first())
+        .filter(
+            UsersWordsHistory.word_id == word_id,
+            UsersWordsHistory.telegram_user_id == telegram_id,
+        )
+        .first()
+    )
 
     history_word_dto = await get_words_history_dto(history_word.__dict__)
 
@@ -185,14 +213,14 @@ async def update_history_word_for_telegram_id(request: UpdateHistoryWordDTO, db:
 
 
 @version_1_history_router.get(
-    path='/learn-words/{telegram_id}/',
+    path="/learn-words/{telegram_id}/",
     response_model=list[HistoryWordModelDTO],
-    responses={status.HTTP_404_NOT_FOUND: {'description': 'User not found.'}},
+    responses={status.HTTP_404_NOT_FOUND: {"description": "User not found."}},
     status_code=status.HTTP_200_OK,
 )
 async def get_learn_words_by_telegram_id(
-        telegram_id: int,
-        db: Session = Depends(get_db),
+    telegram_id: int,
+    db: Session = Depends(get_db),
 ) -> list[HistoryWordModelDTO]:
     """
     Get words for learn for user.
@@ -204,7 +232,7 @@ async def get_learn_words_by_telegram_id(
 
     telegram_user = db.query(Users).filter(Users.telegram_id == telegram_id).first()
     if not telegram_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found.')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
     learn_words = (
         db.query(UsersWordsHistory)
@@ -212,19 +240,20 @@ async def get_learn_words_by_telegram_id(
         .filter(
             UsersWordsHistory.telegram_user_id == telegram_id,
             UsersWordsHistory.is_known == True,
-            UsersWordsHistory.repeat_datetime <= func.now()
-        ).limit(10)
+            UsersWordsHistory.repeat_datetime <= func.now(),
+        )
+        .limit(10)
     ).all()
 
     return [await get_words_history_dto(learn_word.__dict__) for learn_word in learn_words]
 
 
 async def get_words_history_dto(words_history: dict) -> HistoryWordModelDTO:
-    word_info = words_history['word'].__dict__
-    words_history['type_word_id'] = word_info['type_word_id']
-    words_history['word'] = word_info['word']
-    words_history['translation'] = word_info['translation']
-    words_history['transcription'] = word_info['transcription']
-    words_history['part_of_speech'] = word_info['part_of_speech']
+    word_info = words_history["word"].__dict__
+    words_history["type_word_id"] = word_info["type_word_id"]
+    words_history["word"] = word_info["word"]
+    words_history["translation"] = word_info["translation"]
+    words_history["transcription"] = word_info["transcription"]
+    words_history["part_of_speech"] = word_info["part_of_speech"]
 
     return HistoryWordModelDTO(**words_history)

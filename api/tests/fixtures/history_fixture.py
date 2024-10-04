@@ -5,13 +5,21 @@ from faker import Faker
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import BooksModel, BooksSentences, Users, UsersBooksHistory, UsersBooksSentencesHistory, UsersWordsHistory, Words
+from models import (
+    BooksModel,
+    BooksSentences,
+    Users,
+    UsersBooksHistory,
+    UsersBooksSentencesHistory,
+    UsersWordsHistory,
+    Words,
+)
 from tests.fixtures.test_fixtures_book import book_mock, words_mock
 from tests.fixtures.telegram_users_fixture import telegram_users_mock
 
 
 fake = Faker()
-fake_ru = Faker('ru_RU')
+fake_ru = Faker("ru_RU")
 
 
 @fixture

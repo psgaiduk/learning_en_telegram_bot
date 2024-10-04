@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0009_add_field_tenses'),
+        ("books", "0009_add_field_tenses"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='wordsmodel',
-            name='transcription',
-            field=models.CharField(default='ok', max_length=128),
+            model_name="wordsmodel",
+            name="transcription",
+            field=models.CharField(default="ok", max_length=128),
             preserve_default=False,
         ),
     ]

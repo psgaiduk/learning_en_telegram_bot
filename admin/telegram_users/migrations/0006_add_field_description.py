@@ -7,8 +7,8 @@ from telegram_users.models import LevelsEnModel, MainLanguagesModel
 
 
 def add_descriptions(apps, schema_editor):
-    LevelsEnModel = apps.get_model('telegram_users', 'LevelsEnModel')
-    MainLanguagesModel = apps.get_model('telegram_users', 'MainLanguagesModel')
+    LevelsEnModel = apps.get_model("telegram_users", "LevelsEnModel")
+    MainLanguagesModel = apps.get_model("telegram_users", "MainLanguagesModel")
 
     for level in LevelsEnModel.objects.all():
         level.description = LevelEn[level.title].description
@@ -22,20 +22,20 @@ def add_descriptions(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('telegram_users', '0005_create_users_words_history'),
+        ("telegram_users", "0005_create_users_words_history"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='levelsenmodel',
-            name='description',
-            field=models.CharField(default='test', max_length=128),
+            model_name="levelsenmodel",
+            name="description",
+            field=models.CharField(default="test", max_length=128),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='mainlanguagesmodel',
-            name='description',
-            field=models.CharField(default='test', max_length=128),
+            model_name="mainlanguagesmodel",
+            name="description",
+            field=models.CharField(default="test", max_length=128),
             preserve_default=False,
         ),
         migrations.RunPython(add_descriptions),

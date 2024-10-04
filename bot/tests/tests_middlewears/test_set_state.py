@@ -171,7 +171,10 @@ class TestSetStateMiddleware:
         assert isinstance(self._service._telegram_user, TelegramUserDTOModel)
         assert self._service._telegram_user.stage == expected_stage
 
-    @mark.parametrize("is_new_sentence, is_learn_words", [(False, False), (True, False), (False, True), (True, True)])
+    @mark.parametrize(
+        "is_new_sentence, is_learn_words",
+        [(False, False), (True, False), (False, True), (True, True)],
+    )
     @mark.asyncio
     async def test_update_telegram_user(self, mocker, sentence_with_word, is_new_sentence, is_learn_words):
         telegram_user = TelegramUserDTOModel(**self._response_data["detail"])
@@ -370,7 +373,12 @@ class TestSetStateMiddleware:
         "message_text, state, expected_state, is_update",
         [
             ("/profile", State.read_book.value, State.update_profile.value, True),
-            ("/profile", State.check_answer_time.value, State.update_profile.value, True),
+            (
+                "/profile",
+                State.check_answer_time.value,
+                State.update_profile.value,
+                True,
+            ),
             ("/profile", State.check_answer_time.value, State.error.value, False),
             ("/profile", State.read_book.value, State.error.value, False),
         ],
@@ -434,7 +442,10 @@ class TestSetStateMiddleware:
         if state in {State.read_book.value, State.check_answer_time.value}:
             mock_update_data_by_api.assert_called_once_with(
                 telegram_id=self._service._telegram_user.telegram_id,
-                params_for_update={"telegram_id": self._service._telegram_user.telegram_id, "previous_stage": state},
+                params_for_update={
+                    "telegram_id": self._service._telegram_user.telegram_id,
+                    "previous_stage": state,
+                },
                 url_for_update=f"telegram_user/{self._service._telegram_user.telegram_id}",
             )
         else:
@@ -540,11 +551,26 @@ class TestSetStateMiddleware:
     @mark.parametrize(
         "response_status, stage, expected_stage, is_words",
         [
-            (HTTPStatus.PARTIAL_CONTENT, State.check_answer_time.value, State.check_answer_time.value, True),
-            (HTTPStatus.PARTIAL_CONTENT, State.read_book.value, State.read_book_end.value, True),
+            (
+                HTTPStatus.PARTIAL_CONTENT,
+                State.check_answer_time.value,
+                State.check_answer_time.value,
+                True,
+            ),
+            (
+                HTTPStatus.PARTIAL_CONTENT,
+                State.read_book.value,
+                State.read_book_end.value,
+                True,
+            ),
             (HTTPStatus.BAD_REQUEST, State.read_book.value, State.error.value, True),
             (HTTPStatus.OK, State.read_book.value, State.check_words.value, True),
-            (HTTPStatus.OK, State.check_answer_time.value, State.check_answer_time.value, True),
+            (
+                HTTPStatus.OK,
+                State.check_answer_time.value,
+                State.check_answer_time.value,
+                True,
+            ),
             (HTTPStatus.OK, State.read_book.value, State.read_book.value, False),
         ],
     )
@@ -555,8 +581,8 @@ class TestSetStateMiddleware:
 
         sentence = sentence_with_word.dict()
         if is_words is False:
-            sentence['words'] = []
-        response_data = {'detail': sentence}
+            sentence["words"] = []
+        response_data = {"detail": sentence}
         with patch(self._get_method_target, return_value=(response_data, response_status)) as mocked_get:
             state = await self._service._get_new_sentence()
 

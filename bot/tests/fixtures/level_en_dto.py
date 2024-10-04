@@ -7,7 +7,7 @@ from dto import LevelEnDTOModel
 def level_en():
     return LevelEnDTOModel(
         id=1,
-        title='Beginner',
-        description='Beginner description',
+        title="Beginner",
+        description="Beginner description",
         order=1,
     )

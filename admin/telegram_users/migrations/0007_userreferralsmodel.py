@@ -7,21 +7,44 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('telegram_users', '0006_add_field_description'),
+        ("telegram_users", "0006_add_field_description"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserReferralsModel',
+            name="UserReferralsModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('friend_telegram', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='friend_telegram_id', to='telegram_users.telegramusersmodel')),
-                ('telegram', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.telegramusersmodel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "friend_telegram",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="friend_telegram_id",
+                        to="telegram_users.telegramusersmodel",
+                    ),
+                ),
+                (
+                    "telegram",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.telegramusersmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'User referrals',
-                'verbose_name_plural': 'Users referrals',
-                'db_table': 'users_referrals',
+                "verbose_name": "User referrals",
+                "verbose_name_plural": "Users referrals",
+                "db_table": "users_referrals",
             },
         ),
     ]

@@ -9,16 +9,16 @@ from tests.fixtures import create_test_database, main_language_mock
 from tests.connect_db import db_session
 
 
-@mark.usefixtures('create_test_database', 'main_language_mock')
+@mark.usefixtures("create_test_database", "main_language_mock")
 class TestGetLanguagesAPI:
 
     @classmethod
     def setup_class(cls):
-        cls._headers = {'X-API-Key': settings.api_key}
+        cls._headers = {"X-API-Key": settings.api_key}
         cls._client = TestClient(app)
 
     def test_get_languages(self):
-        response = self._client.get('/api/v1/service/languages/', headers=self._headers)
+        response = self._client.get("/api/v1/service/languages/", headers=self._headers)
         assert response.status_code == status.HTTP_200_OK
         response = response.json()
 
@@ -26,10 +26,10 @@ class TestGetLanguagesAPI:
             db_languages = db.query(MainLanguages).all()
             assert len(response) == len(db_languages)
             for language, resp_language in zip(db_languages, response):
-                assert language.id == resp_language['id']
-                assert language.title == resp_language['title']
-                assert language.description == resp_language['description']
+                assert language.id == resp_language["id"]
+                assert language.title == resp_language["title"]
+                assert language.description == resp_language["description"]
 
     def test_not_get_languages_without_api_key(self):
-        response = self._client.get('/api/v1/service/languages/')
+        response = self._client.get("/api/v1/service/languages/")
         assert response.status_code == status.HTTP_401_UNAUTHORIZED

@@ -6,21 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0008_create_tenses'),
+        ("books", "0008_create_tenses"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='bookssentencesmodel',
-            name='description_time',
+            model_name="bookssentencesmodel",
+            name="description_time",
         ),
         migrations.RemoveField(
-            model_name='bookssentencesmodel',
-            name='sentence_times',
+            model_name="bookssentencesmodel",
+            name="sentence_times",
         ),
         migrations.AddField(
-            model_name='bookssentencesmodel',
-            name='tenses',
-            field=models.ManyToManyField(blank=True, related_name='books_sentences', to='books.tensesmodel'),
+            model_name="bookssentencesmodel",
+            name="tenses",
+            field=models.ManyToManyField(blank=True, related_name="books_sentences", to="books.tensesmodel"),
         ),
     ]

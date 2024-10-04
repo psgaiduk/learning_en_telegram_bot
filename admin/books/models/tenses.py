@@ -12,6 +12,6 @@ class TensesModel(Model):
         return self.name
 
     class Meta:
-        db_table = 'tenses'
-        verbose_name = 'tenses'
-        verbose_name_plural = 'tenses'
+        db_table = "tenses"
+        verbose_name = "tenses"
+        verbose_name_plural = "tenses"

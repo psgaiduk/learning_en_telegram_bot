@@ -8,7 +8,7 @@ from database import Base
 class Tenses(Base):
     """Model of tenses."""
 
-    __tablename__ = 'tenses'
+    __tablename__ = "tenses"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(64))
@@ -16,4 +16,4 @@ class Tenses(Base):
     full_description = Column(Text)
     image_telegram_id = Column(Text)
 
-    sentences = relationship('BooksSentences', secondary=sentence_tenses_association, back_populates='tenses')
+    sentences = relationship("BooksSentences", secondary=sentence_tenses_association, back_populates="tenses")

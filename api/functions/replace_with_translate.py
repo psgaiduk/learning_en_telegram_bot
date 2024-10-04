@@ -14,7 +14,7 @@ def replace_with_translation(text: str, words: list) -> str:
 
     for word_info in words:
         word_text = word_info.word.lower()
-        word_translation = word_info.translation['ru']
+        word_translation = word_info.translation["ru"]
 
         def replace_func(match):
             original_word = match.group(0)
@@ -25,7 +25,7 @@ def replace_with_translation(text: str, words: list) -> str:
                     return original_word
 
             replaced_ranges.append(match_range)
-            return f'<b>{original_word}</b> ({word_translation})'
+            return f"<b>{original_word}</b> ({word_translation})"
 
-        text = sub(fr'\b{escape(word_text)}\b', replace_func, text, flags=IGNORECASE)
+        text = sub(rf"\b{escape(word_text)}\b", replace_func, text, flags=IGNORECASE)
     return text

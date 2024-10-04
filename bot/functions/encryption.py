@@ -1,14 +1,14 @@
 from typing import Optional
 
 
-LETTERS = 'abcdefghijklmnopqrstuvwxyz'
+LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
 
 async def encode_telegram_id(number: int) -> Optional[str]:
     if not isinstance(number, int) or number < 0:
         return None
 
-    encoded_str = ''
+    encoded_str = ""
 
     while number > 0:
         remainder = number % 26

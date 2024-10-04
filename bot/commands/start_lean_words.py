@@ -16,7 +16,8 @@ from functions import send_message_learn_word, update_data_by_api
 
 
 @dispatcher.callback_query_handler(
-    lambda c: c.data and c.data.startswith("learn_words_again"), state=State.start_learn_words.value
+    lambda c: c.data and c.data.startswith("learn_words_again"),
+    state=State.start_learn_words.value,
 )
 @dispatcher.message_handler(Text(equals="Read"), state=State.start_learn_words.value)
 async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
@@ -53,7 +54,12 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
 
         first_word = telegram_user.learn_words[0]
         logger.debug(f"Получили первое слово = {first_word}")
-        return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id, message=message, state=state)
+        return await send_message_learn_word(
+            word=first_word,
+            telegram_id=telegram_user.telegram_id,
+            message=message,
+            state=state,
+        )
 
     message_text = "🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже."
     await bot.send_message(

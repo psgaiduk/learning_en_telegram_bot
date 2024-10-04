@@ -1,6 +1,14 @@
 from datetime import datetime
 
-from django.db.models import BooleanField, CASCADE, DateTimeField, FloatField, ForeignKey, Model, PositiveIntegerField
+from django.db.models import (
+    BooleanField,
+    CASCADE,
+    DateTimeField,
+    FloatField,
+    ForeignKey,
+    Model,
+    PositiveIntegerField,
+)
 
 from telegram_users.models.telegram_users import TelegramUsersModel
 from books.models.words import WordsModel
@@ -23,9 +31,9 @@ class UsersWordsHistoryModel(Model):
     updated_at = DateTimeField(default=datetime.utcnow)
 
     class Meta:
-        db_table = 'users_words_history'
-        verbose_name = 'Users\' history words'
-        verbose_name_plural = 'Users\' history words'
+        db_table = "users_words_history"
+        verbose_name = "Users' history words"
+        verbose_name_plural = "Users' history words"
 
     def __str__(self):
-        return f'{self.telegram_user.telegram_id} - {self.word.word}'
+        return f"{self.telegram_user.telegram_id} - {self.word.word}"
