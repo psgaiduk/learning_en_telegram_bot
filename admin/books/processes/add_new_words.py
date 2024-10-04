@@ -19,9 +19,9 @@ class AddNewWordsProcess:
     def _add_words_to_database(self) -> None:
         for word in self._words:
             WordsModel.objects.update_or_create(
-                word=word['word'],
+                word=word["word"],
                 defaults={
-                    'type_word': self._type_words,
-                    'translation': word['translate'],
-                }
+                    "type_word": self._type_words,
+                    "translation": word["translate"],
+                },
             )

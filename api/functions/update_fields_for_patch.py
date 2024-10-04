@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def patch_data(object_from_db: T, request: Generic[T]) -> T:

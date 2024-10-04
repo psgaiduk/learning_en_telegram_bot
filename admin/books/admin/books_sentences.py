@@ -9,9 +9,9 @@ class BooksSentencesAdmin(admin.ModelAdmin):
     """BooksSentences admin."""
 
     form = get_translate_model_form()
-    list_display = ('__str__', 'book', 'order')
-    list_filter = ('book__level_en__title', )
-    search_fields = ('text', )
+    list_display = ("__str__", "book", "order")
+    list_filter = ("book__level_en__title",)
+    search_fields = ("text",)
 
     def get_readonly_fields(self, request, obj=None):
-        return ['translation']
+        return ["translation"]

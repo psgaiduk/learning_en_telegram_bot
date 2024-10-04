@@ -15,7 +15,7 @@ async def update_data_by_api(telegram_id: int, params_for_update: dict, url_for_
     :return: True or False
     """
     async with http_client() as client:
-        url_update_telegram_user = f'{settings.api_url}/v1/{url_for_update}/'
+        url_update_telegram_user = f"{settings.api_url}/v1/{url_for_update}/"
 
         _, response_status = await client.patch(
             url=url_update_telegram_user,
@@ -24,7 +24,7 @@ async def update_data_by_api(telegram_id: int, params_for_update: dict, url_for_
         )
 
     if response_status != HTTPStatus.OK:
-        message_text = '🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже.'
+        message_text = "🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже."
         await bot.send_message(chat_id=telegram_id, text=message_text)
         return False
 

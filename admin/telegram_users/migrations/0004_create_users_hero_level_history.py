@@ -8,22 +8,42 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('telegram_users', '0003_create_users_books_sentences_history'),
+        ("telegram_users", "0003_create_users_books_sentences_history"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UsersHeroLevelsHistoryModel',
+            name="UsersHeroLevelsHistoryModel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=datetime.datetime.utcnow)),
-                ('hero_level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.herolevelsmodel')),
-                ('telegram_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.telegramusersmodel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(default=datetime.datetime.utcnow)),
+                (
+                    "hero_level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.herolevelsmodel",
+                    ),
+                ),
+                (
+                    "telegram_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.telegramusersmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': "Users' history hero levels",
-                'verbose_name_plural': "Users' history hero levels",
-                'db_table': 'users_hero_levels_history',
+                "verbose_name": "Users' history hero levels",
+                "verbose_name_plural": "Users' history hero levels",
+                "db_table": "users_hero_levels_history",
             },
         ),
     ]

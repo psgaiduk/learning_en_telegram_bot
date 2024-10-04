@@ -12,13 +12,13 @@ class UserReferralsModel(Model):
         on_delete=SET_NULL,
         null=True,
         blank=True,
-        related_name='friend_telegram_id',
+        related_name="friend_telegram_id",
     )
 
     def __str__(self) -> str:
-        return f'{self.telegram.user_name} - пригласил {self.friend_telegram.user_name}'
+        return f"{self.telegram.user_name} - пригласил {self.friend_telegram.user_name}"
 
     class Meta:
-        verbose_name = 'User referrals'
-        verbose_name_plural = 'Users referrals'
-        db_table = 'users_referrals'
+        verbose_name = "User referrals"
+        verbose_name_plural = "Users referrals"
+        db_table = "users_referrals"

@@ -11,7 +11,7 @@ class TelegramUserDTO(BaseModel):
     telegram_id: int
     level_en_id: Optional[int]
     main_language_id: int
-    user_name: str = 'New client'
+    user_name: str = "New client"
     experience: int = 0
     hero_level_id: int
     previous_stage: Optional[str] = None

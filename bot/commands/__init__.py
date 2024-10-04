@@ -1,7 +1,17 @@
-from commands.check_answer_time import handle_check_answer_time, handle_check_answer_time_other_data
+from commands.check_answer_time import (
+    handle_check_answer_time,
+    handle_check_answer_time_other_data,
+)
 from commands.registration import handle_registration
-from commands.wait_name import handle_wait_name, handle_wait_name_incorrect_work, handle_wait_name_incorrect_work_buttons
-from commands.wait_en_level import handle_wait_en_level, handle_wait_en_level_incorrect_text
+from commands.wait_name import (
+    handle_wait_name,
+    handle_wait_name_incorrect_work,
+    handle_wait_name_incorrect_work_buttons,
+)
+from commands.wait_en_level import (
+    handle_wait_en_level,
+    handle_wait_en_level_incorrect_text,
+)
 from commands.update_profile import (
     handle_update_profile,
     handle_update_profile_name,
@@ -23,4 +33,7 @@ from commands.read_sentence import (
     handle_end_read_sentence_today_after_learn_words,
 )
 from commands.learn_words import handle_error_learn_words, handle_learn_words
-from commands.start_lean_words import handle_error_start_learn_words, handle_start_lean_words
+from commands.start_lean_words import (
+    handle_error_start_learn_words,
+    handle_start_lean_words,
+)

@@ -9,11 +9,11 @@ from dto import WordDTOModel
 def word_new():
     return WordDTOModel(
         word_id=1,
-        word='test',
+        word="test",
         type_word_id=1,
-        translation={'ru': 'тест'},
-        transcription='test',
-        part_of_speech='n',
+        translation={"ru": "тест"},
+        transcription="test",
+        part_of_speech="n",
         is_known=False,
         count_view=0,
         correct_answers=0,
@@ -29,11 +29,11 @@ def word_new():
 def word_second():
     return WordDTOModel(
         word_id=2,
-        word='second',
+        word="second",
         type_word_id=1,
-        transcription='test',
-        translation={'ru': 'второй'},
-        part_of_speech='n',
+        transcription="test",
+        translation={"ru": "второй"},
+        part_of_speech="n",
         is_known=False,
         count_view=0,
         correct_answers=0,

@@ -7,23 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('telegram_users', '0007_userreferralsmodel'),
+        ("telegram_users", "0007_userreferralsmodel"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userswordshistorymodel',
-            name='increase_factor',
+            model_name="userswordshistorymodel",
+            name="increase_factor",
             field=models.FloatField(default=2.0),
         ),
         migrations.AddField(
-            model_name='userswordshistorymodel',
-            name='interval_repeat',
+            model_name="userswordshistorymodel",
+            name="interval_repeat",
             field=models.PositiveIntegerField(default=600),
         ),
         migrations.AddField(
-            model_name='userswordshistorymodel',
-            name='repeat_datetime',
+            model_name="userswordshistorymodel",
+            name="repeat_datetime",
             field=models.DateTimeField(default=datetime.datetime.utcnow),
         ),
     ]

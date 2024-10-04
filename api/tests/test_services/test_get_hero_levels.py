@@ -9,14 +9,14 @@ from tests.fixtures import create_test_database, hero_level_mock
 from tests.connect_db import db_session
 
 
-@mark.usefixtures('create_test_database', 'hero_level_mock')
+@mark.usefixtures("create_test_database", "hero_level_mock")
 class TestGetHeroLevelsAPI:
 
     @classmethod
     def setup_class(cls):
-        cls._headers = {'X-API-Key': settings.api_key}
+        cls._headers = {"X-API-Key": settings.api_key}
         cls._client = TestClient(app)
-        cls._url = '/api/v1/service/hero_levels/'
+        cls._url = "/api/v1/service/hero_levels/"
 
     def test_get_hero_levels(self):
         response = self._client.get(url=self._url, headers=self._headers)
@@ -27,9 +27,9 @@ class TestGetHeroLevelsAPI:
             db_hero_levels = db.query(HeroLevels).all()
             assert len(response) == len(db_hero_levels)
             for hero_level, resp_hero_level in zip(db_hero_levels, response):
-                assert hero_level.id == resp_hero_level['id']
-                assert hero_level.title == resp_hero_level['title']
-                assert hero_level.need_experience == resp_hero_level['need_experience']
+                assert hero_level.id == resp_hero_level["id"]
+                assert hero_level.title == resp_hero_level["title"]
+                assert hero_level.need_experience == resp_hero_level["need_experience"]
 
     def test_not_get_hero_levels_without_api_key(self):
         response = self._client.get(url=self._url)

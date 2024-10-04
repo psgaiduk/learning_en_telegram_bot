@@ -8,7 +8,9 @@ class WordsModel(Model):
 
     word_id = AutoField(primary_key=True)
     type_word = ForeignKey("TypeWordsModel", on_delete=CASCADE)
-    word = CharField(max_length=128, )
+    word = CharField(
+        max_length=128,
+    )
     translation = JSONField(blank=True, null=True)
     transcription = CharField(max_length=128)
     part_of_speech = CharField(max_length=64, choices=PartOfSpeechChoice.choices())

@@ -73,7 +73,10 @@ class CheckWordsService:
             InlineKeyboardButton(text="Знаю", callback_data=f"know_word_true_{self._first_word.word_id}")
         )
         inline_keyboard.add(
-            InlineKeyboardButton(text="Не знаю", callback_data=f"know_word_false_{self._first_word.word_id}")
+            InlineKeyboardButton(
+                text="Не знаю",
+                callback_data=f"know_word_false_{self._first_word.word_id}",
+            )
         )
 
         text_message = (
@@ -81,4 +84,8 @@ class CheckWordsService:
             f"Слово: {self._first_word.word} - {self._first_word.transcription}\n"
             f'Перевод: {self._first_word.translation["ru"]}'
         )
-        await bot.send_message(chat_id=self._telegram_user.telegram_id, text=text_message, reply_markup=inline_keyboard)
+        await bot.send_message(
+            chat_id=self._telegram_user.telegram_id,
+            text=text_message,
+            reply_markup=inline_keyboard,
+        )

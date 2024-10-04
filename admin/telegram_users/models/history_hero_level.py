@@ -14,9 +14,9 @@ class UsersHeroLevelsHistoryModel(Model):
     created_at = DateTimeField(default=datetime.utcnow)
 
     class Meta:
-        db_table = 'users_hero_levels_history'
-        verbose_name = 'Users\' history hero levels'
-        verbose_name_plural = 'Users\' history hero levels'
+        db_table = "users_hero_levels_history"
+        verbose_name = "Users' history hero levels"
+        verbose_name_plural = "Users' history hero levels"
 
     def __str__(self):
-        return f'{self.telegram_user.telegram_id} - {self.hero_level.title}'
+        return f"{self.telegram_user.telegram_id} - {self.hero_level.title}"

@@ -164,7 +164,7 @@ class TestCheckWordsService:
             await service._send_message()
 
             excepted_text = (
-                f'{start_message_text}\nТы знаешь это слово?\n\n'
+                f"{start_message_text}\nТы знаешь это слово?\n\n"
                 f'Слово: {word.word} - {word.transcription}\nПеревод: {word.translation["ru"]}'
             )
 

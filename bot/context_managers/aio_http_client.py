@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 class AsyncHttpClient:
     """Асинхронный HTTP клиент для выполнения запросов к API"""
+
     def __init__(self) -> None:
         """Init."""
         self.session = ClientSession()
@@ -26,15 +27,15 @@ class AsyncHttpClient:
 
     async def get(self, url, headers=None, params=None):
         """Выполнение GET запроса к API."""
-        return await self._request('GET', url, headers=headers, params=params)
+        return await self._request("GET", url, headers=headers, params=params)
 
     async def post(self, url, headers=None, json=None):
         """Выполнение POST запроса к API."""
-        return await self._request('POST', url, headers=headers, json=json)
+        return await self._request("POST", url, headers=headers, json=json)
 
     async def patch(self, url, headers=None, json=None):
         """Выполнение PATCH запроса к API."""
-        return await self._request('PATCH', url, headers=headers, json=json)
+        return await self._request("PATCH", url, headers=headers, json=json)
 
     async def close(self):
         """Закрытие сессии."""

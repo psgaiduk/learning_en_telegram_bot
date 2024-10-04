@@ -9,11 +9,11 @@ from commands import handle_registration
 class TestRegistrationCommand:
     """Tests command registration."""
 
-    @patch('commands.registration.RegistrationService')
+    @patch("commands.registration.RegistrationService")
     @mark.asyncio
     async def test_handle_registration(self, mock_registration_service, monkeypatch):
-        monkeypatch.setattr('commands.registration.State', MagicMock(value='registration'))
-        mock_message = types.Message(message_id=1, chat=types.Chat(id=1), text='/start')
+        monkeypatch.setattr("commands.registration.State", MagicMock(value="registration"))
+        mock_message = types.Message(message_id=1, chat=types.Chat(id=1), text="/start")
 
         mock_registration_service.return_value.do = AsyncMock()
 

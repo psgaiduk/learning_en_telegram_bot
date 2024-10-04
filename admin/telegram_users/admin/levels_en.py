@@ -5,4 +5,4 @@ from telegram_users.models import LevelsEnModel
 
 @admin.register(LevelsEnModel)
 class LevelsEnAdmin(admin.ModelAdmin):
-    list_display = ('__str__', )
+    list_display = ("__str__",)

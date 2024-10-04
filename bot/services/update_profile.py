@@ -9,7 +9,7 @@ class UpdateProfileService:
     _start_message_text: str
     _chat_id: int
 
-    def __init__(self, chat_id: int, start_message_text: str = '') -> None:
+    def __init__(self, chat_id: int, start_message_text: str = "") -> None:
         """
         Init.
 
@@ -22,13 +22,18 @@ class UpdateProfileService:
     async def do(self) -> None:
         """Update profile user."""
         message_text = (
-            f'{self._start_message_text}'
-            f'Вы можете изменить своё имя или уровень английского языка.\n'
-            f'Чтобы выйти из изменения профиля кликните по кнопке close.'
+            f"{self._start_message_text}"
+            f"Вы можете изменить своё имя или уровень английского языка.\n"
+            f"Чтобы выйти из изменения профиля кликните по кнопке close."
         )
         keyboard = InlineKeyboardMarkup()
-        keyboard.add(InlineKeyboardButton(text='Change english level', callback_data='user_profile_change_en_level'))
-        keyboard.add(InlineKeyboardButton(text='Change name', callback_data='user_profile_change_name'))
-        keyboard.add(InlineKeyboardButton(text='Close', callback_data='user_profile_close'))
+        keyboard.add(
+            InlineKeyboardButton(
+                text="Change english level",
+                callback_data="user_profile_change_en_level",
+            )
+        )
+        keyboard.add(InlineKeyboardButton(text="Change name", callback_data="user_profile_change_name"))
+        keyboard.add(InlineKeyboardButton(text="Close", callback_data="user_profile_close"))
 
         await bot.send_message(chat_id=self._chat_id, text=message_text, reply_markup=keyboard)

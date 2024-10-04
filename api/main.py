@@ -13,7 +13,7 @@ from api import (
 from settings import settings
 
 
-if settings.environment == 'prod':
+if settings.environment == "prod":
     sentry_init(
         dsn=settings.sentry_dsn,
         traces_sample_rate=1.0,
@@ -28,7 +28,7 @@ async def http_exception_handler(_, exc) -> JSONResponse:
     """Handle HTTPException."""
     return JSONResponse(
         status_code=exc.status_code,
-        content={'detail': exc.detail},
+        content={"detail": exc.detail},
     )
 
 

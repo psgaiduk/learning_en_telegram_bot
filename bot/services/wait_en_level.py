@@ -27,7 +27,7 @@ class WaitEnLevelService:
         self._callback_query = callback_query
         self._state = state
         self._telegram_user = None
-        self._new_level = int(self._callback_query.data.split('_')[-1])
+        self._new_level = int(self._callback_query.data.split("_")[-1])
         self._chat_id = self._callback_query.from_user.id
 
     async def do(self) -> None:
@@ -37,7 +37,7 @@ class WaitEnLevelService:
 
     async def _get_user(self) -> None:
         data = await self._state.get_data()
-        self._telegram_user = data['telegram_user']
+        self._telegram_user = data["telegram_user"]
 
     async def _get_message_text(self) -> None:
         if self._telegram_user.previous_stage == State.new_client.value:
@@ -48,43 +48,49 @@ class WaitEnLevelService:
     async def _update_en_level_for_new_client(self) -> None:
 
         data_for_update_user = {
-            'telegram_id': self._chat_id,
-            'level_en_id': self._new_level,
-            'stage': State.read_book.value,
-            'previous_stage': '',
+            "telegram_id": self._chat_id,
+            "level_en_id": self._new_level,
+            "stage": State.read_book.value,
+            "previous_stage": "",
         }
 
         is_update_user = await update_data_by_api(
             telegram_id=self._chat_id,
             params_for_update=data_for_update_user,
-            url_for_update=f'telegram_user/{self._chat_id}',
+            url_for_update=f"telegram_user/{self._chat_id}",
         )
         if is_update_user is False:
             return
 
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.add(KeyboardButton(text='Read'))
+        keyboard.add(KeyboardButton(text="Read"))
 
-        first_task_complete_text = 'Поздравляю с регистрацией! Теперь ты можешь прочитать первый рассказ. Для этого нажми по кнопке Read'
-        await bot.send_message(chat_id=self._callback_query.from_user.id, text=first_task_complete_text, reply_markup=keyboard)
+        first_task_complete_text = (
+            "Поздравляю с регистрацией! Теперь ты можешь прочитать первый рассказ. Для этого нажми по кнопке Read"
+        )
+        await bot.send_message(
+            chat_id=self._callback_query.from_user.id,
+            text=first_task_complete_text,
+            reply_markup=keyboard,
+        )
 
     async def _update_en_level_for_old_client(self) -> None:
 
         data_for_update_user = {
-            'telegram_id': self._telegram_user.telegram_id,
-            'level_en_id': self._new_level,
-            'stage': State.update_profile.value,
+            "telegram_id": self._telegram_user.telegram_id,
+            "level_en_id": self._new_level,
+            "stage": State.update_profile.value,
         }
 
         is_update_user = await update_data_by_api(
             telegram_id=self._chat_id,
             params_for_update=data_for_update_user,
-            url_for_update=f'telegram_user/{self._chat_id}',
+            url_for_update=f"telegram_user/{self._chat_id}",
         )
         if is_update_user is False:
             return
 
-        start_message_text = '🤖 Уровень английского изменён.\n'
+        start_message_text = "🤖 Уровень английского изменён.\n"
 
         update_profile = UpdateProfileService(chat_id=self._chat_id, start_message_text=start_message_text)
         await update_profile.do()

@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0006_add_fields_time_sentences'),
+        ("books", "0006_add_fields_time_sentences"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='booksmodel',
-            name='previous_book',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='books.booksmodel'),
+            model_name="booksmodel",
+            name="previous_book",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="books.booksmodel",
+            ),
         ),
     ]

@@ -10,7 +10,7 @@ def api_key_required(request: Request) -> str:
     :param request: Request object.
     :return: api key.
     """
-    api_key = request.headers.get('X-API-Key')
+    api_key = request.headers.get("X-API-Key")
     if api_key != settings.api_key:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid API Key')
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API Key")
     return api_key

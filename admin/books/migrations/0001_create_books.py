@@ -9,23 +9,29 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('telegram_users', '0001_create_telegram_users_models'),
+        ("telegram_users", "0001_create_telegram_users_models"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BooksModel',
+            name="BooksModel",
             fields=[
-                ('book_id', models.AutoField(primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=128)),
-                ('author', models.CharField(max_length=128)),
-                ('text', models.TextField()),
-                ('level_en', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='telegram_users.levelsenmodel')),
+                ("book_id", models.AutoField(primary_key=True, serialize=False)),
+                ("title", models.CharField(max_length=128)),
+                ("author", models.CharField(max_length=128)),
+                ("text", models.TextField()),
+                (
+                    "level_en",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="telegram_users.levelsenmodel",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Book',
-                'verbose_name_plural': 'Books',
-                'db_table': 'books',
+                "verbose_name": "Book",
+                "verbose_name_plural": "Books",
+                "db_table": "books",
             },
         ),
     ]

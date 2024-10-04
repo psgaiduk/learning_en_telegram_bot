@@ -1,6 +1,12 @@
 from typing import Union
 
-from aiogram.types import CallbackQuery, Message, ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    CallbackQuery,
+    Message,
+    ParseMode,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+)
 from aiogram.dispatcher import FSMContext
 from loguru import logger
 
@@ -11,7 +17,10 @@ from functions import delete_message
 
 
 async def send_message_learn_word(
-    word: WordDTOModel, telegram_id: int, message: Union[CallbackQuery, Message], state: FSMContext
+    word: WordDTOModel,
+    telegram_id: int,
+    message: Union[CallbackQuery, Message],
+    state: FSMContext,
 ) -> None:
     """
     Send message for learn word.

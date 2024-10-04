@@ -15,16 +15,16 @@ def referrals_fixture(telegram_users_mock):
         third_telegram_user = telegram_users.pop(0)
 
         referral = {
-            'telegram_id': second_telegram_user.telegram_id,
-            'friend_telegram_id': third_telegram_user.telegram_id,
+            "telegram_id": second_telegram_user.telegram_id,
+            "friend_telegram_id": third_telegram_user.telegram_id,
         }
 
         db.add(UsersReferrals(**referral))
 
         for telegram_user in telegram_users:
             referral = {
-                'telegram_id': first_telegram_user.telegram_id,
-                'friend_telegram_id': telegram_user.telegram_id,
+                "telegram_id": first_telegram_user.telegram_id,
+                "friend_telegram_id": telegram_user.telegram_id,
             }
 
             db.add(UsersReferrals(**referral))

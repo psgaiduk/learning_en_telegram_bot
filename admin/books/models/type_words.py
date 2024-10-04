@@ -10,9 +10,9 @@ class TypeWordsModel(Model):
     title = CharField(max_length=128, choices=TypeWord.choices())
 
     def __str__(self) -> str:
-        return f'{self.get_title_display()}'
+        return f"{self.get_title_display()}"
 
     class Meta:
-        verbose_name = 'Type of word'
-        verbose_name_plural = 'Types of words'
-        db_table = 'type_words'
+        verbose_name = "Type of word"
+        verbose_name_plural = "Types of words"
+        db_table = "type_words"

@@ -15,9 +15,9 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     :params word: learn word.
     :return: status update learn word.
     """
-    logger.debug(f'word = {word}')
+    logger.debug(f"word = {word}")
     word.count_view += 1
-    if 'yes' in message.data:
+    if "yes" in message.data:
         word.correct_answers += 1
         word.correct_answers_in_row += 1
         word.increase_factor += 0.1
@@ -39,23 +39,23 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
     word.repeat_datetime = datetime.now() + timedelta(seconds=word.interval_repeat)
 
     data_for_update_word = {
-        'telegram_user_id': message.from_user.id,
-        'word_id': word.word_id,
-        'increase_factor': word.increase_factor,
-        'interval_repeat': word.interval_repeat,
-        'repeat_datetime': f'{word.repeat_datetime}',
-        'count_view': word.count_view,
-        'correct_answers_in_row': word.correct_answers_in_row,
-        'incorrect_answers': word.incorrect_answers,
+        "telegram_user_id": message.from_user.id,
+        "word_id": word.word_id,
+        "increase_factor": word.increase_factor,
+        "interval_repeat": word.interval_repeat,
+        "repeat_datetime": f"{word.repeat_datetime}",
+        "count_view": word.count_view,
+        "correct_answers_in_row": word.correct_answers_in_row,
+        "incorrect_answers": word.incorrect_answers,
     }
 
-    logger.debug(f'data_for_update_word: {data_for_update_word}')
+    logger.debug(f"data_for_update_word: {data_for_update_word}")
 
     is_update_history = await update_data_by_api(
         telegram_id=message.from_user.id,
         params_for_update=data_for_update_word,
-        url_for_update='history/words',
+        url_for_update="history/words",
     )
 
-    logger.debug(f'is_update_history: {is_update_history}')
+    logger.debug(f"is_update_history: {is_update_history}")
     return is_update_history

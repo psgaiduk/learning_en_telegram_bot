@@ -17,7 +17,12 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot
 from choices import EnglishLevels, State
 from dto import TelegramUserDTOModel
-from functions import get_combinations, delete_message, save_word_history, update_data_by_api
+from functions import (
+    get_combinations,
+    delete_message,
+    save_word_history,
+    update_data_by_api,
+)
 
 
 class ReadSentenceService:

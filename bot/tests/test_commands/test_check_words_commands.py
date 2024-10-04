@@ -5,7 +5,11 @@ from pytest import mark
 
 from bot import bot
 from choices import State
-from commands import handle_check_words_other_data, handle_check_words_after_read, handle_check_word_click_known
+from commands import (
+    handle_check_words_other_data,
+    handle_check_words_after_read,
+    handle_check_word_click_known,
+)
 
 
 class TestCheckWordsCommand:
@@ -59,7 +63,10 @@ class TestCheckWordsCommand:
 
         expected_message_text = "Прежде чем начать изучать предложение, давай посмотрим слова, которые нам встретятся в этом предложении.\n\n"
         mock_send_delete_message.assert_called_once_with(
-            chat_id=chat_id, message_text=expected_message_text, reply_markup=ReplyKeyboardRemove(), state=state
+            chat_id=chat_id,
+            message_text=expected_message_text,
+            reply_markup=ReplyKeyboardRemove(),
+            state=state,
         )
         mock_check_word_service.assert_called_once_with(state=state, start_text_message="")
         mock_check_word_service.return_value.do.assert_awaited_once_with()
@@ -68,7 +75,11 @@ class TestCheckWordsCommand:
     @mark.parametrize(
         "callback_data, is_update_history, start_text",
         [
-            ("know_word_true_1", True, "Отлично! Больше мы его тебе не будем показывать. Давай продолжим.\n\n"),
+            (
+                "know_word_true_1",
+                True,
+                "Отлично! Больше мы его тебе не будем показывать. Давай продолжим.\n\n",
+            ),
             ("know_word_false_1", True, "Хорошо. Повторим потом ещё раз.\n\n"),
             ("know_word_true_1", False, ""),
             ("know_word_false_1", False, ""),

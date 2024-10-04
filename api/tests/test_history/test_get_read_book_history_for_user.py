@@ -18,14 +18,14 @@ from tests.fixtures import (
 from tests.connect_db import db_session
 
 
-@mark.usefixtures('create_test_database', 'telegram_users_mock', 'book_mock')
+@mark.usefixtures("create_test_database", "telegram_users_mock", "book_mock")
 class TestAddHistoryBookAPI:
 
     @classmethod
     def setup_class(cls):
-        cls._headers = {'X-API-Key': settings.api_key}
+        cls._headers = {"X-API-Key": settings.api_key}
         cls._client = TestClient(app)
-        cls._url = '/api/v1/history/books/telegram_user'
+        cls._url = "/api/v1/history/books/telegram_user"
 
     def test_get_history_user(self, history_book_complete_mock):
         with db_session() as db:
@@ -33,10 +33,9 @@ class TestAddHistoryBookAPI:
             telegram_user_id = book_history.telegram_user_id
 
             history_books_user = (
-                db.query(UsersBooksHistory)
-                .filter(UsersBooksHistory.telegram_user_id == telegram_user_id).all()
+                db.query(UsersBooksHistory).filter(UsersBooksHistory.telegram_user_id == telegram_user_id).all()
             )
-        url = f'{self._url}/{telegram_user_id}/'
+        url = f"{self._url}/{telegram_user_id}/"
         response = self._client.get(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_200_OK
         response = response.json()
@@ -54,11 +53,10 @@ class TestAddHistoryBookAPI:
             db.refresh(new_history)
 
             history_books_user = (
-                db.query(UsersBooksHistory)
-                .filter(UsersBooksHistory.telegram_user_id == telegram_user_id).all()
+                db.query(UsersBooksHistory).filter(UsersBooksHistory.telegram_user_id == telegram_user_id).all()
             )
 
-        url = f'{self._url}/{telegram_user_id}/'
+        url = f"{self._url}/{telegram_user_id}/"
         response = self._client.get(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_200_OK
         response = response.json()
@@ -70,7 +68,7 @@ class TestAddHistoryBookAPI:
             book_history = db.query(UsersBooksHistory).first()
             telegram_user_id = book_history.telegram_user_id
 
-        url = f'{self._url}/{telegram_user_id}/'
+        url = f"{self._url}/{telegram_user_id}/"
         response = self._client.get(url=url)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -79,15 +77,15 @@ class TestAddHistoryBookAPI:
             book_history = db.query(UsersBooksHistory).first()
             telegram_user_id = book_history.telegram_user_id
 
-        url = f'{self._url}/{telegram_user_id}/'
+        url = f"{self._url}/{telegram_user_id}/"
 
-        response = self._client.get(url=url, headers={'X-API-Key': 'wrong_api_key'})
+        response = self._client.get(url=url, headers={"X-API-Key": "wrong_api_key"})
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_not_get_history_book_not_found(self):
         with db_session() as db:
             telegram_user = db.query(Users).order_by(Users.telegram_id).first()
 
-        url = f'{self._url}/{telegram_user.telegram_id}/'
+        url = f"{self._url}/{telegram_user.telegram_id}/"
         response = self._client.get(url=url, headers=self._headers)
         assert response.status_code == status.HTTP_404_NOT_FOUND

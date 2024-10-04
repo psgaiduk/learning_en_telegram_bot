@@ -9,11 +9,11 @@ class UsersBooksHistoryModel(Model):
     book = ForeignKey(BooksModel, on_delete=CASCADE)
     start_read = DateTimeField(auto_now_add=True)
     end_read = DateTimeField(null=True, default=None)
-    
+
     def __str__(self) -> str:
-        return f'{self.telegram_user.telegram_id} - {self.book.title}'
+        return f"{self.telegram_user.telegram_id} - {self.book.title}"
 
     class Meta:
-        db_table = 'users_books_history'
-        verbose_name = 'User\'s book history'
-        verbose_name_plural = 'Users\' book history'
+        db_table = "users_books_history"
+        verbose_name = "User's book history"
+        verbose_name_plural = "Users' book history"
