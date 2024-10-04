@@ -23,7 +23,7 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
     """Handle start learn words after push button read."""
 
     data = await state.get_data()
-    telegram_user: TelegramUserDTOModel = data["user"]
+    telegram_user: TelegramUserDTOModel = data["telegram_user"]
     logger.debug(f"get telegram user = {telegram_user}")
 
     params_for_update_user = {
@@ -53,7 +53,7 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
 
         first_word = telegram_user.learn_words[0]
         logger.debug(f"Получили первое слово = {first_word}")
-        return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id, message=message)
+        return await send_message_learn_word(word=first_word, telegram_id=telegram_user.telegram_id, message=message, state=state)
 
     message_text = "🤖 Что-то пошло не так. Попробуйте еще раз, чуть позже."
     await bot.send_message(

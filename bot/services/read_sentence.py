@@ -36,7 +36,7 @@ class ReadSentenceService:
     async def do(self) -> None:
 
         if isinstance(self._message, CallbackQuery) and "know_word_" in self._message.data:
-            await delete_message(message=self._message)
+            await delete_message(message=self._message, state=self._state)
             await save_word_history(callback_query=self._message)
 
         await self._get_telegram_user()
@@ -52,7 +52,7 @@ class ReadSentenceService:
 
     async def _get_telegram_user(self) -> None:
         data = await self._state.get_data()
-        self._telegram_user = data["user"]
+        self._telegram_user = data["telegram_user"]
 
     async def _get_sentence(self) -> None:
         self._sentence_text = self._telegram_user.new_sentence.text
@@ -109,7 +109,7 @@ class ReadSentenceService:
         if is_update_stage is False:
             return
 
-        await delete_message(message=self._message)
+        await delete_message(message=self._message, state=self._state)
 
         if self._message_text:
             await bot.send_message(

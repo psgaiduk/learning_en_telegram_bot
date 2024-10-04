@@ -58,20 +58,22 @@ class TestReadSentenceCommand:
     @mark.asyncio
     async def test_handle_end_read_sentence_today_message(self, mock_send_message_end_read_today_func):
         chat_id = 1
+        state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_message = Message(id=1, chat=chat_id, text='Read', from_user=user)
         mock_message.from_user = user
 
-        await handle_end_read_sentence_today(mock_message)
-        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_message)
+        await handle_end_read_sentence_today(mock_message, state=state)
+        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_message, state=state)
 
     @patch('commands.read_sentence.send_message_end_read_today_func')
     @mark.asyncio
     async def test_handle_end_read_sentence_today_callback(self, mock_send_message_end_read_today_func):
         chat_id = 1
+        state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name='Test User')
         mock_callback = CallbackQuery(id=1, chat=chat_id, data='other_data', from_user=user)
         mock_callback.from_user = user
 
-        await handle_end_read_sentence_today(mock_callback)
-        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_callback)
+        await handle_end_read_sentence_today(message=mock_callback, state=state)
+        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_callback, state=state)

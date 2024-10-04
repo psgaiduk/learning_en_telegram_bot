@@ -98,7 +98,7 @@ class TestCheckWordsService:
     async def test_get_user(self):
         service = CheckWordsService(state=self._state, start_text_message="")
 
-        self._state.get_data = AsyncMock(return_value={"user": self._telegram_user})
+        self._state.get_data = AsyncMock(return_value={"telegram_user": self._telegram_user})
 
         await service._get_user()
 

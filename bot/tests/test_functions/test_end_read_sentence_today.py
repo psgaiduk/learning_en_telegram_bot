@@ -23,12 +23,17 @@ class TestEndReadTodayFunction:
     @mark.asyncio
     async def test_send_message_if_end_sentences(self, mock_delete_message):
         chat_id = 1
+        state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name="Test User")
         mock_message = Message(id=1, chat=chat_id, text="Read", from_user=user)
         mock_message.from_user = user
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
-            await send_message_end_read_today_func(mock_message)
+            mock_send_message.side_effect = [
+                AsyncMock(message_id=1),
+                AsyncMock(message_id=2),
+            ]
+            await send_message_end_read_today_func(message=mock_message, state=state)
             expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
             expected_keyboard.add(KeyboardButton(text="Read"))
             expected_text = "Вы прочитали все предложения на сегодня. Новые предложения будут доступны завтра."
@@ -43,14 +48,14 @@ class TestEndReadTodayFunction:
                     call(
                         chat_id=chat_id,
                         text=expected_text,
-                        reply_markup=expected_keyboard,
                         parse_mode=ParseMode.HTML,
+                        reply_markup=expected_keyboard,
                     ),
                     call(
                         chat_id=chat_id,
                         text=expected_text_second,
-                        reply_markup=expected_keyboard_second,
                         parse_mode=ParseMode.HTML,
+                        reply_markup=expected_keyboard_second,
                     ),
                 ],
                 any_order=False,
@@ -58,4 +63,5 @@ class TestEndReadTodayFunction:
 
             assert mock_send_message.call_count == 2
 
-            mock_delete_message.assert_called_once_with(message=mock_message)
+            mock_delete_message.assert_called_once_with(message=mock_message, state=state)
+            state.update_data.assert_called_once_with(messages_for_delete=[1, 2])

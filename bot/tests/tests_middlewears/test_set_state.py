@@ -95,12 +95,12 @@ class TestSetStateMiddleware:
 
         fsm_context_mock = mocker.Mock(spec=FSMContext)
         fsm_context_mock.set_state = mocker.AsyncMock()
-        fsm_context_mock.set_data = mocker.AsyncMock()
+        fsm_context_mock.update_data = mocker.AsyncMock()
         self._service._fsm_context = fsm_context_mock
 
         await self._service.set_state_data()
         fsm_context_mock.set_state.assert_called_once_with(state=state)
-        fsm_context_mock.set_data.assert_called_once_with(data={"user": telegram_user})
+        fsm_context_mock.update_data.assert_called_once_with(telegram_user=telegram_user)
 
     @mark.asyncio
     async def test_set_state_data_without_telegram_user(self, mocker):

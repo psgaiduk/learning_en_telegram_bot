@@ -39,7 +39,7 @@ class CheckWordsService:
 
     async def _get_user(self) -> None:
         data = await self._state.get_data()
-        self._telegram_user = data["user"]
+        self._telegram_user = data["telegram_user"]
 
     async def _update_user(self) -> bool:
         data_for_update_user = {

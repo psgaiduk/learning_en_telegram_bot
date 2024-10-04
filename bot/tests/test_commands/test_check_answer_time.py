@@ -18,7 +18,7 @@ class TestCheckAnswerTime:
         self._mock_callback.from_user = self._user
         self._telegram_user = telegram_user_with_sentence_and_word
         self._state = AsyncMock()
-        self._state.get_data = AsyncMock(return_value={'user': self._telegram_user})
+        self._state.get_data = AsyncMock(return_value={'telegram_user': self._telegram_user})
 
     @mark.parametrize('data', ['right_answer_time', 'wrong_answer_time'])
     @patch('commands.check_answer_time.delete_message')
@@ -57,7 +57,7 @@ class TestCheckAnswerTime:
             reply_markup=expected_keyboard,
         )
 
-        mock_delete_message.assert_called_once_with(message=self._mock_callback)
+        mock_delete_message.assert_called_once_with(message=self._mock_callback, state=self._state)
 
     @mark.parametrize('data', ['right_answer_time', 'wrong_answer_time'])
     @patch('commands.check_answer_time.delete_message')

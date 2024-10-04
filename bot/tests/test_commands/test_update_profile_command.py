@@ -159,7 +159,7 @@ class TestUpdateProfileCommand:
             )
 
             state = Mock()
-            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+            state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
             await handle_update_profile_en_level(callback_query=callback, state=state)
 
@@ -216,7 +216,7 @@ class TestUpdateProfileCommand:
             )
 
             state = Mock()
-            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+            state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
             await handle_update_profile_en_level(callback_query=callback, state=state)
 
@@ -267,7 +267,7 @@ class TestUpdateProfileCommand:
             )
 
             state = Mock()
-            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+            state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
             await handle_update_profile_close(callback_query=callback, state=state)
 
@@ -320,7 +320,7 @@ class TestUpdateProfileCommand:
             )
 
             state = Mock()
-            state.get_data = AsyncMock(return_value={'user': telegram_user_model})
+            state.get_data = AsyncMock(return_value={'telegram_user': telegram_user_model})
 
             await handle_update_profile_close(callback_query=callback, state=state)
 
