@@ -135,3 +135,24 @@ class TestCreateWordsForSentenceService:
         assert len(words_in_db) == 2
         new_words = words_in_db.filter(word=word_2.word, part_of_speech=word_2.part_of_speech)
         assert set(self.service.words_ids) == {word.word_id for word in new_words}
+
+    @mark.django_db
+    def test_get_words_for_same_word_with_many_translates(self):
+        word = WordFromSentenceDTO(word="word", translate="слово, словечко", part_of_speech="n", transcription="word")
+        word_1 = WordFromSentenceDTO(word="word", translate="слово", part_of_speech="n", transcription="word")
+        self.service.words = [word_1]
+        WordsModel.objects.create(
+            word=word.word,
+            translation={"ru": word.translate},
+            type_word_id=1,
+            transcription=word.transcription,
+            part_of_speech=word.part_of_speech,
+        )
+        words_in_db = WordsModel.objects.all()
+        assert len(words_in_db) == 1
+        self.service._update_words_in_db()
+        words_in_db = WordsModel.objects.all()
+        assert len(words_in_db) == 1
+        assert words_in_db.first().translation["ru"] == "слово, словечко"
+        new_words = words_in_db.filter(Q(word=word_1.word, part_of_speech=word_1.part_of_speech))
+        assert set(self.service.words_ids) == {word.word_id for word in new_words}
