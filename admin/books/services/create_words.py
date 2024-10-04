@@ -52,7 +52,7 @@ class CreateWordsForSentenceService:
                 condition_for_skip = {
                     word.word == word_from_db.word,
                     word.part_of_speech == word_from_db.part_of_speech,
-                    word.translate == word_from_db.translation["ru"],
+                    word.translate in word_from_db.translation["ru"],
                 }
                 condition_for_update_translate = {
                     word.word == word_from_db.word,
