@@ -22,21 +22,26 @@ jobs:
         run: |
           pip install black
 
-      - name: Get changed files
+      - name: Get changed Python files
         id: changed-files
         run: |
           git fetch origin
-          # Список измененных файлов
+          # Список измененных .py файлов
           git diff --name-only HEAD^ HEAD | grep '\.py$' > changed_files.txt
 
+      - name: Check if there are Python files to format
+        id: check-files
+        run: |
+          if [ -s changed_files.txt ]; then
+            echo "files_exist=true" >> $GITHUB_ENV
+          else
+            echo "files_exist=false" >> $GITHUB_ENV
+
       - name: Run Black with Line Length 120 on changed files
+        if: env.files_exist == 'true'
         run: |
           # Читаем измененные файлы и передаем их в black
-          if [ -s changed_files.txt ]; then
-            cat changed_files.txt | xargs black --line-length 120
-          else
-            echo "No Python files to format."
-          fi
+          cat changed_files.txt | xargs black --line-length 120
 
       - name: Extract task ID from branch
         id: extract-task-id
@@ -46,13 +51,7 @@ jobs:
           echo "TASK_ID=$task_id" >> $GITHUB_ENV
 
       - name: Commit changes
+        if: env.files_exist == 'true'
         run: |
           git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          task_id=${{ env.TASK_ID }}
-          git commit -m "#$task_id style: apply black formatting" || echo "No changes to commit"
-
-      - name: Push changes
-        run: |
-          git push origin HEAD
+          git config --local user.email "github-actions[bot
