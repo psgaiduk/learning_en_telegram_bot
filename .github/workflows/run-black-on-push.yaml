@@ -39,8 +39,11 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           task_id=${{ env.TASK_ID }}
-          git diff --cached --quiet || git commit -m "#$task_id style: apply black formatting"
+          git diff --cached --quiet || git commit -m "#$task_id style(action): apply black formatting"
 
       - name: Push changes
+        env:
+          TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
           git push origin HEAD || echo "No changes to push"
