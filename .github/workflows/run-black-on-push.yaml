@@ -1,0 +1,58 @@
+name: Run Black on Push
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  run-black:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Black
+        run: |
+          pip install black
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          git fetch origin
+          # Список измененных файлов
+          git diff --name-only HEAD^ HEAD | grep '\.py$' > changed_files.txt
+
+      - name: Run Black with Line Length 120 on changed files
+        run: |
+          # Читаем измененные файлы и передаем их в black
+          if [ -s changed_files.txt ]; then
+            cat changed_files.txt | xargs black --line-length 120
+          else
+            echo "No Python files to format."
+          fi
+
+      - name: Extract task ID from branch
+        id: extract-task-id
+        run: |
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          task_id=$(echo $branch_name | grep -o '^[0-9]\+')
+          echo "TASK_ID=$task_id" >> $GITHUB_ENV
+
+      - name: Commit changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          task_id=${{ env.TASK_ID }}
+          git commit -m "#$task_id style: apply black formatting" || echo "No changes to commit"
+
+      - name: Push changes
+        run: |
+          git push origin HEAD
