@@ -32,6 +32,7 @@ async def handle_read_sentence_after_learn_words(message: Union[CallbackQuery, M
     if telegram_user.learn_words:
         first_word = telegram_user.learn_words.pop(0)
         is_update = await update_learn_word(message=message, word=first_word)
+        await state.update_data(telegram_user=telegram_user)
     else:
         is_update = True
     if is_update:
