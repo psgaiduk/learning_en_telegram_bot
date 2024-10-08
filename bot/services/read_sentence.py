@@ -53,7 +53,7 @@ class ReadSentenceService:
         await self._send_message_or_tenses()
 
         self._telegram_user.new_sentence.text = ""
-        await self._state.set_data(data={"user": self._telegram_user})
+        await self._state.set_data(data={"telegram_user": self._telegram_user})
 
     async def _get_telegram_user(self) -> None:
         data = await self._state.get_data()

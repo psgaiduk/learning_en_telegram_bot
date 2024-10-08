@@ -33,7 +33,7 @@ class CheckWordsService:
         if await self._update_sentence() is False:
             return
 
-        await self._state.set_data(data={"user": self._telegram_user})
+        await self._state.set_data(data={"telegram_user": self._telegram_user})
 
         await self._send_message()
 

@@ -36,7 +36,7 @@ async def handle_read_sentence_after_learn_words(message: Union[CallbackQuery, M
     else:
         is_update = True
     if is_update:
-        await state.set_data(data={"user": telegram_user})  # Обновляем состояние без первого слова в learn_words
+        await state.set_data(data={"telegram_user": telegram_user})  # Обновляем состояние без первого слова в learn_words
         return await ReadSentenceService(message=message, state=state).do()
     await bot.send_message(
         chat_id=message.from_user.id,

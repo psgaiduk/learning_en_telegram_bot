@@ -90,7 +90,7 @@ class SetStateMiddleware(BaseMiddleware):
         logger.debug("update telegram user")
         self._current_data = await self._fsm_context.get_data()
         logger.debug(f"Current state data: {self._current_data}")
-        current_user: TelegramUserDTOModel = self._current_data.get("user")
+        current_user: TelegramUserDTOModel = self._current_data.get("telegram_user")
         if current_user and current_user.new_sentence:
             logger.debug("We have current user and he has sentence insert new_sentence for him")
             self._telegram_user.new_sentence = current_user.new_sentence

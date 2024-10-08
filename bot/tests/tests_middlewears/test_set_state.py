@@ -190,7 +190,7 @@ class TestSetStateMiddleware:
         assert self._service._telegram_user.learn_words == []
 
         fsm_context_mock = mocker.Mock(spec=FSMContext)
-        fsm_context_mock.get_data = mocker.AsyncMock(return_value={"user": telegram_user})
+        fsm_context_mock.get_data = mocker.AsyncMock(return_value={"telegram_user": telegram_user})
         self._service._fsm_context = fsm_context_mock
 
         await self._service.update_telegram_user()
