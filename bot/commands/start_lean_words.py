@@ -46,11 +46,18 @@ async def handle_start_lean_words(message: Message, state: FSMContext) -> None:
         else:
             message_start_learn_word = "Повторим слова"
 
-        await bot.send_message(
+        data = await state.get_data()
+        messages_for_delete = data.get("messages_for_delete", [])
+
+        send_message = await bot.send_message(
             chat_id=telegram_user.telegram_id,
             text=message_start_learn_word,
             parse_mode=ParseMode.HTML,
         )
+
+        logger.debug(f"send message = {send_message.__dict__}")
+        messages_for_delete.append(send_message.message_id)
+        await state.update_data(messages_for_delete=messages_for_delete)
 
         first_word = telegram_user.learn_words[0]
         logger.debug(f"Получили первое слово = {first_word}")

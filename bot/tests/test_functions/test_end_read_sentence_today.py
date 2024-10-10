@@ -20,8 +20,9 @@ class TestEndReadTodayFunction:
     """Tests send message if end read today function."""
 
     @patch("functions.end_read_sentence_today.delete_message")
+    @mark.parametrize("state_data, expected_ids", [[{}, [1, 2]], [{"messages_for_delete": [3]}, [3, 1, 2]]])
     @mark.asyncio
-    async def test_send_message_if_end_sentences(self, mock_delete_message):
+    async def test_send_message_if_end_sentences(self, mock_delete_message, state_data, expected_ids):
         chat_id = 1
         state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name="Test User")
@@ -29,6 +30,7 @@ class TestEndReadTodayFunction:
         mock_message.from_user = user
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
+            state.get_data = AsyncMock(return_value=state_data)
             mock_send_message.side_effect = [
                 AsyncMock(message_id=1),
                 AsyncMock(message_id=2),
@@ -64,4 +66,4 @@ class TestEndReadTodayFunction:
             assert mock_send_message.call_count == 2
 
             mock_delete_message.assert_called_once_with(message=mock_message, state=state)
-            state.update_data.assert_called_once_with(messages_for_delete=[1, 2])
+            state.update_data.assert_called_once_with(messages_for_delete=expected_ids)
