@@ -23,7 +23,9 @@ async def send_message_end_read_today_func(message: Union[CallbackQuery, Message
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(KeyboardButton(text="Read"))
 
-    messages_for_delete = []
+    data = await state.get_data()
+    messages_for_delete = data.get("messages_for_delete", [])
+
     send_message = await bot.send_message(
         chat_id=message.from_user.id,
         text=message_text,
