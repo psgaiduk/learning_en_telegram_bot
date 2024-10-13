@@ -203,16 +203,20 @@ class TestSetStateMiddleware:
         [
             ("/profile", State.grammar.value, State.grammar.value),
             ("/profile", State.update_profile.value, State.update_profile.value),
+            ("/profile", State.show_word.value, State.show_word.value),
             ("/records", State.grammar.value, State.grammar.value),
             ("/records", State.update_profile.value, State.update_profile.value),
+            ("/records", State.show_word.value, State.show_word.value),
             ("/achievements", State.grammar.value, State.grammar.value),
             ("/achievements", State.update_profile.value, State.update_profile.value),
+            ("/achievements", State.show_word.value, State.show_word.value),
             ("just text", State.update_profile.value, State.update_profile.value),
             ("just text", State.grammar.value, State.grammar.value),
+            ("just text", State.show_word.value, State.show_word.value),
         ],
     )
     @mark.asyncio
-    async def test_get_real_state_grammar_and_update_profile(self, message_text, state, expected_state):
+    async def test_get_real_state_grammar_update_profile_show_word(self, message_text, state, expected_state):
         self._service._state = state
         self._service._message_text = message_text
         self._service._telegram_user = TelegramUserDTOModel(**self._response_data["detail"])

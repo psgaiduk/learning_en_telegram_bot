@@ -37,3 +37,4 @@ from commands.start_lean_words import (
     handle_error_start_learn_words,
     handle_start_lean_words,
 )
+from commands.show_word import handle_show_word, handle_show_word_other_data

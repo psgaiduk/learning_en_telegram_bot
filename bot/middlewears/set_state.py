@@ -103,8 +103,8 @@ class SetStateMiddleware(BaseMiddleware):
 
     async def get_real_state(self) -> None:
         """Get real state."""
-        if self._state in {State.grammar.value, State.update_profile.value}:
-            logger.debug("It is grammar or update profile. End work.")
+        if self._state in {State.grammar.value, State.update_profile.value, State.show_word.value}:
+            logger.debug("It is grammar, update profile or show_word. End work.")
             return
 
         if self._message_text in {"/profile", "/records", "/achievements"}:
@@ -220,7 +220,7 @@ class SetStateMiddleware(BaseMiddleware):
             self._telegram_user.new_sentence = NewSentenceDTOModel(**new_sentence)
             logger.debug(f"update sentence for telegram user {self._telegram_user.new_sentence}")
             if self._state == State.check_answer_time.value:
-                logger.debug(f"check answer time.")
+                logger.debug("check answer time.")
                 return State.check_answer_time.value
             if new_sentence["words"]:
                 logger.debug("sentence have words return check words")

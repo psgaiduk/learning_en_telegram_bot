@@ -19,3 +19,4 @@ class State(Enum):
     achievements = "ACHIEVEMENTS"
     start_learn_words = "START_LEARN_WORDS"
     learn_words = "LEARN_WORDS"
+    show_word = "SHOW_WORD"
