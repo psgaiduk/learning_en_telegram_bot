@@ -11,9 +11,10 @@ from aiogram.dispatcher import FSMContext
 from loguru import logger
 
 from bot import bot
-from choices import PartOfSpeechChoice
+from choices import PartOfSpeechChoice, State
 from dto import WordDTOModel
 from functions import delete_message
+from functions.update_data_by_api import update_data_by_api
 
 
 async def send_message_learn_word(
@@ -29,20 +30,33 @@ async def send_message_learn_word(
     :params telegram_id: users telegram id.
     """
     await delete_message(message=message, state=state)
-    translate_word = word.translation.get("ru")
-    translate_word += (60 - len(translate_word)) * " " + "."
     part_of_speech = PartOfSpeechChoice[word.part_of_speech].value
 
     message_text = (
-        f"Помните перевод слова:\n<b><u>{word.word}</u></b> ({part_of_speech}) - {word.transcription}\n\n"
-        f"Перевод: <tg-spoiler>\n{translate_word}</tg-spoiler>"
+        f"{'=' * 40}\n\n"
+        f"<b><u>{word.word}</u></b> - {word.transcription}\n\n"
+        f"<i>{part_of_speech}</i>\n\n"
+        f"{'=' * 40}"
     )
     logger.debug(f"message text = {message_text}")
 
     inline_keyboard = InlineKeyboardMarkup()
-    inline_keyboard.add(InlineKeyboardButton(text="Помню", callback_data="learn_word_yes"))
-    inline_keyboard.add(InlineKeyboardButton(text="Не помню", callback_data="learn_word_no"))
+    inline_keyboard.add(InlineKeyboardButton(text="Проверить", callback_data="show_word"))
     logger.debug(f"keyboard = {inline_keyboard}")
+
+    params_for_update_user = {
+        "telegram_id": telegram_id,
+        "stage": State.show_word.value,
+    }
+
+    is_update_user = await update_data_by_api(
+        telegram_id=telegram_id,
+        params_for_update=params_for_update_user,
+        url_for_update=f"telegram_user/{telegram_id}",
+    )
+
+    if is_update_user is False:
+        return
 
     await bot.send_message(
         chat_id=telegram_id,
