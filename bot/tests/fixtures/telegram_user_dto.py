@@ -33,5 +33,5 @@ def telegram_user_with_sentence_and_word_and_learn_word(sentence_with_word, leve
         level_en=level_en,
         main_language=None,
         new_sentence=sentence_with_word,
-        learn_words=[word_new]
+        learn_words=[word_new],
     )
