@@ -33,10 +33,10 @@ async def send_message_learn_word(
     part_of_speech = PartOfSpeechChoice[word.part_of_speech].value
 
     message_text = (
-        f"{'=' * 40}\n\n"
+        f"{'=' * 35}\n\n"
         f"<b><u>{word.word}</u></b> - {word.transcription}\n\n"
         f"<i>{part_of_speech}</i>\n\n"
-        f"{'=' * 40}"
+        f"{'=' * 35}"
     )
     logger.debug(f"message text = {message_text}")
 

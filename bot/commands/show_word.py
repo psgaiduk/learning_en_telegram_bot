@@ -21,7 +21,7 @@ async def handle_show_word(callback_query: CallbackQuery, state: FSMContext) -> 
     telegram_id = callback_query.message.chat.id
     logger.debug(f"telegram_id = {telegram_id}\ncallback = {callback_query}")
 
-    message_text = f"{'=' * 40}\n\n" f"{word.word}\n\n" f"<b><u>{translate_word}</u></b>\n\n" f"{'=' * 40}\n"
+    message_text = f"{'=' * 35}\n\n" f"{word.word}\n\n" f"<b><u>{translate_word}</u></b>\n\n" f"{'=' * 35}\n"
     logger.debug(f"message text = {message_text}")
 
     params_for_update_user = {

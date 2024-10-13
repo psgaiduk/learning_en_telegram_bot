@@ -35,7 +35,7 @@ class TestShowWordCommand:
         mock_update_user.side_effect = [True]
 
         translate_word = word.translation.get("ru")
-        expected_text = f"{'=' * 40}\n\n" f"{word.word}\n\n" f"<b><u>{translate_word}</u></b>\n\n" f"{'=' * 40}\n"
+        expected_text = f"{'=' * 35}\n\n" f"{word.word}\n\n" f"<b><u>{translate_word}</u></b>\n\n" f"{'=' * 35}\n"
 
         with patch.object(bot, "edit_message_text", new=AsyncMock()) as mock_edit_message:
 
