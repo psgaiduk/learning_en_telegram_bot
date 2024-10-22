@@ -78,7 +78,7 @@ class ReadSentenceService:
             self._message_text = f"{self._sentence_text}"
 
     async def _send_message_or_tenses(self) -> None:
-        if randint(1, 1) == 1:
+        if randint(1, 5) == 1:
             await self._send_tenses()
         else:
             await self._send_message()
