@@ -6,7 +6,7 @@ from sqlalchemy import Boolean, Integer, and_, func, or_, select, union_all
 from sqlalchemy.orm import Session, joinedload, subqueryload
 
 from database import get_db
-from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO
+from dto.models import HistoryWordModelForReadDTO, SentenceModelForReadDTO, UserStatsModelDTO
 from dto.responses import OneResponseDTO
 from functions import api_key_required, replace_with_translation
 from models import (
@@ -19,6 +19,7 @@ from models import (
     Words,
     sentence_word_association,
 )
+from services import GetReadUserStatsService
 
 
 version_1_read_router = APIRouter(
@@ -402,3 +403,18 @@ class ReadBookService:
         logger.debug(f"words for learn = {words_for_learn}")
         logger.debug(f"words for sentence = {words_for_sentence}")
         return words_for_learn, words_for_sentence
+
+
+@version_1_read_router.get(
+    path="/stats/{telegram_id}/",
+    response_model=OneResponseDTO[UserStatsModelDTO],
+    responses={
+        status.HTTP_404_NOT_FOUND: {"description": "Telegram user not found."},
+        status.HTTP_206_PARTIAL_CONTENT: {"description": "You have  read the maximum number of sentences today."},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def get_stats_for_user(telegram_id: int, db: Session = Depends(get_db)):
+    """Get read stats for user."""
+    user_stat = await GetReadUserStatsService(telegram_id=telegram_id, db=db).work()
+    return OneResponseDTO(detail=user_stat)
