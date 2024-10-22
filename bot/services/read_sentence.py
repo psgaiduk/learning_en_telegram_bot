@@ -78,7 +78,7 @@ class ReadSentenceService:
             self._message_text = f"{self._sentence_text}"
 
     async def _send_message_or_tenses(self) -> None:
-        if randint(1, 5) == 1:
+        if randint(1, 1) == 1:
             await self._send_tenses()
         else:
             await self._send_message()
@@ -101,6 +101,8 @@ class ReadSentenceService:
         is_update = await self._update_stage_user(stage=State.check_answer_time.value)
         if is_update is False:
             return
+
+        await delete_message(message=self._message, state=self._state)
 
         await self._send_text_with_tenses()
 
