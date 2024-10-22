@@ -102,6 +102,8 @@ class ReadSentenceService:
         if is_update is False:
             return
 
+        await delete_message(message=self._message, state=self._state)
+
         await self._send_text_with_tenses()
 
     async def _send_message(self) -> None:
