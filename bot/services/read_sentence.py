@@ -84,8 +84,10 @@ class ReadSentenceService:
             await self._send_message()
 
     async def _send_audio_message(self) -> None:
-        with open(self._file_path, "rb") as audio:
+        image_path = f"static/img/en_level_{self._telegram_user.level_en.order}.jpg"
+        with open(self._file_path, "rb") as audio, open(image_path, "rb") as thumb:
             self._message_text = ""
+            image_path = f"static/img/en_level_{self._telegram_user.level_en.order}.jpg"   
             sentence_text = f"Text:\n\n<tg-spoiler>{self._sentence_text}</tg-spoiler>"
             await bot.send_audio(
                 chat_id=self._telegram_user.telegram_id,
@@ -95,6 +97,7 @@ class ReadSentenceService:
                 reply_markup=self._keyboard,
                 title=f"#{self._telegram_user.new_sentence.order}",
                 performer=self._telegram_user.new_sentence.book_title,
+                thumb=thumb,
             )
 
     async def _send_tenses(self) -> None:
