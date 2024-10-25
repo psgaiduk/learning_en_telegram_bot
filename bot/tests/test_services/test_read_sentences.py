@@ -10,7 +10,7 @@ from aiogram.types import (
     User,
 )
 from pytest import fixture, mark
-from unittest.mock import ANY, AsyncMock, mock_open, patch
+from unittest.mock import ANY, AsyncMock, call, mock_open, patch
 
 from choices import EnglishLevels, State
 from services import ReadSentenceService
@@ -198,7 +198,7 @@ class TestReadSentenceService:
             self._service._send_tenses.assert_not_called()
             self._service._send_message.assert_called_once()
 
-    @patch("builtins.open", new_callable=mock_open, read_data="data")
+    @patch("builtins.open", new_callable=mock_open)
     @patch("services.read_sentence.bot", new_callable=AsyncMock)
     @mark.asyncio
     async def test_send_audio_message(self, mock_bot, mock_open_file):
@@ -212,7 +212,11 @@ class TestReadSentenceService:
 
         await self._service._send_audio_message()
 
-        mock_open_file.assert_called_once()
+        mock_open_file.assert_has_calls([
+            call("test_file", "rb"),
+            call(f"static/img/en_level_{self._telegram_user.level_en.order}.jpg", "rb")
+        ], any_order=True)
+
         expected_text = "Text:\n\n<tg-spoiler>Hello World!</tg-spoiler>"
         assert self._service._message_text == ""
         mock_bot.send_audio.assert_called_once_with(
@@ -223,11 +227,13 @@ class TestReadSentenceService:
             reply_markup=keyboard,
             title=f"#{self._telegram_user.new_sentence.order}",
             performer=self._telegram_user.new_sentence.book_title,
+            thumb=ANY,
         )
 
     @mark.parametrize("is_update", [True, False])
+    @patch("services.read_sentence.delete_message")
     @mark.asyncio
-    async def test_send_tenses(self, is_update):
+    async def test_send_tenses(self, mock_delete_message, is_update):
         mock_update_stage_user = AsyncMock(return_value=is_update)
         self._service._update_stage_user = mock_update_stage_user
 
@@ -239,9 +245,11 @@ class TestReadSentenceService:
         if is_update:
             mock_update_stage_user.assert_called_once_with(stage=State.check_answer_time.value)
             mock_send_text_with_tenses.assert_called_once()
+            mock_delete_message.assert_called_once()
         else:
             mock_update_stage_user.assert_called_once_with(stage=State.check_answer_time.value)
             mock_send_text_with_tenses.assert_not_called()
+            mock_delete_message.assert_not_called()
 
     @mark.parametrize(
         "is_update_history, is_update_stage, message_text",
