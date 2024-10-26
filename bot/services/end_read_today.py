@@ -33,17 +33,8 @@ class EndReadTodayService:
         await delete_message(message=self.message, state=self.state)
         await self._get_messages_for_delete()
         await self._send_message_end_sentences()
+        await self._send_message_repeat_words()
 
-        message_with_grammar = "Но можно продолжить повторение слов"
-        inline_keyboard = InlineKeyboardMarkup()
-        inline_keyboard.add(InlineKeyboardButton(text="Повторение слов", callback_data="learn_words_again"))
-        send_message = await bot.send_message(
-            chat_id=self.message.from_user.id,
-            text=message_with_grammar,
-            parse_mode=ParseMode.HTML,
-            reply_markup=inline_keyboard,
-        )
-        self.messages_for_delete.append(send_message.message_id)
         await self.state.update_data(messages_for_delete=self.messages_for_delete)
 
     async def _get_messages_for_delete(self) -> None:
@@ -62,4 +53,16 @@ class EndReadTodayService:
             reply_markup=keyboard,
         )
         logger.debug(f"send message = {send_message.__dict__}")
+        self.messages_for_delete.append(send_message.message_id)
+
+    async def _send_message_repeat_words(self) -> None:
+        message_with_grammar = "Но можно продолжить повторение слов"
+        inline_keyboard = InlineKeyboardMarkup()
+        inline_keyboard.add(InlineKeyboardButton(text="Повторение слов", callback_data="learn_words_again"))
+        send_message = await bot.send_message(
+            chat_id=self.message.from_user.id,
+            text=message_with_grammar,
+            parse_mode=ParseMode.HTML,
+            reply_markup=inline_keyboard,
+        )
         self.messages_for_delete.append(send_message.message_id)
