@@ -32,18 +32,7 @@ class EndReadTodayService:
         logger.debug(f"message = {self.message}")
         await delete_message(message=self.message, state=self.state)
         await self._get_messages_for_delete()
-        message_text = "Вы прочитали все предложения на сегодня. Новые предложения будут доступны завтра."
-        keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-        keyboard.add(KeyboardButton(text="Read"))
-
-        send_message = await bot.send_message(
-            chat_id=self.message.from_user.id,
-            text=message_text,
-            parse_mode=ParseMode.HTML,
-            reply_markup=keyboard,
-        )
-        logger.debug(f"send message = {send_message.__dict__}")
-        self.messages_for_delete.append(send_message.message_id)
+        await self._send_message_end_sentences()
 
         message_with_grammar = "Но можно продолжить повторение слов"
         inline_keyboard = InlineKeyboardMarkup()
@@ -60,3 +49,17 @@ class EndReadTodayService:
     async def _get_messages_for_delete(self) -> None:
         data = await self.state.get_data()
         self.messages_for_delete = data.get("messages_for_delete", [])
+
+    async def _send_message_end_sentences(self) -> None:
+        message_text = "Вы прочитали все предложения на сегодня. Новые предложения будут доступны завтра."
+        keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(KeyboardButton(text="Read"))
+
+        send_message = await bot.send_message(
+            chat_id=self.message.from_user.id,
+            text=message_text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard,
+        )
+        logger.debug(f"send message = {send_message.__dict__}")
+        self.messages_for_delete.append(send_message.message_id)
