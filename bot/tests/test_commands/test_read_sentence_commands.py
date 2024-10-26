@@ -76,9 +76,9 @@ class TestReadSentenceCommand:
 
         mock_read_sentence_service.assert_called_once()
 
-    @patch("commands.read_sentence.send_message_end_read_today_func")
+    @patch("commands.read_sentence.EndReadTodayService.work")
     @mark.asyncio
-    async def test_handle_end_read_sentence_today_message(self, mock_send_message_end_read_today_func):
+    async def test_handle_end_read_sentence_today_message(self, mock_send_message_end_read_today_service):
         chat_id = 1
         state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name="Test User")
@@ -86,11 +86,11 @@ class TestReadSentenceCommand:
         mock_message.from_user = user
 
         await handle_end_read_sentence_today(mock_message, state=state)
-        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_message, state=state)
+        mock_send_message_end_read_today_service.assert_called_once()
 
-    @patch("commands.read_sentence.send_message_end_read_today_func")
+    @patch("commands.read_sentence.EndReadTodayService.work")
     @mark.asyncio
-    async def test_handle_end_read_sentence_today_callback(self, mock_send_message_end_read_today_func):
+    async def test_handle_end_read_sentence_today_callback(self, mock_send_message_end_read_today_service):
         chat_id = 1
         state = AsyncMock()
         user = User(id=chat_id, is_bot=False, first_name="Test User")
@@ -98,15 +98,15 @@ class TestReadSentenceCommand:
         mock_callback.from_user = user
 
         await handle_end_read_sentence_today(message=mock_callback, state=state)
-        mock_send_message_end_read_today_func.assert_called_once_with(message=mock_callback, state=state)
+        mock_send_message_end_read_today_service.assert_called_once()
 
-    @patch("commands.read_sentence.send_message_end_read_today_func")
+    @patch("commands.read_sentence.EndReadTodayService.work")
     @patch("commands.read_sentence.update_learn_word")
     @mark.asyncio
     async def test_handle_end_read_sentence_today_after_learn_words(
         self,
         mock_update_learn_word,
-        mock_send_message_end_read_today_func,
+        mock_send_message_end_read_today_service,
         telegram_user_with_sentence_and_word_and_learn_word,
     ):
         chat_id = 1
@@ -121,10 +121,7 @@ class TestReadSentenceCommand:
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
             await handle_end_read_sentence_today_after_learn_words(message=mock_callback, state=state)
-            mock_send_message_end_read_today_func.assert_called_once_with(
-                message=mock_callback,
-                state=state,
-            )
+            mock_send_message_end_read_today_service.assert_called_once()
             mock_update_learn_word.assert_called_once_with(
                 message=mock_callback,
                 word=expected_learn_word,
@@ -133,13 +130,13 @@ class TestReadSentenceCommand:
             expected_telegram_user.learn_words = []
             state.update_data.assert_called_once_with(telegram_user=expected_telegram_user)
 
-    @patch("commands.read_sentence.send_message_end_read_today_func")
+    @patch("commands.read_sentence.EndReadTodayService.work", new_callable=AsyncMock)
     @patch("commands.read_sentence.update_learn_word")
     @mark.asyncio
     async def test_handle_end_read_sentence_today_after_learn_words_without_words(
         self,
         mock_update_learn_word,
-        mock_send_message_end_read_today_func,
+        mock_send_message_end_read_today_service,
         telegram_user_with_sentence_and_word_and_learn_word,
     ):
         chat_id = 1
@@ -153,21 +150,18 @@ class TestReadSentenceCommand:
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
             await handle_end_read_sentence_today_after_learn_words(message=mock_callback, state=state)
-            mock_send_message_end_read_today_func.assert_called_once_with(
-                message=mock_callback,
-                state=state,
-            )
+            mock_send_message_end_read_today_service.assert_called_once()
             mock_update_learn_word.assert_not_called()
             mock_send_message.assert_not_called()
             state.update_data.assert_not_called()
 
-    @patch("commands.read_sentence.send_message_end_read_today_func")
+    @patch("commands.read_sentence.EndReadTodayService.work", new_callable=AsyncMock)
     @patch("commands.read_sentence.update_learn_word")
     @mark.asyncio
     async def test_handle_end_read_sentence_today_after_learn_words_with_error_update(
         self,
         mock_update_learn_word,
-        mock_send_message_end_read_today_func,
+        mock_send_message_end_read_today_service,
         telegram_user_with_sentence_and_word_and_learn_word,
     ):
         chat_id = 1
@@ -182,7 +176,7 @@ class TestReadSentenceCommand:
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
             await handle_end_read_sentence_today_after_learn_words(message=mock_callback, state=state)
-            mock_send_message_end_read_today_func.assert_not_called()
+            mock_send_message_end_read_today_service.assert_not_called()
             mock_update_learn_word.assert_called_once_with(
                 message=mock_callback,
                 word=expected_learn_word,

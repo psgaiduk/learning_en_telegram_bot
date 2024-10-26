@@ -12,14 +12,14 @@ from aiogram.types import (
 from pytest import mark
 
 from bot import bot
-from functions import send_message_end_read_today_func
+from services import EndReadTodayService
 from tests.fixtures import *
 
 
-class TestEndReadTodayFunction:
-    """Tests send message if end read today function."""
+class TestEndReadTodayService:
+    """Tests send message if end read today service."""
 
-    @patch("functions.end_read_sentence_today.delete_message")
+    @patch("services.end_read_today.delete_message")
     @mark.parametrize("state_data, expected_ids", [[{}, [1, 2]], [{"messages_for_delete": [3]}, [3, 1, 2]]])
     @mark.asyncio
     async def test_send_message_if_end_sentences(self, mock_delete_message, state_data, expected_ids):
@@ -35,7 +35,7 @@ class TestEndReadTodayFunction:
                 AsyncMock(message_id=1),
                 AsyncMock(message_id=2),
             ]
-            await send_message_end_read_today_func(message=mock_message, state=state)
+            await EndReadTodayService(message=mock_message, state=state).work()
             expected_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
             expected_keyboard.add(KeyboardButton(text="Read"))
             expected_text = "Вы прочитали все предложения на сегодня. Новые предложения будут доступны завтра."

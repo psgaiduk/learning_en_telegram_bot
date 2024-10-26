@@ -2,7 +2,6 @@ from functions.combintation_english_times import get_combinations
 from functions.create_keyboard_for_en_levels import create_keyboard_for_en_levels
 from functions.encryption import encode_telegram_id, decode_telegram_id
 from functions.get_data_by_api import get_data_by_api_func
-from functions.end_read_sentence_today import send_message_end_read_today_func
 from functions.save_update_word_history import save_word_history
 from functions.send_and_delete_message import delete_message, send_message_and_delete
 from functions.send_message_learn_word import send_message_learn_word
