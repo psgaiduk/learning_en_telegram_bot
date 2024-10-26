@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, patch, call
 
 from aiogram.types import (
+    Chat,
     Message,
     ParseMode,
     InlineKeyboardButton,
@@ -24,19 +25,25 @@ class TestEndReadTodayService:
         self.state = AsyncMock()
         self.chat_id = 1
         user = User(id=self.chat_id, is_bot=False, first_name="Test User")
-        self.mock_message = Message(id=1, chat=self.chat_id, text="Read", from_user=user)
+        self.mock_message = Message(id=1, text="Read", from_user=user)
         self.mock_message.from_user = user
+        self.mock_message.chat = Chat(id=self.chat_id)
+        self.mock_message.chat.id = self.chat_id
         self.service = EndReadTodayService(message=self.mock_message, state=self.state)
 
+    @mark.parametrize("minutes_for_word", [0, 1])
     @patch("services.end_read_today.delete_message")
     @mark.asyncio
-    async def test_send_message_if_end_sentences(self, mock_delete_message):
+    async def test_send_message_if_end_sentences(self, mock_delete_message, minutes_for_word):
 
         self.service.messages_for_delete = []
         mock_get_messages_for_delete = AsyncMock(return_value=None)
         self.service._get_messages_for_delete = mock_get_messages_for_delete
         mock_send_message_end_sentences = AsyncMock(return_value=None)
         self.service._send_message_end_sentences = mock_send_message_end_sentences
+        mock_get_user_stats = AsyncMock(return_value=None)
+        self.service._get_user_stats = mock_get_user_stats
+        self.service.minutes_for_repeat_word = minutes_for_word
         mock_send_message_repeat_words = AsyncMock(return_value=None)
         self.service._send_message_repeat_words = mock_send_message_repeat_words
 
@@ -46,6 +53,10 @@ class TestEndReadTodayService:
         self.state.update_data.assert_called_once_with(messages_for_delete=[])
         mock_get_messages_for_delete.assert_called_once()
         mock_send_message_end_sentences.assert_called_once()
+        if minutes_for_word == 0:
+            mock_send_message_repeat_words.assert_called_once()
+        else:
+            mock_send_message_repeat_words.assert_not_called()
 
     @mark.parametrize("state_data, expected_ids", [[{}, []], [{"messages_for_delete": [3]}, [3]]])
     @mark.asyncio
@@ -99,3 +110,12 @@ class TestEndReadTodayService:
             )
 
             assert self.service.messages_for_delete == expected_ids
+
+    @mark.parametrize("count_minutes_to_repeat", [0, 2])
+    @patch("services.end_read_today.get_data_by_api_func")
+    @mark.asyncio
+    async def test_get_user_stats(self, mock_get_data_by_api_func, count_minutes_to_repeat, api_get_user_stats) -> None:
+        api_get_user_stats["time_to_next_word"] = count_minutes_to_repeat
+        mock_get_data_by_api_func.return_value = api_get_user_stats
+        await self.service._get_user_stats()
+        assert self.service.minutes_for_repeat_word == count_minutes_to_repeat
