@@ -31,6 +31,7 @@ class EndReadTodayService:
     async def work(self) -> None:
         logger.debug(f"message = {self.message}")
         await delete_message(message=self.message, state=self.state)
+        await self._get_messages_for_delete()
         message_text = "Вы прочитали все предложения на сегодня. Новые предложения будут доступны завтра."
         keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
         keyboard.add(KeyboardButton(text="Read"))

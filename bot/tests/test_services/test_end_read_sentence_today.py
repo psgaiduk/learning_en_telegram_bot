@@ -34,6 +34,8 @@ class TestEndReadTodayService:
     async def test_send_message_if_end_sentences(self, mock_delete_message, old_messages_ids, expected_ids):
 
         self.service.messages_for_delete = old_messages_ids
+        mock_get_messages_for_delete = AsyncMock(return_value=None)
+        self.service._get_messages_for_delete = mock_get_messages_for_delete
 
         with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
 
@@ -73,6 +75,7 @@ class TestEndReadTodayService:
 
             mock_delete_message.assert_called_once_with(message=self.mock_message, state=self.state)
             self.state.update_data.assert_called_once_with(messages_for_delete=expected_ids)
+            mock_get_messages_for_delete.assert_called_once()
 
     @mark.parametrize("state_data, expected_ids", [[{}, []], [{"messages_for_delete": [3]}, [3]]])
     @mark.asyncio
