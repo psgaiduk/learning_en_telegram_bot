@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, patch, call
+from unittest.mock import AsyncMock, patch
 
 from aiogram.types import (
     Chat,
@@ -46,6 +46,8 @@ class TestEndReadTodayService:
         self.service.minutes_for_repeat_word = minutes_for_word
         mock_send_message_repeat_words = AsyncMock(return_value=None)
         self.service._send_message_repeat_words = mock_send_message_repeat_words
+        mock_send_message_time_to_repeat_words = AsyncMock(return_value=None)
+        self.service._send_message_time_to_repeat_words = mock_send_message_time_to_repeat_words
 
         await self.service.work()
 
@@ -55,8 +57,10 @@ class TestEndReadTodayService:
         mock_send_message_end_sentences.assert_called_once()
         if minutes_for_word == 0:
             mock_send_message_repeat_words.assert_called_once()
+            mock_send_message_time_to_repeat_words.assert_not_called()
         else:
             mock_send_message_repeat_words.assert_not_called()
+            mock_send_message_time_to_repeat_words.assert_called_once()
 
     @mark.parametrize("state_data, expected_ids", [[{}, []], [{"messages_for_delete": [3]}, [3]]])
     @mark.asyncio
@@ -119,3 +123,27 @@ class TestEndReadTodayService:
         mock_get_data_by_api_func.return_value = api_get_user_stats
         await self.service._get_user_stats()
         assert self.service.minutes_for_repeat_word == count_minutes_to_repeat
+
+    @mark.parametrize("old_messages_ids, expected_ids", [[[], [2]], [[3], [3, 2]]])
+    @patch("services.end_read_today.get_end_of_russian_word_func", return_value="минут")
+    @mark.asyncio
+    async def test_send_message_time_to_repeat_words(
+        self, mock_get_end_of_russian_word, old_messages_ids, expected_ids
+    ):
+        self.service.minutes_for_repeat_word = 10
+        self.service.messages_for_delete = old_messages_ids
+        with patch.object(bot, "send_message", new=AsyncMock()) as mock_send_message:
+
+            mock_send_message.side_effect = [AsyncMock(message_id=2)]
+            expected_text = "Слова для повторения тоже закончились. Новые слова для повторения появятся через 10 минут"
+
+            await self.service._send_message_time_to_repeat_words()
+
+            mock_send_message.assert_called_once_with(
+                chat_id=self.chat_id,
+                text=expected_text,
+                parse_mode=ParseMode.HTML,
+            )
+
+            assert self.service.messages_for_delete == expected_ids
+            mock_get_end_of_russian_word.assert_called_once_with(number=10, endings=["минуту", "минуты", "минут"])

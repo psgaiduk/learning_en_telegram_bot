@@ -13,7 +13,7 @@ from aiogram.dispatcher.storage import FSMContext
 from loguru import logger
 
 from bot import bot
-from functions import get_data_by_api_func, delete_message
+from functions import get_data_by_api_func, get_end_of_russian_word_func, delete_message
 
 
 class EndReadTodayService:
@@ -38,6 +38,8 @@ class EndReadTodayService:
         await self._get_user_stats()
         if self.minutes_for_repeat_word == 0:
             await self._send_message_repeat_words()
+        else:
+            await self._send_message_time_to_repeat_words()
 
         await self.state.update_data(messages_for_delete=self.messages_for_delete)
 
@@ -66,7 +68,7 @@ class EndReadTodayService:
             telegram_id = self.message.chat.id
 
         user_stats = await get_data_by_api_func(
-            telegram_id=telegram_id, params_for_get={}, url_for_get=f"/read/stats/{telegram_id}"
+            telegram_id=telegram_id, params_for_get={}, url_for_get=f"read/stats/{telegram_id}"
         )
 
         self.minutes_for_repeat_word = user_stats["time_to_next_word"]
@@ -80,5 +82,20 @@ class EndReadTodayService:
             text=message_with_grammar,
             parse_mode=ParseMode.HTML,
             reply_markup=inline_keyboard,
+        )
+        self.messages_for_delete.append(send_message.message_id)
+
+    async def _send_message_time_to_repeat_words(self) -> None:
+        word_minute_with_ending = get_end_of_russian_word_func(
+            number=self.minutes_for_repeat_word, endings=["минуту", "минуты", "минут"]
+        )
+        message = (
+            "Слова для повторения тоже закончились. "
+            f"Новые слова для повторения появятся через {self.minutes_for_repeat_word} {word_minute_with_ending}"
+        )
+        send_message = await bot.send_message(
+            chat_id=self.message.from_user.id,
+            text=message,
+            parse_mode=ParseMode.HTML,
         )
         self.messages_for_delete.append(send_message.message_id)
