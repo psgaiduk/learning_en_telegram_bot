@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from aiogram.types import CallbackQuery
 from loguru import logger
@@ -36,7 +36,7 @@ async def update_learn_word(message: CallbackQuery, word: WordDTOModel) -> bool:
         if word.increase_factor < 1.1:
             word.increase_factor = 1.1
 
-    word.repeat_datetime = datetime.now() + timedelta(seconds=word.interval_repeat)
+    word.repeat_datetime = datetime.now(timezone.utc) + timedelta(seconds=word.interval_repeat)
 
     data_for_update_word = {
         "telegram_user_id": message.from_user.id,
