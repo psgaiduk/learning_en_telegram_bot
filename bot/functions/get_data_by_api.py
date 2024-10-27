@@ -21,7 +21,7 @@ async def get_data_by_api_func(telegram_id: int, params_for_get: dict, url_for_g
         response, response_status = await client.get(
             url=url_for_get_data,
             headers=settings.api_headers,
-            json=params_for_get,
+            params=params_for_get,
         )
 
     if response_status != HTTPStatus.OK:

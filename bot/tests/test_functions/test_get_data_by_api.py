@@ -30,7 +30,7 @@ class TestGetDataByApiFunction:
         mocked_get.assert_awaited_once_with(
             url=f"{settings.api_url}/v1/telegram_user/{self._telegram_id}/",
             headers=settings.api_headers,
-            json={"id": 1},
+            params={"id": 1},
         )
 
         mock_send_message.assert_not_awaited()
@@ -51,7 +51,7 @@ class TestGetDataByApiFunction:
         mocked_get.assert_awaited_once_with(
             url=f"{settings.api_url}/v1/telegram_user/{self._telegram_id}/",
             headers=settings.api_headers,
-            json={},
+            params={},
         )
 
         mock_send_message.assert_called_once_with(
