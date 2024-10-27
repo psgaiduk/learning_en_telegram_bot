@@ -13,8 +13,8 @@ from aiogram.dispatcher.storage import FSMContext
 from bot import bot, dispatcher
 from choices import State
 from dto import TelegramUserDTOModel
-from functions import send_message_end_read_today_func, update_learn_word
-from services import ReadSentenceService
+from functions import update_learn_word
+from services import EndReadTodayService, ReadSentenceService
 
 
 @dispatcher.message_handler(Text(equals="Read"), state=State.read_book.value)
@@ -36,7 +36,9 @@ async def handle_read_sentence_after_learn_words(message: Union[CallbackQuery, M
     else:
         is_update = True
     if is_update:
-        await state.set_data(data={"telegram_user": telegram_user})  # Обновляем состояние без первого слова в learn_words
+        await state.set_data(
+            data={"telegram_user": telegram_user}
+        )  # Обновляем состояние без первого слова в learn_words
         return await ReadSentenceService(message=message, state=state).do()
     await bot.send_message(
         chat_id=message.from_user.id,
@@ -75,7 +77,7 @@ async def handle_end_read_sentence_today_after_learn_words(message: CallbackQuer
     else:
         is_update = True
     if is_update:
-        await send_message_end_read_today_func(message=message, state=state)
+        await EndReadTodayService(message=message, state=state).work()
         return
     await bot.send_message(
         chat_id=message.from_user.id,
@@ -87,4 +89,4 @@ async def handle_end_read_sentence_today_after_learn_words(message: CallbackQuer
 @dispatcher.callback_query_handler(state=State.read_book_end.value)
 async def handle_end_read_sentence_today(message: Union[CallbackQuery, Message], state: FSMContext) -> None:
     """Handle if user read all sentences today."""
-    await send_message_end_read_today_func(message=message, state=state)
+    await EndReadTodayService(message=message, state=state).work()
