@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 from loguru import logger
@@ -42,7 +42,7 @@ class GetReadUserStatsService:
 
     async def _get_word_history(self) -> None:
 
-        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
         today_words = (
             self.db.query(UsersWordsHistory)
@@ -54,6 +54,8 @@ class GetReadUserStatsService:
             return
 
         for word in today_words:
+            if word.created_at.tzinfo is None:
+                word.created_at = word.created_at.replace(tzinfo=timezone.utc)
             self.user_stats.count_of_words += 1
             if word.created_at >= today_start:
                 self.user_stats.count_of_new_words += 1
@@ -71,7 +73,11 @@ class GetReadUserStatsService:
         if not next_word:
             return
 
-        now = datetime.utcnow()
-        next_repeat_time = next_word.repeat_datetime
-        time_to_next_word = (next_repeat_time - now).total_seconds() / 60
+        now = datetime.now(timezone.utc)
+        logger.debug(f'now time = {now}, repeat_time = {next_word.repeat_datetime}')
+        if next_word.repeat_datetime.tzinfo is None:
+            logger.debug('not timezone add it')
+            next_word.repeat_datetime = next_word.repeat_datetime.replace(tzinfo=timezone.utc)
+        logger.debug(f'now time = {now}, repeat_time = {next_word.repeat_datetime}')
+        time_to_next_word = (next_word.repeat_datetime - now).total_seconds() / 60
         self.user_stats.time_to_next_word = max(time_to_next_word, 0)
