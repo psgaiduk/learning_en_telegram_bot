@@ -9,8 +9,8 @@ def create_dump_func():
 
     db = settings.postgres
 
-    timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"db_dump_{timestamp}.sql"
+    timestamp = timezone.now().strftime("%Y%m%d")
+    filename = f"db_dump_{timestamp}.sql.gz"
     dump_dir = "static/dump/"
     filepath = path.join(dump_dir, filename)
     makedirs(dump_dir, exist_ok=True)
@@ -19,7 +19,7 @@ def create_dump_func():
     subprocess.run(command, shell=True, check=True)
 
     dump_files = sorted(
-        [path.join(dump_dir, f) for f in listdir(dump_dir) if f.endswith(".sql")],
+        [path.join(dump_dir, f) for f in listdir(dump_dir) if f.endswith(".sql.gz")],
         key=path.getmtime
     )
 
