@@ -15,7 +15,7 @@ def create_dump_func():
     filepath = path.join(dump_dir, filename)
     makedirs(dump_dir, exist_ok=True)
 
-    command = f"PGPASSWORD={db.password} pg_dump -h {db.host} -U {db.user} -d {db.db_name} | gzip > {filepath}"
+    command = f"PGPASSWORD={db.password} pg_dump -h {db.host} -U {db.user} -d {db.db_name} --no-owner --encoding=UTF8 | gzip > {filepath}"
     subprocess.run(command, shell=True, check=True)
 
     dump_files = sorted(
