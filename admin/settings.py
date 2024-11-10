@@ -22,6 +22,7 @@ class MainSettings(BaseSettings):
     debug: bool = Field(..., env="DEBUG")
     sentry_dsn: str = Field(..., env="SENTRY_DSN_DJANGO")
     ai_token: str = Field(..., env="OPEN_AI_TOKEN")
+    hosts: str = Field(..., env="ALLOWED_HOSTS")
 
     postgres: PostgresSettings = PostgresSettings()
 
