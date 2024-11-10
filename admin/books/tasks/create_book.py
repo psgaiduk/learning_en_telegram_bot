@@ -46,11 +46,14 @@ def create_sentences(instance: BooksModel, sentence: str, index: int) -> None:
     logger.debug(f"Words ids: {words_ids}")
     sentence_tenses: list = sentence_data[3].strip().split(", ")
     logger.debug(f"Sentence times {sentence_tenses}")
+    
+    voices = ["shimmer", "onyx"]
 
     AISDK().create_audio_file(
         sentence=english_sentence,
         file_name=f"{instance.book_id} - {index}",
         level_order=instance.level_en.order,
+        voice=voices[index % 2],
     )
     tenses = TensesModel.objects.filter(Q(name__in=sentence_tenses))
 
