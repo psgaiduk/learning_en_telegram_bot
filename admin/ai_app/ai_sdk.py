@@ -12,12 +12,14 @@ class AISDK:
     def __init__(self):
         self._client = OpenAI(api_key=settings.ai_token)
 
-    def create_audio_file(self, sentence: str, file_name: str, level_order: int) -> None:
+    def create_audio_file(self, sentence: str, file_name: str, level_order: int, voice: str) -> None:
         """
         Создать аудио файл.
+        https://platform.openai.com/docs/guides/text-to-speech
 
         :param sentence: Текст для озвучки.
         :param file_name: имя файла.
+        :param voice: Тип голоса
         :return: None
         """
         audio_dir = Path.cwd() / "static" / "audio"
@@ -31,7 +33,7 @@ class AISDK:
         logger.debug(f"file path = {speech_file_path}")
         response = self._client.audio.speech.create(
             model="tts-1",
-            voice="shimmer",
+            voice=voice,
             input=sentence,
             speed=speed_by_level[level_order - 1],
         )
