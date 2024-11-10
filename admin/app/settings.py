@@ -33,7 +33,7 @@ SECRET_KEY = settings.django_secret_key
 
 DEBUG = settings.debug
 
-ALLOWED_HOSTS = ["145.14.157.244", "localhost", "srv439225.hstgr.cloud"]
+ALLOWED_HOSTS = settings.hosts.split(",")
 
 
 # Application definition
@@ -133,6 +133,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATIC_ROOT = path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
