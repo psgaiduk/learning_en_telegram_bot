@@ -21,3 +21,4 @@ class BooksSentences(Base):
     words = relationship("Words", secondary=sentence_word_association, back_populates="sentences")
     tenses = relationship("Tenses", secondary=sentence_tenses_association, back_populates="sentences")
     users_books_sentences_history = relationship("UsersBooksSentencesHistory", back_populates="sentence")
+    tg_audio_sentence = relationship("TgAudioSentenceModel", back_populates="sentence", uselist=False)

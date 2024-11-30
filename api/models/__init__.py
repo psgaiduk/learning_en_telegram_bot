@@ -7,6 +7,7 @@ from models.hero_level import HeroLevels
 from models.main_language import MainLanguages, MainLanguagesModelDTO
 from models.telegram_user import Users
 from models.tenses import Tenses
+from models.tg_audio_sentences import TgAudioSentenceModel
 from models.type_words import TypeWords
 from models.users_books_history import UsersBooksHistory
 from models.users_books_sentences_history import UsersBooksSentencesHistory
