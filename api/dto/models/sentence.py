@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 from dto.models.history_words import HistoryWordModelDTO, HistoryWordModelForReadDTO
@@ -28,5 +30,6 @@ class SentenceModelForReadDTO(BaseModel):
     translation: dict[str, str]
     sentence_times: str
     description_time: str
+    tg_audio_id: Optional[str]
 
     words: list[HistoryWordModelForReadDTO]

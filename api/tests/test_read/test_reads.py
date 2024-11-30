@@ -22,7 +22,6 @@ from tests.connect_db import db_session
     "create_test_database",
     "telegram_users_mock",
     "book_mock",
-    "book_sentences_mock",
     "words_mock",
 )
 class TestReadApi:
@@ -76,6 +75,7 @@ class TestReadApi:
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
             assert book.title == response["book_title"]
+            assert sentence.tg_audio_sentence.audio_id == response["tg_audio_id"]
 
             """
             { 'translation': {'ru': 'некоторый'}, 'is_known': False, 'count_view': 0, 'correct_answers': 0, 'incorrect_answers': 0, 'correct_answers_in_row': 0, 'increase_factor': 0.0, 'interval_repeat': 0, 'repeat_datetime': '2024-09-22T06:04:50.390282'}
@@ -222,6 +222,7 @@ class TestReadApi:
             assert len(response["words"]) <= 5
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
+            assert sentence.tg_audio_sentence.audio_id == response["tg_audio_id"]
             assert users_history_book_sentence.id == response["history_sentence_id"]
             assert "- part 2" in response["text"].lower()
 
@@ -288,6 +289,7 @@ class TestReadApi:
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
             assert users_history_book_sentence.id == response["history_sentence_id"]
+            assert sentence.tg_audio_sentence.audio_id == response["tg_audio_id"]
             assert "- part 2" not in response["text"].lower()
 
     def test_get_first_sentence_after_last_sentence(self):
@@ -354,6 +356,7 @@ class TestReadApi:
             assert len(response["words"]) <= 5
             sentence = db.query(BooksSentences).filter(BooksSentences.sentence_id == response["sentence_id"]).first()
             assert sentence.order == 1
+            assert sentence.tg_audio_sentence.audio_id == response["tg_audio_id"]
 
             old_book_history = (
                 db.query(UsersBooksHistory)

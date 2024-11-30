@@ -2,7 +2,7 @@ from faker import Faker
 from pytest import fixture
 
 from tests.connect_db import db_session
-from models import BooksModel, LevelsEn, Tenses, BooksSentences, Words
+from models import BooksModel, LevelsEn, Tenses, BooksSentences, TgAudioSentenceModel, Words
 from tests.fixtures.test_fixtures_services import level_en_mock, type_words_mock
 
 
@@ -134,6 +134,11 @@ def book_sentences_mock(tenses_mock):
 
                 for index_sentence, sentence_data in enumerate(sentences_data):
                     sentence = BooksSentences(**sentence_data)
+                    audio_sentence = TgAudioSentenceModel(
+                        sentence=sentence,
+                        audio_id=f"audio_{sentence.sentence_id}"
+                    )
+                    db.add(audio_sentence)
                     db.add(sentence)
                     tense = tenses[index_sentence]
                     tense.sentences.append(sentence)

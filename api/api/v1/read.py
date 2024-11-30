@@ -88,7 +88,7 @@ class ReadBookService:
                 ),
             )
             .order_by(UsersBooksSentencesHistory.is_read, BooksSentences.order)
-            .options(subqueryload(BooksSentences.tenses))
+            .options(joinedload(BooksSentences.tenses), joinedload(BooksSentences.tg_audio_sentence))
         )
         logger.debug(f"query get sentence for started book = {need_sentence}")
         self._need_sentence = need_sentence.first()
@@ -179,7 +179,7 @@ class ReadBookService:
                 .join(union_subquery, BooksSentences.book_id == union_subquery.c.book_id)
                 .filter(BooksSentences.order == 1)
                 .order_by(union_subquery.c.order_book)
-                .options(subqueryload(BooksSentences.tenses))
+                .options(joinedload(BooksSentences.tenses), joinedload(BooksSentences.tg_audio_sentence))
                 .add_columns(
                     union_subquery.c.title,
                     union_subquery.c.author,
@@ -288,6 +288,9 @@ class ReadBookService:
         sentence_for_read["order"] = self._need_sentence.order
         sentence_for_read["sentence_times"] = []
         sentence_for_read["description_time"] = []
+        sentence_for_read["tg_audio_id"] = (
+            self._need_sentence.tg_audio_sentence.audio_id if self._need_sentence.tg_audio_sentence else ""
+        )
 
         for tense in self._need_sentence.tenses:
             logger.debug(f"tense: {tense.__dict__}")
